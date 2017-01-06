@@ -5,9 +5,12 @@ var fs = require('fs')
 var json2csv = require('json2csv')
 
 // ladder
+// leagues to consider
+const leagues = ["Breach", "Hardcore Breach"]
 // what we want per fetch
-const limit = 10
+const limit = 200
 // what we want at max
+// passive fetches = |leagues| * total
 const total = 2*limit
 
 const start = Date.now()
@@ -70,9 +73,6 @@ var entries = new Map()
 // passives_url => character id
 var passives_urls_characters = new Map()
 
-// leagues to consider
-const leagues = ["Breach", "Hardcore Breach"]
-
 // w/o array.fill it results in empty values
 // create the ladder urls for each league and flatten it into one array
 const ladder_urls
@@ -119,7 +119,7 @@ var ladderComplete = function (results) {
 }
 
 var passivesComplete = function (results) {
-    report_log.push(`finished passive fetch after ${runtime()}ms`)
+    report_log.push(`finished passive fetch after ${runtime()}ms (${runtime() / results.length}ms/passive)`)
 
     var trees = []
 
