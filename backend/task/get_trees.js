@@ -6,7 +6,7 @@ var json2csv = require('json2csv')
 
 // ladder
 // what we want per fetch
-const limit = 200
+const limit = 10
 // what we want at max
 const total = 2*limit
 
@@ -15,11 +15,39 @@ const start = Date.now()
 const log_filename = __dirname + `/out/get_trees_log` // ${start}_
 const out_filename = __dirname + `/out/get_trees.csv` // ${start}_
 
-const ladderApi = (league, offset, limit) =>
-    `http://api.pathofexile.com/ladders/${league}?offset=${offset}&limit=${limit}&track=true`
+/**
+ * generates the url for the ggg ladder api
+ * see https://www.pathofexile.com/developer/docs/api-resource-ladders
+ *
+ * @param league
+ * @param offset
+ * @param limit
+ * @returns {string}
+ */
+const ladderApi = function (league, offset, limit) {
+    return `http://api.pathofexile.com/ladders/${league}?offset=${offset}&limit=${limit}&track=true`
+}
 
-const passivesApi = (character, account) =>
-    `https://www.pathofexile.com/character-window/get-passive-skills?character=${character}&accountName=${account}`
+
+/**
+ * partial inverse to ladderApi
+ * @param api_url
+ * @returns {string}
+ */
+const ladderApiToLeague = function (api_url) {
+    return decodeURIComponent(api_url.match(/http:\/\/api.pathofexile.com\/ladders\/([^?]+)\?.*/)[1])
+}
+
+/**
+ * generates the url to display all used passives
+ *
+ * @param character
+ * @param account
+ * @returns {string}
+ */
+const passivesApi = function (character, account) {
+    return `https://www.pathofexile.com/character-window/get-passive-skills?character=${character}&accountName=${account}`
+}
 
 // list of lines that should be included in the report_log
 var report_log = []
@@ -37,13 +65,20 @@ const runtime = (function () {
 // while the ladders api may return deleted chars
 // this means that we will assign new passives to deleted chars if another one was created
 // character id => ladder entry
-var characters = new Map()
+var entries = new Map()
 
 // passives_url => character id
 var passives_urls_characters = new Map()
 
+// leagues to consider
+const leagues = ["Breach", "Hardcore Breach"]
+
 // w/o array.fill it results in empty values
-var ladder_urls = new Array(total / limit).fill(0).map((_, offset) => ladderApi("Breach", offset * limit, limit))
+// create the ladder urls for each league and flatten it into one array
+const ladder_urls
+    = [].concat(...leagues.map(league =>
+        new Array(total / limit).fill(0).map((_, offset) => ladderApi(league, offset * limit, limit))))
+
 report_log.push(`fetching ${ladder_urls.length} ladders`)
 
 var ladderComplete = function (results) {
@@ -54,6 +89,8 @@ var ladderComplete = function (results) {
         // parse the body and map on every entry its passives url
         var body = JSON.parse(l.body)
 
+        var league = ladderApiToLeague(l.request.href)
+
         if (l.statusCode == 404 || !body.entries) {
             console.warn("no entries", l.request.href)
             return false
@@ -63,7 +100,7 @@ var ladderComplete = function (results) {
             var passive_url = passivesApi(e.character.name, e.account.name)
 
             // save the entry
-            characters.set(e.character.id, e)
+            entries.set(e.character.id, Object.assign(e, {league: league}))
             // and a reverse mapping so we can get the entry via url
             passives_urls_characters.set(passive_url, e.character.id)
 
@@ -94,7 +131,7 @@ var passivesComplete = function (results) {
 
             var passive_url = result.request.href
 
-            var entry = characters.get(passives_urls_characters.get(passive_url))
+            var entry = entries.get(passives_urls_characters.get(passive_url))
 
             //console.log(passive_url, entry)
 
@@ -115,6 +152,7 @@ var taskComplete = function (trees) {
     const fields = [
         "entry.account.name",
         "entry.character.name",
+        "entry.league",
         "entry.character.level",
         "entry.character.class",
         "entry.dead",
