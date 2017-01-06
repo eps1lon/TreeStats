@@ -7,11 +7,15 @@ var json2csv = require('json2csv')
 // ladder
 // leagues to consider
 const leagues = ["Breach", "Hardcore Breach"]
-// what we want per fetch
-const limit = 200
-// what we want at max
+
 // passive fetches = |leagues| * total
-const total = 2*limit
+var [total, limit] = process.argv.slice(2);
+// boundaries set by ggg api
+total = Math.min(15000, Math.max(1, total || 0))
+limit = Math.min(200, Math.max(1, limit || 200))
+
+// cut of remainder
+total -= total % limit
 
 const start = Date.now()
 
@@ -63,6 +67,8 @@ const runtime = (function () {
     }
 })()
 
+report_log.push(`fetching total of ${total} in chunks of ${limit}`)
+
 // apparently there can exist name collisions with accounts
 // so the get-passive-skills prob only returns the current character
 // while the ladders api may return deleted chars
@@ -79,7 +85,7 @@ const ladder_urls
     = [].concat(...leagues.map(league =>
         new Array(total / limit).fill(0).map((_, offset) => ladderApi(league, offset * limit, limit))))
 
-report_log.push(`fetching ${ladder_urls.length} ladders`)
+report_log.push(`fetching total of ${ladder_urls.length} ladders over ${leagues.length} leagues`)
 
 var ladderComplete = function (results) {
     report_log.push(`finished ladder fetch after ${runtime()}ms`)
