@@ -1,4 +1,10 @@
 {
   "name": "poe-ladder-crawler",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "dependencies": {
+    "async": "^2.1.4",
+    "fs": "0.0.1-security",
+    "json2csv": "^3.7.3",
+    "request": "^2.79.0"
+  }
 }
