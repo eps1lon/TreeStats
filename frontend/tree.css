@@ -1,0 +1,19 @@
+svg {
+    border: 1px solid black;
+}
+
+.tree_group {
+    fill: black;
+    fill-opacity: .5;
+}
+
+.group_orbit {
+    fill: none;
+    stroke: black;
+    stroke-width: 10;
+    stroke-dasharray: 2;
+}
+
+.tree_node {
+    fill: red;
+}
