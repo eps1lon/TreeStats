@@ -1,14 +1,15 @@
 class PoeTree {
     constructor(tree_data) {
-        this.data = tree_data
-        this.groups = new Map(Object.entries(this.data.groups))
+        this.data = tree_data;
+        this.groups = new Map(Object.entries(this.data.groups));
+        //noinspection JSUnresolvedFunction
         this.nodes = new Map(this.data.nodes.map(function (n) {
             // [key, value]
             return [n.id, new PoeNode(n, tree_data.groups)]
-        }))
+        }));
 
         /*
-         * althogh we get min/max coords they dont include the ascendancy
+         * although we get min/max coords they don't include the ascendancy
          * so we do its ourselves
          * could do it via nodes but if we use the groups with the orbits
          * we get a nice padding that could still be not enough if we draw the nodes to big
@@ -18,10 +19,10 @@ class PoeTree {
             Number.POSITIVE_INFINITY, // min_y
             Number.NEGATIVE_INFINITY, // max_x
             Number.NEGATIVE_INFINITY  // max_y
-        ]
+        ];
 
-        const max_radius = Math.max(...orbit_radii)
-        for (var [_, group] of this.groups) {
+        const max_radius = Math.max(...orbit_radii);
+        for (let group of this.groups.values()) {
             this.dimensions = [
                 Math.min(group.x - max_radius, this.dimensions[0]),
                 Math.min(group.y - max_radius, this.dimensions[1]),
@@ -45,15 +46,15 @@ class PoeTree {
 
     /**
      * svg viewbox
-     * @returns {[min-x,min-y,width,height]}
+     * @returns {[*]}
      */
     get viewbox() {
-        return  [
+        return [
             this.dimensions[0],
             this.dimensions[1],
             this.width,
             this.height
-        ]
+        ];
     }
 
     get width() {
@@ -66,9 +67,9 @@ class PoeTree {
 
     drawGroups(d3_svg) {
         // group_id => radii of nodes of that group
-        var radii = new Map()
+        let radii = new Map();
 
-        for (var [node_id, node] of this.nodes) {
+        for (let node of this.nodes.values()) {
             if (radii.has(node.group_id)) {
                 radii.get(node.group_id).add(node.radius)
             } else {
@@ -76,9 +77,9 @@ class PoeTree {
             }
         }
 
-        for (var group_id in this.data.groups) {
-            var group = this.data.groups[group_id]
-            group_id = +group_id
+        for (let group_id of Object.keys(this.data.groups)) {
+            const group = this.data.groups[group_id];
+            group_id = +group_id;
 
             if (!radii.has(group_id)) {
                 radii.set(group_id, [0])
@@ -91,9 +92,9 @@ class PoeTree {
                 .attr("class", "tree_group")
                 .attr("id", `node_group_${group_id}`)
                 .append("svg:title")
-                    .text(group_id)
+                    .text(group_id);
 
-            for (var r of radii.get(group_id)) {
+            for (let r of radii.get(group_id)) {
                 d3_svg.append("circle")
                     .attr("r", r)
                     .attr("cx", group.x)
@@ -105,9 +106,8 @@ class PoeTree {
     }
 
     drawNodes(d3_svg) {
-        for (var [node_id, node] of this.nodes) {
+        for (let [node_id, node] of this.nodes) {
             d3_svg.append("circle")
-                .attr("background", node.icon_for_background)
                 .attr("r", 40 * node.size)
                 .attr("cx", node.x)
                 .attr("cy", node.y)
@@ -122,19 +122,20 @@ class PoeTree {
      * draws the edges between nodes
      *
      * @param d3_svg
+     * @param blacklist_fn
      */
     drawEdges(d3_svg, blacklist_fn) {
         if (!blacklist_fn) {
-            blacklist_fn = function (source, target) {
+            blacklist_fn = function () {
                 return false
             }
         }
 
-        for (var [node_id, node] of this.nodes) {
-            var x1 = node.x
-            var y1 = node.y
-            for (var adj_id of node.adjacent) {
-                var adj = this.nodes.get(adj_id)
+        for (let node of this.nodes.values()) {
+            const x1 = node.x;
+            const y1 = node.y;
+            for (let adj_id of node.adjacent) {
+                const adj = this.nodes.get(adj_id);
 
                 if (!blacklist_fn(node, adj)) {
                     d3_svg.append("line")

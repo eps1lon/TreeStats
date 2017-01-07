@@ -1,5 +1,5 @@
-const orbit_radii = [0, 82, 162, 335, 493]
-const skills_per_orbit = [1, 6, 12, 12, 40]
+const orbit_radii = [0, 82, 162, 335, 493];
+const skills_per_orbit = [1, 6, 12, 12, 40];
 
 /**
  * special node types
@@ -11,16 +11,12 @@ const types = [
     "notable",
     "start",
     "ascendancy"
-]
+];
 
 class PoeNode {
     constructor(props, groups) {
-        this.props = props
-        this.group = groups[props.g]
-    }
-
-    static get types() {
-        return
+        this.props = props;
+        this.group = groups[props.g];
     }
 
     get name() {
@@ -85,7 +81,7 @@ class PoeNode {
     }
 
     get size() {
-        var order = [this.keystone, false, this.props.notable || this.props.mastery, true]
+        const order = [this.keystone, false, this.props.notable || this.props.mastery, true];
         return order.length - order.indexOf(true)
     }
 

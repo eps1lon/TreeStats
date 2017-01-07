@@ -1,4 +1,4 @@
-const NODES_KEY = "nodes"
+const NODES_KEY = "nodes";
 
 const NodeAggregation = class NodeAggregation {
     /**
@@ -28,7 +28,6 @@ const NodeAggregation = class NodeAggregation {
     }
 
 
-
     /**
      * filters each row by the given fn
      *
@@ -40,21 +39,21 @@ const NodeAggregation = class NodeAggregation {
     }
 
     /**
-     * sums up the occurences of nodes in its rows
+     * sums up the occurrence of nodes in its rows
      *
      * @returns {Map}
      */
     sum() {
-        var aggregated = new Map()
+        let aggregated = new Map();
 
-        for (var row of this.rows) {
-            var nodes = NodeAggregation.nodeStringToArray(row[NodeAggregation.nodes_key])
+        for (let row of this.rows) {
+            const nodes = NodeAggregation.nodeStringToArray(row[NodeAggregation.nodes_key]);
 
-            for (var node of nodes) {
+            for (const node of nodes) {
                 NodeAggregation.incMapKey(aggregated, node)
             }
         }
 
         return aggregated
     }
-}
+};
