@@ -33,6 +33,17 @@ class PoeTree {
     }
 
     /**
+     * checks if the edge between these nodes is Path of X to X edge
+     *
+     * @param source
+     * @param target
+     * @returns {boolean}
+     */
+    static scionPathOfEdge(source, target) {
+        return source.ascendancy != target.ascendancy
+    }
+
+    /**
      * svg viewbox
      * @returns {[min-x,min-y,width,height]}
      */
@@ -104,6 +115,36 @@ class PoeTree {
                 .attr("id", `node_${node_id}`)
                 .append("svg:title")
                 .text(node.name)
+        }
+    }
+
+    /**
+     * draws the edges between nodes
+     *
+     * @param d3_svg
+     */
+    drawEdges(d3_svg, blacklist_fn) {
+        if (!blacklist_fn) {
+            blacklist_fn = function (source, target) {
+                return false
+            }
+        }
+
+        for (var [node_id, node] of this.nodes) {
+            var x1 = node.x
+            var y1 = node.y
+            for (var adj_id of node.adjacent) {
+                var adj = this.nodes.get(adj_id)
+
+                if (!blacklist_fn(node, adj)) {
+                    d3_svg.append("line")
+                        .attr("class", ["tree_edge", ...node.types, ...adj.types].join(" "))
+                        .attr("x1", x1)
+                        .attr("y1", y1)
+                        .attr("x2", adj.x)
+                        .attr("y2", adj.y)
+                }
+            }
         }
     }
 

@@ -22,6 +22,11 @@ trees.then(function (aggregate) {
     //tree_svg.height(passive_tree.height)
 
     passive_tree.viewFull(d3_svg)
-    passive_tree.drawGroups(d3_svg)
+    //passive_tree.drawGroups(d3_svg)
     passive_tree.drawNodes(d3_svg)
+    //*
+    passive_tree.drawEdges(d3_svg, function (source, target) {
+        // no start node connection
+        return source.start || target.start || PoeTree.scionPathOfEdge(source, target)
+    })//*/
 })

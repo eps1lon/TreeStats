@@ -5,15 +5,21 @@ svg {
 .tree_group {
     fill: black;
     fill-opacity: .5;
+    display: none;
 }
 
 .group_orbit {
     fill: none;
     stroke: black;
-    stroke-width: 10;
-    stroke-dasharray: 2;
+    stroke-width: 5;
+    stroke-dasharray: 50;
 }
 
 .tree_node {
     fill: red;
+}
+
+.tree_edge {
+    stroke: black;
+    stroke-width: 10;
 }

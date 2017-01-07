@@ -8,7 +8,9 @@ const skills_per_orbit = [1, 6, 12, 12, 40]
 const types = [
     "keystone",
     "mastery",
-    "notable"
+    "notable",
+    "start",
+    "ascendancy"
 ]
 
 class PoeNode {
@@ -35,6 +37,19 @@ class PoeNode {
 
     get notable() {
         return this.props.not
+    }
+
+    get ascendancy() {
+        return !!this.props.ascendancyName
+    }
+
+    // classes used to have a common start point
+    get start() {
+        return this.props.spc.length > 0
+    }
+
+    get adjacent() {
+        return this.props.out
     }
 
     /**
