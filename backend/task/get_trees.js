@@ -9,10 +9,12 @@ var json2csv = require('json2csv')
 const leagues = ["Breach", "Hardcore Breach"]
 
 // passive fetches = |leagues| * total
-var [total, limit] = process.argv.slice(2);
+var [total, async_limit, limit] = process.argv.slice(2);
 // boundaries set by ggg api
 total = Math.min(15000, Math.max(1, total || 0))
 limit = Math.min(200, Math.max(1, limit || 200))
+// number of simultanous async calls to ggg servers
+async_limit = Math.min(Number.POSITIVE_INFINITY, Math.max(1, async_limit || 500))
 
 // cut of remainder
 total -= total % limit
@@ -118,7 +120,7 @@ var ladderComplete = function (results) {
 
     report_log.push(`fetching ${passives_urls.length} passives`)
 
-    nodeAsync.map(passives_urls, request, (e, results) => {
+    nodeAsync.mapLimit(passives_urls, async_limit, request, (e, results) => {
         if (e) throw e
         passivesComplete(results)
     })
@@ -179,7 +181,7 @@ var taskComplete = function (trees) {
     });
 }
 
-nodeAsync.map(ladder_urls, request, (e, results) => {
+nodeAsync.mapLimit(ladder_urls, async_limit, request, (e, results) => {
     if (e) {
         throw(e)
     }
