@@ -155,4 +155,12 @@ class PoeTree {
     viewFull(d3_svg) {
         d3_svg.attr("viewBox", this.viewbox.join(" "))
     }
+
+    xScaled(x, new_width) {
+        return (x - this.dimensions[0]) * new_width / this.width
+    }
+
+    yScaled(y, new_height) {
+        return (y - this.dimensions[0]) * new_height / this.height
+    }
 }
