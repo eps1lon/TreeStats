@@ -1,10 +1,35 @@
 class PoeTree {
-
     constructor(tree_data) {
         this.data = tree_data
-        this.nodes = new Map(this.data.nodes.map(n => [n.id, new PoeNode(n, tree_data.groups)]))
+        this.groups = new Map(Object.entries(this.data.groups))
+        this.nodes = new Map(this.data.nodes.map(function (n) {
+            // [key, value]
+            return [n.id, new PoeNode(n, tree_data.groups)]
+        }))
 
-        console.log(this.nodes)
+        /*
+         * althogh we get min/max coords they dont include the ascendancy
+         * so we do its ourselves
+         * could do it via nodes but if we use the groups with the orbits
+         * we get a nice padding that could still be not enough if we draw the nodes to big
+         */
+        this.dimensions = [
+            Number.POSITIVE_INFINITY, // min_x
+            Number.POSITIVE_INFINITY, // min_y
+            Number.NEGATIVE_INFINITY, // max_x
+            Number.NEGATIVE_INFINITY  // max_y
+        ]
+
+        const max_radius = Math.max(...orbit_radii)
+        for (var [_, group] of this.groups) {
+            this.dimensions = [
+                Math.min(group.x - max_radius, this.dimensions[0]),
+                Math.min(group.y - max_radius, this.dimensions[1]),
+                Math.max(group.x + max_radius, this.dimensions[2]),
+                Math.max(group.y + max_radius, this.dimensions[3])
+            ]
+
+        }
     }
 
     /**
@@ -13,19 +38,19 @@ class PoeTree {
      */
     get viewbox() {
         return  [
-            this.data.min_x,
-            this.data.min_y,
+            this.dimensions[0],
+            this.dimensions[1],
             this.width,
             this.height
         ]
     }
 
     get width() {
-        return this.data.max_x - this.data.min_x
+        return this.dimensions[2] - this.dimensions[0]
     }
 
     get height() {
-        return this.data.max_y - this.data.min_y
+        return this.dimensions[3] - this.dimensions[1]
     }
 
     drawGroups(d3_svg) {
