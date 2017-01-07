@@ -95,7 +95,7 @@ class PoeNode {
      * @returns {number}
      */
     get angle() {
-        return 2 * Math.PI * this.props.oidx / skills_per_orbit[this.props.o]
+        return 2 * Math.PI * this.props.oidx / skills_per_orbit[this.props.o] - .5 * Math.PI
     }
 
     get x() {
