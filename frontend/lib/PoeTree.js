@@ -160,7 +160,7 @@ class PoeTree {
                     .attr("class", ["tree_node", ...node.types].join(" "))
                     .attr("id", `node_${node_id}`)
                     .append("svg:title")
-                    .text(node.inspect)
+                    .text([node.name, ...node.props.sd].join("\n"))
             }
         }
     }
