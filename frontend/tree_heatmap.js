@@ -40,12 +40,13 @@ Promise.all([trees, $(document).ready]).then(function (args) {
      */
     const aggregate = args[0];
 
+    const league_name = "Hardcore Breach"
     /**
      * all passives of the X league
      *
      * @type {NodeAggregation}
      */
-    const league = aggregate.filter(row => row["entry.league"] == "Hardcore Breach");
+    const league = aggregate.filter(row => row["entry.league"] == league_name);
 
     // sum the the used nodes
     const league_sum = league.sum();
@@ -95,7 +96,7 @@ Promise.all([trees, $(document).ready]).then(function (args) {
     heatmap.setData(heatmap_data)
 
     // explain the data
-    $('#tree_stats_header').text(`nodes taken sum heatmap for top ${league.rows.length} public passives on BreachSC ladder`)
+    $('#tree_stats_header').text(`nodes taken sum heatmap for top ${league.rows.length} public passives on ${league_name} ladder`)
 
     // event handlers
     // download heatmap
