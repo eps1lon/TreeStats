@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Single Tree Aggregation With Heatmap</title>
+    <script src="../lib/ext/jquery-3.1.1.min.js"></script>
+    <script src="map_switcher.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<h1 id="tree_stats_header"></h1>
+<select id="heatmaps">
+    <option value="maps/breachhc-692.png" selected="selected">Hardcore Breach top 692</option>
+    <option value="maps/breachsc-664.png">Breach top 664</option>
+</select>
+<img id="heatmap">
+<object id="passive_tree" type="image/svg+xml" data="passive-tree-orbits-nodes-edges.svg">
+    Your browser does not support SVG
+</object>
+</body>
+</html>

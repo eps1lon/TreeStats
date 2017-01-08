@@ -41,14 +41,14 @@ Promise.all([trees, $(document).ready]).then(function (args) {
     const aggregate = args[0];
 
     /**
-     * all passives of the Breach league
+     * all passives of the X league
      *
      * @type {NodeAggregation}
      */
-    const breach = aggregate.filter(row => row["entry.league"] == "Breach");
+    const league = aggregate.filter(row => row["entry.league"] == "Hardcore Breach");
 
     // sum the the used nodes
-    const sum = breach.sum();
+    const league_sum = league.sum();
 
     const $heatmap_container = $("#heatmap");
 
@@ -65,13 +65,18 @@ Promise.all([trees, $(document).ready]).then(function (args) {
     });
 
 
-    const max = Math.max(...sum.values());
+    const max = Math.max(...league_sum.values());
 
     // create the data for the heatmaps.js api
-    const data = [...sum].map(function (entry) {
+    const data = [...league_sum].map(function (entry) {
         const [node_id, sum] = entry;
 
         const node = passive_tree.nodes.get(+node_id);
+
+        if (!node) {
+            console.log(node_id)
+            console.log(sum)
+        }
 
         return {
             x: passive_tree.xScaled(node.x, $heatmap_container.width()) | 0,
@@ -90,7 +95,7 @@ Promise.all([trees, $(document).ready]).then(function (args) {
     heatmap.setData(heatmap_data)
 
     // explain the data
-    $('#tree_stats_header').text(`nodes taken sum heatmap for top ${breach.rows.length} public passives on BreachSC ladder`)
+    $('#tree_stats_header').text(`nodes taken sum heatmap for top ${league.rows.length} public passives on BreachSC ladder`)
 
     // event handlers
     // download heatmap

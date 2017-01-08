@@ -1,0 +1,18 @@
+body {
+    background-color: white;
+}
+
+#tree_stats_header {
+    max-width: 500px;
+}
+
+#heatmap, #passive_tree {
+    position: absolute !important;
+    top: 0px;
+    left: 0px;
+}
+
+#heatmaps {
+    position: relative;
+    z-index: 3;
+}
