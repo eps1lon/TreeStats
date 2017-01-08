@@ -1,0 +1,26 @@
+body {
+    background-color: white;
+}
+
+#tree_stats_header {
+    max-width: 500px;
+}
+
+#passive_tree {
+    z-index: 2;
+}
+
+#heatmap {
+    z-index: 1;
+}
+
+#download_heatmap {
+    position: relative;
+    z-index: 9999;
+}
+
+#heatmap, #passive_tree {
+    position: absolute !important;
+    top: 0px;
+    left: 0px;
+}

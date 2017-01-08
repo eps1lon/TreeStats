@@ -105,6 +105,11 @@ class PoeTree {
         }
     }
 
+    /**
+     * draws every node
+     *
+     * @param d3_svg
+     */
     drawNodes(d3_svg) {
         for (let [node_id, node] of this.nodes) {
             d3_svg.append("circle")
@@ -122,7 +127,8 @@ class PoeTree {
      * draws the edges between nodes
      *
      * @param d3_svg
-     * @param blacklist_fn
+     * @param blacklist_fn a callback that given the source and the target should return true
+     *                       if you dont want the edge to be drawn
      */
     drawEdges(d3_svg, blacklist_fn) {
         if (!blacklist_fn) {
@@ -157,11 +163,26 @@ class PoeTree {
         d3_svg.attr("viewBox", this.viewbox.join(" "))
     }
 
+    /**
+     * scales the given x in this tree to the matching x on a new container with a different width
+     * assuming top left is 0,0
+     *
+     * @param x
+     * @param new_width
+     * @returns {number}
+     */
     xScaled(x, new_width) {
         return (x - this.dimensions[0]) * new_width / this.width
     }
 
+    /**
+     * see this.xScaled
+     *
+     * @param y
+     * @param new_height
+     * @returns {number}
+     */
     yScaled(y, new_height) {
-        return (y - this.dimensions[0]) * new_height / this.height
+        return (y - this.dimensions[1]) * new_height / this.height
     }
 }

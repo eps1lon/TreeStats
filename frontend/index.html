@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <title>Single Tree Heatmap</title>
     <script src="lib/ext/jquery-3.1.1.min.js"></script>
+    <script src="lib/ext/d3.v4.min.js"></script>
     <script src="lib/ext/papaparse.min.js"></script>
     <script src="lib/ext/heatmap.min.js"></script>
     <script src="../tree/250/tree.js"></script>
     <script src="lib/PoeNode.js"></script>
     <script src="lib/PoeTree.js"></script>
     <script src="lib/NodeAggregation.js"></script>
-    <script src="test.js"></script>
-    <link type="text/css" rel="stylesheet" href="style/heatmap.css">
+    <script src="tree_heatmap.js"></script>
+    <link type="text/css" rel="stylesheet" href="style/tree.css">
+    <link type="text/css" rel="stylesheet" href="style/tree_heatmap.css">
 </head>
 <body>
+    <h1 id="tree_stats_header"></h1>
     <div id="heatmap"></div>
+    <svg id="passive_tree"></svg>
+    <p id="tree_stats_info">download svg via svg crowbar bookmarklet</p>
+    <a id="download_heatmap" href="#">download heatmap</a>
 </body>
 </html>
