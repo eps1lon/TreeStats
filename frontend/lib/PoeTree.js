@@ -113,13 +113,13 @@ class PoeTree {
     drawNodes(d3_svg) {
         for (let [node_id, node] of this.nodes) {
             d3_svg.append("circle")
-                .attr("r", 40 * node.size)
+                .attr("r", 60)
                 .attr("cx", node.x)
                 .attr("cy", node.y)
                 .attr("class", ["tree_node", ...node.types].join(" "))
                 .attr("id", `node_${node_id}`)
                 .append("svg:title")
-                .text(node.name)
+                .text(node.inspect)
         }
     }
 
@@ -137,6 +137,8 @@ class PoeTree {
             }
         }
 
+
+
         for (let node of this.nodes.values()) {
             const x1 = node.x;
             const y1 = node.y;
@@ -144,12 +146,22 @@ class PoeTree {
                 const adj = this.nodes.get(adj_id);
 
                 if (!blacklist_fn(node, adj)) {
-                    d3_svg.append("line")
-                        .attr("class", ["tree_edge", ...node.types, ...adj.types].join(" "))
-                        .attr("x1", x1)
-                        .attr("y1", y1)
-                        .attr("x2", adj.x)
-                        .attr("y2", adj.y)
+                    const class_names = ["tree_edge", ...node.types, ...adj.types];
+
+                    // same orbit and same group
+                    if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
+                        d3_svg.append("path")
+                            .attr("class", class_names.join(" "))
+                            .attr("d", PoeTree.describeArc(node, adj))
+                            .attr("fill", "none");//*/
+                    } else {
+                        d3_svg.append("line")
+                            .attr("class", class_names.join(" "))
+                            .attr("x1", x1)
+                            .attr("y1", y1)
+                            .attr("x2", adj.x)
+                            .attr("y2", adj.y)
+                    }
                 }
             }
         }
@@ -184,5 +196,35 @@ class PoeTree {
      */
     yScaled(y, new_height) {
         return (y - this.dimensions[1]) * new_height / this.height
+    }
+
+    static describeArc(start, end){
+        const x = start.group.x;
+        const y = start.group.y;
+        const r = start.radius;
+        const tau = 2 * Math.PI;
+
+        let start_angle = start.angle;
+        let end_angle = end.angle;
+
+        if (start_angle > end_angle){
+            [start_angle, end_angle] = [end_angle, start_angle]
+        }
+
+        if (end_angle - start_angle > tau) {
+            end_angle = tau - Number.EPSILON;
+        }
+
+        let sweep = 0;
+        if (end_angle - start_angle > Math.PI) {
+            sweep = 1;
+        }
+
+        return [
+            //'M', x, y,
+            'M', x + Math.cos(start_angle) * r, y - (Math.sin(start_angle) * r),
+            'A', r, r, 0, 0, sweep, x + Math.cos(end_angle) * r, y - (Math.sin(end_angle) * r),
+            //'L', x, y
+        ].join(' ');
     }
 }
