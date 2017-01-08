@@ -30,10 +30,12 @@ Promise.all([trees, $(document).ready]).then(function (args) {
     });
 
     // group orbits
-    passive_tree.drawGroups(d3_svg);
+    //passive_tree.drawGroups(d3_svg);
 
     // and the actual nodes
-    passive_tree.drawNodes(d3_svg);
+    passive_tree.drawNodes(d3_svg, function (node) {
+        return node.mastery || node.start
+    });
 
     /**
      * @type {NodeAggregation}
