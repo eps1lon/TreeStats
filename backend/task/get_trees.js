@@ -7,6 +7,8 @@ const request = require('request');
 const fs = require('fs');
 //noinspection JSUnresolvedFunction
 const json2csv = require('json2csv');
+//noinspection JSUnresolvedFunction
+const log4js = require('log4js')
 
 // ladder
 // leagues to consider
@@ -30,6 +32,17 @@ const start = Date.now();
 const log_filename = __dirname + `/out/get_trees_log`; // ${start}_
 //noinspection JSUnresolvedVariable
 const out_filename = __dirname + `/out/get_trees.csv`; // ${start}_
+
+
+log4js.configure({
+    appenders: [
+        { type: 'console' },
+        { type: 'file', filename: log_filename }
+    ]
+});
+
+const logger = log4js.getLogger()
+logger.setLevel('INFO');
 
 /**
  * generates the url for the ggg ladder api
@@ -65,18 +78,15 @@ const passivesApi = function (character, account) {
     return `https://www.pathofexile.com/character-window/get-passive-skills?character=${character}&accountName=${account}`
 };
 
-// list of lines that should be included in the report_log
-let report_log = [];
-
 const runtime = (function () {
-    report_log.push("started task at " + start);
+    logger.info(`started task with --total=${total} --limit=${limit} --async_limit=${async_limit}`);
 
     return function () {
         return Date.now() - start
     }
 })();
 
-report_log.push(`fetching total of ${total} in chunks of ${limit}`);
+logger.info(`fetching total of ${total} in chunks of ${limit}`);
 
 // apparently there can exist name collisions with accounts
 // so the get-passive-skills prob only returns the current character
@@ -94,10 +104,10 @@ const ladder_urls
     = [].concat(...leagues.map(league =>
     new Array(total / limit).fill(0).map((_, offset) => ladderApi(league, offset * limit, limit))));
 
-report_log.push(`fetching total of ${ladder_urls.length} ladders over ${leagues.length} leagues`);
+logger.info(`fetching total of ${ladder_urls.length} ladders over ${leagues.length} leagues`);
 
 const ladderComplete = function (results) {
-    report_log.push(`finished ladder fetch after ${runtime()}ms`);
+    logger.info(`finished ladder fetch after ${runtime()}ms`);
 
     // flattened passive urls
     const passives_urls = [].concat(...results.map(l => {
@@ -125,16 +135,19 @@ const ladderComplete = function (results) {
 
     //console.log(passives_urls)
 
-    report_log.push(`fetching ${passives_urls.length} passives`);
+    logger.info(`fetching ${passives_urls.length} passives`);
 
     nodeAsync.mapLimit(passives_urls, async_limit, request, (e, results) => {
-        if (e) throw e;
-        passivesComplete(results)
+        if (e) {
+            logger.error(e)
+        } else {
+            passivesComplete(results)
+        }
     })
 };
 
 const passivesComplete = function (results) {
-    report_log.push(`finished passive fetch after ${runtime()}ms (${runtime() / results.length}ms/passive)`);
+    logger.info(`finished passive fetch after ${runtime()}ms (${runtime() / results.length}ms/passive)`);
 
     let trees = [];
 
@@ -148,7 +161,7 @@ const passivesComplete = function (results) {
 
             const entry = entries.get(passives_urls_characters.get(passive_url));
 
-            //console.log(passive_url, entry)
+            //logger.debug(passive_url, entry)
 
             trees.push({
                 entry: entry,
@@ -156,7 +169,7 @@ const passivesComplete = function (results) {
             })
         } else {
             // FIXME first breach result returns false but browser is ok
-            report_log.push(result.request.href)
+            logger.debug(result.request.href)
         }
     }
 
@@ -178,23 +191,20 @@ const taskComplete = function (trees) {
     const csv = json2csv({data: trees, fields: fields});
 
     //noinspection JSUnresolvedFunction
-    fs.writeFile(out_filename, csv, function (err) {
-        if (err) throw err;
-        console.log('csv saved');
-    });
-
-    //noinspection JSUnresolvedFunction
-    fs.writeFile(log_filename, report_log.join("\n"), function (err) {
-        if (err) throw err;
-        console.log('log saved');
+    fs.writeFile(out_filename, csv, function (e) {
+        if (e) {
+            logger.error(e);
+        } else {
+            logger.info("csv saved")
+        }
     });
 };
 
 // ggg has a rate limit so fuck me right
 nodeAsync.mapLimit(ladder_urls, 3, request, (e, results) => {
     if (e) {
-        throw(e)
+        logger.error(e);
+    } else {
+        ladderComplete(results);
     }
-
-    ladderComplete(results)
 });
