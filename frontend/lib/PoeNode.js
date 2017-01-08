@@ -16,11 +16,15 @@ const types = [
 class PoeNode {
     constructor(props, groups) {
         this.props = props;
-        this.group = groups[props.g];
+        this.group = groups[this.group_id];
     }
 
     get name() {
         return this.props.dn
+    }
+
+    get orbit() {
+        return this.props.o
     }
 
     get keystone() {
@@ -88,10 +92,16 @@ class PoeNode {
     /**
      * calculates the radiant angle at which the node is located in its orbit
      *
+     * consider a clock
+     * the oidx starts at 0:00 and moves counter clockwise
+     * angles in math increases counter clockwise starting at 3:00
+     * we need to adjust the angle accordingly
+     *
      * @returns {number}
      */
     get angle() {
-        return 2 * Math.PI * this.props.oidx / skills_per_orbit[this.props.o] - .5 * Math.PI
+        const tau = 2 * Math.PI
+        return (tau * (1 - this.props.oidx / skills_per_orbit[this.props.o]) + tau / 4) % tau
     }
 
     get x() {
@@ -99,6 +109,15 @@ class PoeNode {
     }
 
     get y() {
-        return this.group.y + this.radius * Math.sin(this.angle)
+        return this.group.y - this.radius * Math.sin(this.angle)
+    }
+
+    get inspect() {
+        return Object.entries(Object.assign({
+            angle: this.angle,
+            x: this.x,
+            y: this.y,
+            g: Object.entries(this.group).join("\n")
+        }, this.props)).map(e => `${e[0]}: ${e[1]}`).join("\n")
     }
 }
