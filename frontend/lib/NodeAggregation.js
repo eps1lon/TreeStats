@@ -15,8 +15,15 @@ const NodeAggregation = class NodeAggregation {
         }
     }
 
+    /**
+     * converts a string in '[elem*]' where elem* is a comma separated list
+     * into a js array
+     *
+     * @param nodes
+     * @returns {Array}
+     */
     static nodeStringToArray(nodes) {
-        return nodes.slice(1, nodes.length - 1).split(",")
+        return nodes.length > 2 ? nodes.slice(1, nodes.length - 1).split(",") : []
     }
 
     static get nodes_key() {
