@@ -40,7 +40,7 @@ Promise.all([trees, $(document).ready]).then(function (args) {
      */
     const aggregate = args[0];
 
-    const league_name = "Hardcore Breach"
+    const league_name = "Breach"
     /**
      * all passives of the X league
      *
