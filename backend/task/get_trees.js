@@ -106,8 +106,8 @@ const ladderComplete = function (results) {
 
         const league = ladderApiToLeague(l.request.href);
 
-        if (l.statusCode == 404 || !body.entries) {
-            console.warn("no entries", l.request.href);
+        if (!body.entries) {
+            console.warn("no entries", l.request.href, body);
             return false
         }
 
@@ -190,7 +190,8 @@ const taskComplete = function (trees) {
     });
 };
 
-nodeAsync.mapLimit(ladder_urls, async_limit, request, (e, results) => {
+// ggg has a rate limit so fuck me right
+nodeAsync.mapLimit(ladder_urls, 3, request, (e, results) => {
     if (e) {
         throw(e)
     }
