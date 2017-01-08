@@ -85,7 +85,7 @@ class PoeNode {
     }
 
     get size() {
-        const order = [this.keystone, false, this.props.notable || this.props.mastery, true];
+        const order = [this.keystone, this.notable || this.mastery, true];
         return order.length - order.indexOf(true)
     }
 

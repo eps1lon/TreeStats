@@ -154,7 +154,7 @@ class PoeTree {
         for (let [node_id, node] of this.nodes) {
             if (!blacklist_fn(node)) {
                 d3_svg.append("circle")
-                    .attr("r", 60)
+                    .attr("r", Math.pow(2, node.size) * 20)
                     .attr("cx", node.x)
                     .attr("cy", node.y)
                     .attr("class", ["tree_node", ...node.types].join(" "))
