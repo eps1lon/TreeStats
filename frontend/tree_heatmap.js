@@ -40,16 +40,12 @@ Promise.all([trees, $(document).ready]).then(function (args) {
      */
     const aggregate = args[0];
 
-    const league_name = "Breach"
-    /**
-     * all passives of the X league
-     *
-     * @type {NodeAggregation}
-     */
-    const league = aggregate.filter(row => row["entry.league"] == league_name);
+    const league_names = new Set(aggregate.rows.map(r => r["entry.league"]));
 
-    // sum the the used nodes
-    const league_sum = league.sum();
+    // leagues and their node aggregation
+    const leagues = new Map(Array.from(league_names).map(function (league_name) {
+        return [league_name, aggregate.filter(row => row["entry.league"] == league_name)]
+    }));
 
     const $heatmap_container = $("#heatmap");
 
@@ -65,38 +61,54 @@ Promise.all([trees, $(document).ready]).then(function (args) {
         maxOpacity: 0.5
     });
 
+    const displayHeatmap = function () {
+        // just get the first
+        const [league_name, league] = leagues.entries().next().value;
 
-    const max = Math.max(...league_sum.values());
+        // sum the the used nodes
+        const league_sums = new Map(Array.from(leagues).map(function (e) {
+            return [e[0], e[1].sum()]
+        }));
 
-    // create the data for the heatmaps.js api
-    const data = [...league_sum].map(function (entry) {
-        const [node_id, sum] = entry;
+        const league_sum = league_sums.get(league_name);
 
-        const node = passive_tree.nodes.get(+node_id);
+        // calculate the max
+        const max = Math.max(...league_sum.values());
 
-        if (!node) {
-            console.log(node_id)
-            console.log(sum)
-        }
+        // create the data for the heatmaps.js api
+        const data = [...league_sum].map(function (entry) {
+            const [node_id, sum] = entry;
 
-        return {
-            x: passive_tree.xScaled(node.x, $heatmap_container.width()) | 0,
-            y: passive_tree.yScaled(node.y, $heatmap_container.height()) | 0,
-            value: sum
-        }
-    });
+            const node = passive_tree.nodes.get(+node_id);
 
-    // object for heatmap.setData
-    const heatmap_data = {
-        max: max,
-        data: data
+            if (!node) {
+                console.log(node_id)
+                console.log(sum)
+            }
+
+            return {
+                x: passive_tree.xScaled(node.x, $heatmap_container.width()) | 0,
+                y: passive_tree.yScaled(node.y, $heatmap_container.height()) | 0,
+                value: sum
+            }
+        });
+
+        // object for heatmap.setData
+        const heatmap_data = {
+            max: max,
+            data: data
+        };
+
+        // display the data
+        heatmap.setData(heatmap_data);
+
+        // explain the data
+        $('#tree_stats_header').text(`nodes taken sum heatmap for \
+                                      top ${league.rows.length} public passives \
+                                      on ${league_name} ladder`);
     };
 
-    // display the data
-    heatmap.setData(heatmap_data)
-
-    // explain the data
-    $('#tree_stats_header').text(`nodes taken sum heatmap for top ${league.rows.length} public passives on ${league_name} ladder`)
+    displayHeatmap();
 
     // event handlers
     // download heatmap
