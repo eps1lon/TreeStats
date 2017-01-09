@@ -231,7 +231,7 @@ const ladderComplete = function (results, old_trees) {
         const league = ladderApiToLeague(l.request.href);
 
         if (!body.entries) {
-            console.warn("no entries", l.request.href, body);
+            logger.warn("no entries", l.request.href, body);
             return false
         }
 
@@ -252,7 +252,7 @@ const ladderComplete = function (results, old_trees) {
         })
     })).filter(u => u);
 
-    //console.log(passives_urls)
+    //logger.info(passives_urls)
 
     logger.info(`fetching ${passives_urls.length} passives`);
 
