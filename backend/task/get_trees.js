@@ -2,17 +2,34 @@
 const nodeAsync = require('async');
 //noinspection JSUnresolvedFunction
 const request = require('request');
-
+//noinspection JSUnresolvedFunction
+const path = require('path')
 //noinspection JSUnresolvedFunction
 const fs = require('fs');
 //noinspection JSUnresolvedFunction
-const json2csv = require('json2csv');
+const log4js = require('log4js');
 //noinspection JSUnresolvedFunction
-const log4js = require('log4js')
+const csv = require('csv');
+//noinspection JSUnresolvedFunction
+const POE = require('../lib/const.js');
 
-// ladder
-// leagues to consider
-const leagues = ["Breach", "Hardcore Breach"];
+const treeUrl = require('../lib/treeUrl');
+
+const tree_ident = POE.current_tree;
+
+// create some lookup tables for leagues, classes etc
+const leagues = new Map();
+for (let [league_id, league] of POE.leagues) {
+    if (league.active) {
+        leagues.set(league.name, league_id)
+    }
+}
+const classes = new Map();
+for (let [class_id, klass] of POE.classes) {
+    classes.set(klass.name, Object.assign({
+        id: class_id
+    }, klass));
+}
 
 // passive fetches = |leagues| * total
 //noinspection JSUnresolvedVariable
@@ -28,11 +45,10 @@ total -= total % limit;
 
 const start = Date.now();
 
-//noinspection JSUnresolvedVariable
-const log_filename = __dirname + `/out/get_trees_log`; // ${start}_
-//noinspection JSUnresolvedVariable
-const out_filename = __dirname + `/out/get_trees.csv`; // ${start}_
+const root_path = __dirname;
+const data_path = path.join(root_path, "/get_trees");
 
+const log_filename = path.join(root_path, `log/get_trees_log`);
 
 log4js.configure({
     appenders: [
@@ -78,6 +94,72 @@ const passivesApi = function (character, account) {
     return `https://www.pathofexile.com/character-window/get-passive-skills?character=${character}&accountName=${account}`
 };
 
+/**
+ * generates the filename for the csv output
+ * @param root
+ * @param now
+ * @returns {*}
+ */
+const outFilename = function (root, now) {
+    return path.join(root, `${now}_${tree_ident}_get_trees.csv`);
+};
+
+/**
+ * extracts the creation date from a filename which should be a js Date at the start of the basename
+ * @param filename
+ * @returns {*}
+ */
+const ctimeOutFile = function (filename) {
+    const match = new RegExp(`^([^_]+)_${tree_ident}_get_trees\.csv$`).exec(path.basename(filename));
+    return match ? +match[1] : Number.NEGATIVE_INFINITY;
+};
+
+/**
+ * creates an object which maps the json data generated in this script
+ * to a non nested map
+ *
+ * @param data
+ * @returns {{id, last_active: (*|number), league: (string|*), xp: *, class: (*|string), dead: *, nodes: (*|Array|nodes|ny|Map), challenges: *}}
+ */
+const csvTransform = function (data) {
+    var klass = classes.get(data.character.class);
+
+    return {
+        id: data.character.id,
+        last_active: data.last_active,
+        league: leagues.get(data.league),
+        xp: data.character.experience,
+        class: klass.id,
+        dead: data.dead,
+        // on 10k passives we are saving around 2MB by encoding the nodes (4.8MB down to 2.6MB)
+        nodes: treeUrl.encode(
+            POE.trees.get(POE.current_tree).version,
+            klass.character_class,
+            klass.ascendancy,
+            data.nodes || []
+        ),
+        challenges: data.account.challenges.total
+    }
+};
+
+/**
+ * checks if the new_entry was active since old_entry
+ *
+ * @param old_entry
+ * @param new_entry
+ * @returns {boolean}
+ */
+const ladderActive = function (old_entry_csv, new_entry_api) {
+    if (!old_entry_csv) {
+        return true
+    }
+
+    const new_entry_csv = csvTransform(new_entry_api);
+
+    return old_entry_csv.xp != new_entry_csv.xp
+        || old_entry_csv.dead != new_entry_csv.dead
+};
+
 const runtime = (function () {
     logger.info(`started task with --total=${total} --limit=${limit} --async_limit=${async_limit}`);
 
@@ -86,7 +168,17 @@ const runtime = (function () {
     }
 })();
 
-logger.info(`fetching total of ${total} in chunks of ${limit}`);
+const out_filename = outFilename(data_path, start);
+
+// get the last out
+const latest = path.join(data_path, fs.readdirSync(data_path).reduce(function (latest, file) {
+    if (ctimeOutFile(latest) < ctimeOutFile(file)) {
+        return file;
+    }
+    return latest;
+}, outFilename(data_path, Number.NEGATIVE_INFINITY)));
+
+logger.info(`fetching total of ${total} in chunks of ${async_limit}`);
 
 // apparently there can exist name collisions with accounts
 // so the get-passive-skills prob only returns the current character
@@ -101,12 +193,34 @@ let passives_urls_characters = new Map();
 // w/o array.fill it results in empty values
 // create the ladder urls for each league and flatten it into one array
 const ladder_urls
-    = [].concat(...leagues.map(league =>
-    new Array(total / limit).fill(0).map((_, offset) => ladderApi(league, offset * limit, limit))));
+    = [].concat(...Array.from(leagues.keys()).map(league =>
+        new Array(total / limit).fill(0).map((_, offset) => ladderApi(league, offset * limit, limit))
+    ));
 
-logger.info(`fetching total of ${ladder_urls.length} ladders over ${leagues.length} leagues`);
+logger.info(`fetching total of ${ladder_urls.length} ladders over ${leagues.size} leagues`);
 
-const ladderComplete = function (results) {
+fs.exists(latest, function (exists) {
+    let old_trees = new Map();
+
+    if (exists) {
+        fs.createReadStream(latest).pipe(csv.parse({
+            delimiter: ",",
+            columns: true
+        }, function (e, data) {
+            if (!e) {
+                old_trees = new Map(data.map(function (entry) {
+                    return [entry.id, entry]
+                }));
+            }
+
+            oldTreesComplete(old_trees);
+        }));
+    } else {
+        oldTreesComplete(old_trees)
+    }
+});
+
+const ladderComplete = function (results, old_trees) {
     logger.info(`finished ladder fetch after ${runtime()}ms`);
 
     // flattened passive urls
@@ -123,9 +237,14 @@ const ladderComplete = function (results) {
 
         return body.entries.map(e => {
             const passive_url = passivesApi(e['character'].name, e['account'].name);
+            const id = e['character'].id;
+            const old_entry = old_trees.get(id);
 
             // save the entry
-            entries.set(e['character'].id, Object.assign(e, {league: league}));
+            entries.set(id, Object.assign(e, {
+                league: league,
+                last_active: ladderActive(old_entry, e) ? start : old_entry.last_active
+            }));
             // and a reverse mapping so we can get the entry via url
             passives_urls_characters.set(passive_url, e['character'].id);
 
@@ -163,10 +282,9 @@ const passivesComplete = function (results) {
 
             //logger.debug(passive_url, entry)
 
-            trees.push({
-                entry: entry,
+            trees.push(Object.assign({
                 nodes: nodes
-            })
+            }, entry))
         } else {
             // FIXME first breach result returns false but browser is ok
             logger.debug(result.request.href)
@@ -177,34 +295,18 @@ const passivesComplete = function (results) {
 };
 
 const taskComplete = function (trees) {
-    const fields = [
-        "entry.account.name",
-        "entry.character.name",
-        "entry.league",
-        "entry.character.level",
-        "entry.character.class",
-        "entry.dead",
-        "nodes",
-        "entry.account.challenges.total",
-    ];
+    csv.transform(trees, csvTransform).pipe(csv.stringify({
+        header: true
+    })).pipe(fs.createWriteStream(out_filename));
+};
 
-    const csv = json2csv({data: trees, fields: fields});
-
-    //noinspection JSUnresolvedFunction
-    fs.writeFile(out_filename, csv, function (e) {
+const oldTreesComplete = function (old_trees) {
+    // ggg has a rate limit so fuck me right
+    nodeAsync.mapLimit(ladder_urls, 10, request, (e, results) => {
         if (e) {
             logger.error(e);
         } else {
-            logger.info("csv saved")
+            ladderComplete(results, old_trees);
         }
     });
 };
-
-// ggg has a rate limit so fuck me right
-nodeAsync.mapLimit(ladder_urls, 3, request, (e, results) => {
-    if (e) {
-        logger.error(e);
-    } else {
-        ladderComplete(results);
-    }
-});
