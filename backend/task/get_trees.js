@@ -33,15 +33,17 @@ for (let [class_id, klass] of POE.classes) {
 
 // passive fetches = |leagues| * total
 //noinspection JSUnresolvedVariable
-let [total, async_limit, limit] = process.argv.slice(2);
+let [total, async_limit, ladder_limit, api_rate_limit] = process.argv.slice(2);
 // boundaries set by ggg api
 total = Math.min(15000, Math.max(1, total || 0));
-limit = Math.min(200, Math.max(1, limit || 200));
-// number of simultaneous async calls to ggg servers
+ladder_limit = Math.min(200, Math.max(1, ladder_limit || 200));
+// number of simultaneous async calls
 async_limit = Math.min(Number.POSITIVE_INFINITY, Math.max(1, async_limit || 500));
+// number of maximum calls to ggg api (this should be small
+api_rate_limit = Math.min(Number.POSITIVE_INFINITY, Math.max(1, api_rate_limit || 5));
 
 // cut of remainder
-total -= total % limit;
+total -= total % ladder_limit;
 
 const start = Date.now();
 
@@ -161,7 +163,11 @@ const ladderActive = function (old_entry_csv, new_entry_api) {
 };
 
 const runtime = (function () {
-    logger.info(`started task with --total=${total} --limit=${limit} --async_limit=${async_limit}`);
+    logger.info(`started task with `
+               +`--total=${total} `
+               +`--limit=${ladder_limit} `
+               +`--async_limit=${async_limit} `
+               +`--api_rate_limit=${api_rate_limit}`);
 
     return function () {
         return Date.now() - start
@@ -194,7 +200,7 @@ let passives_urls_characters = new Map();
 // create the ladder urls for each league and flatten it into one array
 const ladder_urls
     = [].concat(...Array.from(leagues.keys()).map(league =>
-        new Array(total / limit).fill(0).map((_, offset) => ladderApi(league, offset * limit, limit))
+        new Array(total / ladder_limit).fill(0).map((_, offset) => ladderApi(league, offset * ladder_limit, ladder_limit))
     ));
 
 logger.info(`fetching total of ${ladder_urls.length} ladders over ${leagues.size} leagues`);
@@ -295,14 +301,15 @@ const passivesComplete = function (results) {
 };
 
 const taskComplete = function (trees) {
+    logger.info(`finished task in ${(runtime() / 1000).toFixed(2)}s`)
     csv.transform(trees, csvTransform).pipe(csv.stringify({
         header: true
     })).pipe(fs.createWriteStream(out_filename));
 };
 
 const oldTreesComplete = function (old_trees) {
-    // ggg has a rate limit so fuck me right
-    nodeAsync.mapLimit(ladder_urls, 10, request, (e, results) => {
+    // ggg has a rate ladder_limit so fuck me right
+    nodeAsync.mapLimit(ladder_urls, api_rate_limit, request, (e, results) => {
         if (e) {
             logger.error(e);
         } else {
