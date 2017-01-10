@@ -26,6 +26,43 @@ let csv_file_production = "../backend/task/get_trees/1483973137391_250_get_trees
 let db = csvToDb(csv_file_production);
 
 $(document).ready(function () {
+    // TODO add opcity, jquerify
+
+    /**
+     * updates the legend for the heatmap
+     * @see {https://www.patrick-wied.at/static/heatmapjs/example-legend-tooltip.html}
+     *
+     * @param data the heatmap data
+     */
+    const updateHeatmapLegend = (function () {
+        const legendCanvas = document.createElement('canvas');
+        legendCanvas.width = 100;
+        legendCanvas.height = 10;
+
+        const gradientImg = document.querySelector('#heatmap_legend img');
+        let legendCtx = legendCanvas.getContext('2d');
+        let gradientCfg = {};
+
+        return function (data) {
+            // the onExtremaChange callback gives us min, max, and the gradientConfig
+            // so we can update the legend
+            $("#heatmap_min").text(data.min);
+            $("#heatmap_max").text(data.max);
+
+            // regenerate gradient image
+            if (data.gradient != gradientCfg) {
+                gradientCfg = data.gradient;
+                var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
+                for (var key in gradientCfg) {
+                    gradient.addColorStop(key, gradientCfg[key]);
+                }
+                legendCtx.fillStyle = gradient;
+                legendCtx.fillRect(0, 0, 100, 10);
+                gradientImg.src = legendCanvas.toDataURL();
+            }
+        };
+    })();
+
     const $heatmap_container = $("#heatmap");
     const tree = drawTreeSvg("passive_tree");
 
@@ -68,7 +105,7 @@ $(document).ready(function () {
             // and we cant use async functions as dom event handlers
             const rows = db.find(filter, function (e, rows) {
                 // clear old
-                $("canvas", $heatmap_container).remove();
+                $(".heatmap-canvas", $heatmap_container).remove();
 
                 // we need to create this here every time
                 // reconfiguring the container is not possible
@@ -78,7 +115,8 @@ $(document).ready(function () {
                 const heatmap = h337.create({
                     container: $heatmap_container.get(0),
                     minOpacity: .05,
-                    maxOpacity: 0.5
+                    maxOpacity: 0.5,
+                    onExtremaChange: updateHeatmapLegend
                 });
 
                 const aggregate = new NodeAggregation(rows);
@@ -92,8 +130,15 @@ $(document).ready(function () {
                     return false;
                 });
 
+
+                // candidate for max value but differences are not recognizeable anymore
+                const passives_taken = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
+
                 // calculate the max
-                const max = Math.max(...summarized.values());
+                const max = Math.max(...summarized.values()); // most taken
+
+                // relative to trees which doesnt actually change the image, just doesnt look as dramatic
+                //const max = rows.length;
 
                 // create the data for the heatmaps.js api
                 const data = [...summarized].map(function (entry) {

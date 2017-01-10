@@ -11,3 +11,29 @@ body {
     top: 0px;
     left: 0px;
 }
+
+#heatmap_legend {
+    position: relative;
+    width: 20%;
+}
+
+#heatmap_min {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#heatmap_max {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+#heatmap_legend img {
+    position: relative;
+    top: 1em;
+    right: 0px;
+    height: 1em;
+    width: 100%;
+    border: 1px solid black;
+}
