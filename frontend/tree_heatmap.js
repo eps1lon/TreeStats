@@ -61,7 +61,8 @@ $(document).ready(function () {
                 filter.class = +class_id;
             }
 
-            // TODO apply filter
+            // id like to use await but nedb doesnt support promises
+            // and we cant use async functions as dom event handlers
             const rows = db.find(filter, function (e, rows) {
                 // clear old
                 $("canvas", $heatmap_container).remove();
@@ -112,7 +113,7 @@ $(document).ready(function () {
 
                 // explain the data
                 $('#tree_stats_header').text(`nodes taken sum heatmap for \
-                                          top TODO public passives \
+                                          top ${rows.length} public passives \
                                           on ${league_name} ladder`);
             });
         });
