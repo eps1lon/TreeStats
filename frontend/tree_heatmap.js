@@ -1,123 +1,137 @@
-trees = new Promise(function (fulfill) {
-    Papa.parse("../backend/task/out/get_trees.csv", {
+const passive_tree = new PoeTree(passiveSkillTreeData);
+
+const db = new Nedb();
+
+const db_created = new Promise(function (fulfill) {
+    Papa.parse("../backend/task/get_trees/1483981100685_250_get_trees.csv", {
         download: true,
         dynamicTyping: true,
         header: true,
         complete: function (results) {
-            fulfill(new NodeAggregation(results.data))
+            db.insert(results.data);
+
+            fulfill(db);
         }
     })
 });
 
-const passive_tree = new PoeTree(passiveSkillTreeData);
+/**
+ * rows with decoded nodes
+ *
+ * @param rows
+ */
+const heatmap_data = function (rows) {
+    const data = new Map();
+};
 
-Promise.all([trees, $(document).ready]).then(function (args) {
-    // the jquery object of the passive tree
-    const $tree_svg = $('#passive_tree');
-    // the d3 object of the passive tree
-    const d3_svg = d3.select("#" + $tree_svg.attr("id"));
-
-    //$tree_svg.width(passive_tree.width)
-    //$tree_svg.height(passive_tree.height)
-
-    // adjust the viewbox
-    passive_tree.viewFull(d3_svg);
-
-    // draw edges
-    passive_tree.drawEdges(d3_svg, function (source, target) {
-        // no start node connection, no scion path of x edges
-        return source.start || target.start || PoeTree.scionPathOfEdge(source, target)
-    });
-
-    // group orbits
-    //passive_tree.drawGroups(d3_svg);
-
-    // and the actual nodes
-    passive_tree.drawNodes(d3_svg, function (node) {
-        return node.mastery || node.start
-    });
-
-    /**
-     * @type {NodeAggregation}
-     */
-    const aggregate = args[0];
-
-    const league_names = new Set(aggregate.rows.map(r => r["entry.league"]));
-
-    // leagues and their node aggregation
-    const leagues = new Map(Array.from(league_names).map(function (league_name) {
-        return [league_name, aggregate.filter(row => row["entry.league"] == league_name)]
-    }));
-
+$(document).ready(function () {
     const $heatmap_container = $("#heatmap");
+    const $tree = $("#passive_tree");
 
-    // adjust the heatmap to match the underlying tree
-    $heatmap_container.width($tree_svg.width());
-    $heatmap_container.height($tree_svg.height());
+    // ui
+    // display leagues
+    for (let [league_id, league] of POE.leagues) {
+        $("#leagues").append(`<option value="${league_id}">${league.name}</option>`);
+    }
 
-    // heatmap config
-    //noinspection JSUnresolvedVariable
-    const heatmap = h337.create({
-        container: $heatmap_container.get(0),
-        minOpacity: .05,
-        maxOpacity: 0.5
-    });
+    // display leagues
+    for (let [class_id, klass] of POE.classes) {
+        $("#classes").append(`<option value="${class_id}">${klass.name}</option>`);
+    }
 
-    const displayHeatmap = function () {
-        // just get the first
-        const [league_name, league] = leagues.entries().next().value;
-
-        // sum the the used nodes
-        const league_sums = new Map(Array.from(leagues).map(function (e) {
-            return [e[0], e[1].sum()]
-        }));
-
-        const league_sum = league_sums.get(league_name);
-
-        // calculate the max
-        const max = Math.max(...league_sum.values());
-
-        // create the data for the heatmaps.js api
-        const data = [...league_sum].map(function (entry) {
-            const [node_id, sum] = entry;
-
-            const node = passive_tree.nodes.get(+node_id);
-
-            if (!node) {
-                console.log(node_id)
-                console.log(sum)
-            }
-
-            return {
-                x: passive_tree.xScaled(node.x, $heatmap_container.width()) | 0,
-                y: passive_tree.yScaled(node.y, $heatmap_container.height()) | 0,
-                value: sum
-            }
-        });
-
-        // object for heatmap.setData
-        const heatmap_data = {
-            max: max,
-            data: data
-        };
-
-        // display the data
-        heatmap.setData(heatmap_data);
-
-        // explain the data
-        $('#tree_stats_header').text(`nodes taken sum heatmap for \
-                                      top ${league.rows.length} public passives \
-                                      on ${league_name} ladder`);
-    };
-
-    displayHeatmap();
+    // TODO cleanup asnyc pipeline
 
     // event handlers
+    $("#calculate_heatmap").click(function () {
+        const filter = {};
+
+        const league_id = $("#leagues").val();
+        const league_name = $("#leagues option:selected").text();
+        if (league_id) {
+            filter.league = +league_id;
+        }
+
+        const class_id = $("#classes").val();
+        if (class_id) {
+            filter.class = +class_id;
+        }
+
+        console.log(filter)
+
+        // TODO apply filter
+        const rows = db.find(filter, function (e, rows) {
+            const aggregate = new NodeAggregation(rows);
+            const summarized = aggregate.sum();
+
+            // adjust width
+            $heatmap_container.width($tree.width());
+            $heatmap_container.height($tree.height());
+
+            // clear old
+            $("canvas", $heatmap_container).remove()
+
+            // heatmap config
+            // TODO use configure when tree hast changes
+            // and create instance on app init
+            //noinspection JSUnresolvedVariable
+            const heatmap = h337.create({
+                container: $heatmap_container.get(0),
+                minOpacity: .05,
+                maxOpacity: 0.5
+            });
+
+            // calculate the max
+            const max = Math.max(...summarized.values());
+
+            // create the data for the heatmaps.js api
+            const data = [...summarized].map(function (entry) {
+                const [node_id, sum] = entry;
+
+                const node = passive_tree.nodes.get(+node_id);
+
+                if (!node) {
+                    console.log(node_id)
+                    console.log(sum)
+                }
+
+                return {
+                    x: passive_tree.xScaled(node.x, $heatmap_container.width()) | 0,
+                    y: passive_tree.yScaled(node.y, $heatmap_container.height()) | 0,
+                    value: sum
+                }
+            });
+
+            // object for heatmap.setData
+            const heatmap_data = {
+                max: max,
+                data: data
+            };
+
+            // adjust the heatmap to match the underlying tree
+            // FIXME still heatmap fails and says its zero
+            $heatmap_container.width($tree.width());
+            $heatmap_container.height($tree.height());
+
+            // display the data
+            heatmap.setData(heatmap_data);
+
+            // explain the data
+            $('#tree_stats_header').text(`nodes taken sum heatmap for \
+                                          top TODO public passives \
+                                          on ${league_name} ladder`);
+        });
+    });
+
     // download heatmap
     $("#download_heatmap").click(function () {
         const data_url = heatmap.getDataURL()
 
         this.href = data_url
         this.download = "heatmap_breach.png"
+    });
+
+    db_created.then(function () {
+        $("#calculate_heatmap").prop("disabled", false);
+        $("#calculate_heatmap").click();
     })
 });

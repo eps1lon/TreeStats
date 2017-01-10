@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Single Tree Heatmap</title>
+    <script src="../backend/lib/TreeUrl.js"></script>
+    <script src="../backend/lib/const.js"></script>
+    <script src="lib/buffer_bundle.js"></script>
     <script src="lib/ext/jquery-3.1.1.min.js"></script>
+    <script src="lib/ext/nedb.min.js"></script></script>
     <script src="lib/ext/d3.v4.min.js"></script>
     <script src="lib/ext/papaparse.min.js"></script>
     <script src="lib/ext/heatmap.min.js"></script>
@@ -12,6 +16,7 @@
     <script src="lib/PoeTree.js"></script>
     <script src="lib/NodeAggregation.js"></script>
     <script src="tree_heatmap.js"></script>
+    <script src="passive_tree_svg.js"></script>
     <link type="text/css" rel="stylesheet" href="style/tree.css">
     <link type="text/css" rel="stylesheet" href="style/tree_heatmap.css">
 </head>
@@ -20,6 +25,22 @@
 
     <p id="tree_stats_info">download svg via svg crowbar bookmarklet</p>
     <a id="download_heatmap" href="#">download heatmap</a>
+
+    <fieldset id="filter">
+        <legend>Filter</legend>
+
+        <label for="leagues">leagues</label>
+        <select id="leagues">
+            <option value="">all</option>
+        </select>
+
+        <label for="classes">classes</label>
+        <select id="classes">
+            <option value="">all</option>
+        </select>
+
+        <button id="calculate_heatmap" disabled="disabled">display heatmap</button>
+    </fieldset>
 
     <div id="heatmap_wrapper">
         <div id="heatmap"></div>

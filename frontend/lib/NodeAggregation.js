@@ -15,23 +15,12 @@ const NodeAggregation = class NodeAggregation {
         }
     }
 
-    /**
-     * converts a string in '[elem*]' where elem* is a comma separated list
-     * into a js array
-     *
-     * @param nodes
-     * @returns {Array}
-     */
-    static nodeStringToArray(nodes) {
-        return nodes.length > 2 ? nodes.slice(1, nodes.length - 1).split(",") : []
-    }
-
     static get nodes_key() {
         return NODES_KEY
     }
 
-    constructor(csv_rows) {
-        this.rows = csv_rows
+    constructor(rows) {
+        this.rows = rows
     }
 
 
@@ -54,7 +43,13 @@ const NodeAggregation = class NodeAggregation {
         let aggregated = new Map();
 
         for (let row of this.rows) {
-            const nodes = NodeAggregation.nodeStringToArray(row[NodeAggregation.nodes_key]);
+            let nodes = []
+
+            try {
+                nodes = TreeUrl.decode(row[NODES_KEY]).nodes;
+            } catch (e) {
+                console.warn(e);
+            }
 
             for (const node of nodes) {
                 NodeAggregation.incMapKey(aggregated, node)
@@ -62,5 +57,26 @@ const NodeAggregation = class NodeAggregation {
         }
 
         return aggregated
+    }
+
+    /**
+     * calculates the gradient between 2 maps
+     * if a key is not set in one of the maps 0 is assumed
+     *
+     * @param map1
+     * @param map2
+     * @returns {Map}
+     */
+    static grad(map1, map2) {
+        let gradient = new Map();
+
+        for (let key of new Set(...aggregated1.keys(), ...aggregated2.keys())) {
+            const val1 = aggregated1.get(key) || 0;
+            const val2 = aggregated2.get(key) || 0;
+
+            gradient.set(key, val1 - val2)
+        }
+
+        return gradient
     }
 };
