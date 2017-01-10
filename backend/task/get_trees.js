@@ -13,7 +13,7 @@ const csv = require('csv');
 //noinspection JSUnresolvedFunction
 const POE = require('../lib/const.js');
 
-const treeUrl = require('../lib/treeUrl');
+const treeUrl = require('../lib/TreeUrl');
 
 const tree_ident = POE.current_tree;
 
@@ -124,7 +124,18 @@ const ctimeOutFile = function (filename) {
  * @returns {{id, last_active: (*|number), league: (string|*), xp: *, class: (*|string), dead: *, nodes: (*|Array|nodes|ny|Map), challenges: *}}
  */
 const csvTransform = function (data) {
-    var klass = classes.get(data.character.class);
+    const klass = classes.get(data.character.class);
+    const tree_url = treeUrl.encode(
+        POE.trees.get(POE.current_tree).version,
+        klass.character_class,
+        klass.ascendancy,
+        data.nodes || []
+    );
+
+    if (data.nodes && tree_url.length < 70) {
+        logger.info(data.nodes)
+        logger.info(`very short tree url for ${data.account.name}/characters?characterName=${data.character.name} '${tree_url}'`);
+    }
 
     return {
         id: data.character.id,
@@ -134,12 +145,7 @@ const csvTransform = function (data) {
         class: klass.id,
         dead: data.dead,
         // on 10k passives we are saving around 2MB by encoding the nodes (4.8MB down to 2.6MB)
-        nodes: treeUrl.encode(
-            POE.trees.get(POE.current_tree).version,
-            klass.character_class,
-            klass.ascendancy,
-            data.nodes || []
-        ),
+        nodes: tree_url,
         challenges: data.account.challenges.total
     }
 };
