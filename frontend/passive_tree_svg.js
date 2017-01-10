@@ -1,6 +1,6 @@
-$(document).ready(function () {
+const drawTreeSvg = async function (id) {
     // the jquery object of the passive tree
-    const $tree_svg = $('#passive_tree');
+    const $tree_svg = $(`#${id}`);
     // the d3 object of the passive tree
     const d3_svg = d3.select("#" + $tree_svg.attr("id"));
 
@@ -23,4 +23,6 @@ $(document).ready(function () {
     passive_tree.drawNodes(d3_svg, function (node) {
         return node.mastery || node.start
     });
-});
+
+    return $tree_svg;
+};
