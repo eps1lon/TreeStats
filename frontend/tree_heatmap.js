@@ -35,28 +35,28 @@ $(document).ready(function () {
     // ui
     // display leagues
     for (let [league_id, league] of POE.leagues) {
-        $("#leagues").append(`<option value="${league_id}">${league.name}</option>`);
+        $("#filter_leagues").append(`<option value="${league_id}">${league.name}</option>`);
     }
 
     // display leagues
     for (let [class_id, klass] of POE.classes) {
-        $("#classes").append(`<option value="${class_id}">${klass.name}</option>`);
+        $("#filter_classes").append(`<option value="${class_id}">${klass.name}</option>`);
     }
 
     // event handlers
 
     // only clickable when db is synced
     db.then(function (db) {
-        $("#calculate_heatmap").click(function () {
+        $("#heatmap_calculate").click(function () {
             const filter = {};
 
-            const league_id = $("#leagues").val();
-            const league_name = $("#leagues option:selected").text();
+            const league_id = $("#filter_leagues").val();
+            const league_name = $("#filter_leagues option:selected").text();
             if (league_id) {
                 filter.league = +league_id;
             }
 
-            const class_id = $("#classes").val();
+            const class_id = $("#filter_classes").val();
             if (class_id) {
                 filter.class = +class_id;
             }
@@ -128,7 +128,7 @@ $(document).ready(function () {
     });
 
     db.then(function () {
-        $("#calculate_heatmap").prop("disabled", false);
-        $("#calculate_heatmap").click();
+        $("#heatmap_calculate").prop("disabled", false);
+        $("#heatmap_calculate").click();
     })
 });

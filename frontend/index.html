@@ -26,23 +26,64 @@
 <body>
     <h1 id="tree_stats_header"></h1>
 
-    <p id="tree_stats_info">download svg via svg crowbar bookmarklet</p>
-    <a id="download_heatmap" href="#">download heatmap</a>
-
     <fieldset id="filter">
-        <legend>Filter</legend>
+        <legend>data filter</legend>
 
-        <label for="leagues">leagues</label>
-        <select id="leagues">
+        <label for="filter_leagues">leagues</label>
+        <select id="filter_leagues">
             <option value="">all</option>
         </select>
 
-        <label for="classes">classes</label>
-        <select id="classes">
+        <label for="filter_classes">classes</label>
+        <select id="filter_classes">
             <option value="">all</option>
         </select>
 
-        <button id="calculate_heatmap" disabled="disabled">display heatmap</button>
+        <label for="filter_limit">limit</label>
+        <input type="number" min="0" step="200" value="15000" id="filter_limit">
+
+        <label for="filter_offset">limit</label>
+        <input type="number" min="0" step="200" value="0" id="filter_offset">
+
+        <input type="submit" id="heatmap_calculate" disabled="disabled" value="display heatmap">
+        <input id="filter_submit_onchange" class="submit_onchange" type="checkbox" checked="checked">
+        <label for="filter_submit_onchange">automatically submit on reconfigure</label>
+    </fieldset>
+
+    <fieldset id="heatmap_conf">
+        <legend>heatmap conf</legend>
+
+        <label for="heatmap_min_opacity">min opacity [%]</label>
+        <input type="number" min="0" max="100" step="1" value="0" id="heatmap_min_opacity">
+
+        <label for="heatmap_max_opacity">max opacity [%]</label>
+        <input type="number" min="0" max="100" step="1" value="100" id="heatmap_max_opacity">
+
+        <label for="heatmap_radius">radius of data points</label>
+        <input type="number" min="0" step="1" value="100" id="heatmap_radius">
+
+        <label for="heatmap_blur">blur of gradient</label>
+        <input type="number" min="0" max="100" step="1" value="100" id="heatmap_blur">
+
+        <input type="submit" id="heatmap_redraw" disabled="disabled" value="redraw heatmap">
+        <input id="heatmap_submit_onchange" class="submit_onchange" type="checkbox" checked="checked">
+        <label for="heatmap_submit_onchange">automatically submit on reconfigure</label>
+
+        <a id="download_heatmap" href="#">download heatmap</a>
+    </fieldset>
+
+    <fieldset id="tree_conf">
+        <legend>tree conf</legend>
+
+        <label for="tree_node_radius">node radius</label>
+        <input type="number" min="0" value="5" id="tree_node_radius">
+
+        <label for="tree_use_assets">use images for nodes</label>
+        <input type="checkbox" id="tree_use_assets">
+
+        <input type="submit" id="tree_redraw" disabled="disabled" value="redraw tree">
+        <input id="tree_submit_onchange" class="submit_onchange" type="checkbox" checked="checked">
+        <label for="tree_submit_onchange">automatically submit on reconfigure</label>
     </fieldset>
 
     <div id="heatmap_wrapper">
