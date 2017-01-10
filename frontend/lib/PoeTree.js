@@ -1,7 +1,3 @@
-const blacklistNone = function () {
-    return false
-};
-
 class PoeTree {
     /**
      * checks if the edge between these nodes is Path of X to X edge
@@ -150,7 +146,12 @@ class PoeTree {
      *
      * @param d3_svg
      */
-    drawNodes(d3_svg, blacklist_fn = blacklistNone) {
+    drawNodes(d3_svg, blacklist_fn) {
+        if (!blacklist_fn) {
+            // blacklist none per default
+            blacklist_fn = () => false
+        }
+
         for (let [node_id, node] of this.nodes) {
             if (!blacklist_fn(node)) {
                 d3_svg.append("circle")
@@ -172,7 +173,12 @@ class PoeTree {
      * @param blacklist_fn a callback that given the source and the target should return true
      *                       if you don't want the edge to be drawn
      */
-    drawEdges(d3_svg, blacklist_fn = blacklistNone) {
+    drawEdges(d3_svg, blacklist_fn) {
+        if (!blacklist_fn) {
+            // blacklist none per default
+            blacklist_fn = () => false
+        }
+
         for (let node of this.nodes.values()) {
             const x1 = node.x;
             const y1 = node.y;

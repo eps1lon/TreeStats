@@ -20,7 +20,10 @@ async function csvToDb(filename) {
 
 const passive_tree = new PoeTree(passiveSkillTreeData);
 
-let db = csvToDb("../backend/task/get_trees/1483981100685_250_get_trees.csv");
+const csv_file_development = "../backend/task/get_trees/1484038613856_250_get_trees.csv";
+let csv_file_production = "../backend/task/get_trees/1483973137391_250_get_trees.csv";
+
+let db = csvToDb(csv_file_production);
 
 $(document).ready(function () {
     const $heatmap_container = $("#heatmap");
@@ -79,7 +82,15 @@ $(document).ready(function () {
                 });
 
                 const aggregate = new NodeAggregation(rows);
-                const summarized = aggregate.sum();
+                // TODO blacklist by looking at displayed nodes
+                const summarized = aggregate.sum(function (node_id) {
+                    const node = passive_tree.nodes.get(node_id)
+                    if (node) {
+                        // skip ascendancies
+                        return node.ascendancy;
+                    }
+                    return false;
+                });
 
                 // calculate the max
                 const max = Math.max(...summarized.values());

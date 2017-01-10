@@ -39,7 +39,12 @@ const NodeAggregation = class NodeAggregation {
      *
      * @returns {Map}
      */
-    sum() {
+    sum(blacklist_fn) {
+        if (!blacklist_fn) {
+            // blacklist none per default
+            blacklist_fn = () => false
+        }
+
         let aggregated = new Map();
 
         for (let row of this.rows) {
@@ -51,8 +56,10 @@ const NodeAggregation = class NodeAggregation {
                 console.warn(e);
             }
 
-            for (const node of nodes) {
-                NodeAggregation.incMapKey(aggregated, node)
+            for (const node_id of nodes) {
+                if (!blacklist_fn(node_id)) {
+                    NodeAggregation.incMapKey(aggregated, node_id);
+                }
             }
         }
 

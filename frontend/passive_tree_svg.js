@@ -12,8 +12,12 @@ const drawTreeSvg = async function (id) {
 
     // draw edges
     passive_tree.drawEdges(d3_svg, function (source, target) {
-        // no start node connection, no scion path of x edges
-        return source.start || target.start || PoeTree.scionPathOfEdge(source, target)
+        // no start node connection
+        return source.start || target.start
+            // no scion path of x edges
+            || PoeTree.scionPathOfEdge(source, target)
+            // no ascendancy edges
+            || source.ascendancy
     });
 
     // group orbits
@@ -21,7 +25,7 @@ const drawTreeSvg = async function (id) {
 
     // and the actual nodes
     passive_tree.drawNodes(d3_svg, function (node) {
-        return node.mastery || node.start
+        return node.mastery || node.start || node.ascendancy
     });
 
     return $tree_svg;
