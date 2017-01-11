@@ -90,8 +90,18 @@ class PoeNode {
     }
 
     get size() {
-        const order = [this.keystone, this.notable || this.mastery, true];
-        return order.length - order.indexOf(true)
+        // taken from sprite coords w/h
+        const sizes = {
+            "keystone": 53,
+            "mastery": 99,
+            "notable": 38,
+            "start": 40,
+            "ascendancy": 27,
+            "jewel_socket": 40,
+            "normal": 27
+        }
+
+        return sizes[Object.keys(sizes).filter(t => this[t])]
     }
 
     /**
