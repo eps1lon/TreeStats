@@ -10,7 +10,8 @@ const types = [
     "mastery",
     "notable",
     "start",
-    "ascendancy"
+    "ascendancy",
+    "jewel_socket"
 ];
 
 class PoeNode {
@@ -41,6 +42,10 @@ class PoeNode {
 
     get ascendancy() {
         return !!this.props.ascendancyName
+    }
+
+    get jewel_socket() {
+        return this.props.isJewelSocket
     }
 
     // classes used to have a common start point
