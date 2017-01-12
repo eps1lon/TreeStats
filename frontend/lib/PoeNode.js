@@ -81,6 +81,10 @@ class PoeNode {
        ].filter(t => this[t])
     }
 
+    get stats() {
+        return this.props.sd;
+    }
+
     get group_id() {
         return this.props.g
     }
@@ -101,7 +105,7 @@ class PoeNode {
             "normal": 27
         }
 
-        return sizes[Object.keys(sizes).filter(t => this[t])]
+        return sizes[Object.keys(sizes).filter(t => this[t])[0]]
     }
 
     /**
