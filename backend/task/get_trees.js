@@ -132,11 +132,6 @@ const csvTransform = function (data) {
         data.nodes || []
     );
 
-    if (data.nodes && tree_url.length < 70) {
-        logger.info(data.nodes)
-        logger.info(`very short tree url for ${data.account.name}/characters?characterName=${data.character.name} '${tree_url}'`);
-    }
-
     return {
         id: data.character.id,
         last_active: data.last_active,
