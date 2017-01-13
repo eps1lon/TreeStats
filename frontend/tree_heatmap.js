@@ -89,7 +89,7 @@ $(document).ready(function () {
 
     // only clickable when db is synced
     db.then(function (db) {
-        $("#heatmap_calculate").click(function () {
+        $("#heatmap_calculate, #heatmap_redraw").click(function () {
             const filter = {};
 
             const league_id = $("#filter_leagues").val();
@@ -116,8 +116,10 @@ $(document).ready(function () {
                 // size after the tree is set
                 const heatmap = h337.create({
                     container: $heatmap_container.get(0),
-                    minOpacity: .05,
-                    maxOpacity: 0.5,
+                    minOpacity: $("#heatmap_min_opacity").val() / 100,
+                    maxOpacity: $("#heatmap_max_opacity").val() / 100,
+                    radius: $("#heatmap_radius").val(),
+                    blur: $("#heatmap_blur").val() / 100,
                     onExtremaChange: updateHeatmapLegend
                 });
 
@@ -185,8 +187,20 @@ $(document).ready(function () {
         this.download = "heatmap_breach.png"
     });
 
+    // heatmap conf
+    $("#heatmap_conf input").change(function () {
+        if ($("#heatmap_submit_onchange").prop("checked")) {
+            $("#heatmap_redraw").click();
+        }
+    });
+
     db.then(function () {
-        $("#heatmap_calculate").prop("disabled", false);
+        $("#heatmap_calculate, #heatmap_redraw").prop("disabled", false);
+
         $("#heatmap_calculate").click();
+    });
+
+    tree.then(function () {
+        $("#tree_redraw").prop("disabled", false);
     })
 });
