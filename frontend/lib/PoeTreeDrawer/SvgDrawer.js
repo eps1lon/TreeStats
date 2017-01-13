@@ -6,29 +6,19 @@ class SvgDrawer extends PoeTreeDrawer {
     }
 
     drawNodes(nodes_cb) {
-        if (nodes_cb) {
-            this.conf[DRAW_NODE] = nodes_cb;
-        }
-
-        for (const [node_id, node] of this.tree.nodes) {
-            if (this.conf[DRAW_NODE](node)) {
-                this.d3_svg.append("circle")
-                    .attr("r", node.size * 2)
-                    .attr("cx", node.x)
-                    .attr("cy", node.y)
-                    .attr("class", ["tree_node", ...node.types].join(" "))
-                    .attr("id", `node_${node_id}`)
-                    .append("svg:title")
-                    .text([node.name, ...node.stats].join("\n"))
-            }
+        for (const [node_id, node] of this.nodesDrawn(nodes_cb)) {
+            this.d3_svg.append("circle")
+                .attr("r", node.size * 2)
+                .attr("cx", node.x)
+                .attr("cy", node.y)
+                .attr("class", ["tree_node", ...node.types].join(" "))
+                .attr("id", `node_${node_id}`)
+                .append("svg:title")
+                .text([node.name, ...node.stats].join("\n"));
         }
     }
 
     drawGroups(groups_cb) {
-        if (groups_cb) {
-            this.conf[DRAW_GROUP] = groups_cb;
-        }
-
         // group_id => radii of nodes of that group
         let radii = new Map();
 
@@ -40,65 +30,48 @@ class SvgDrawer extends PoeTreeDrawer {
             }
         }
 
-        for (let [group_id, group] of this.tree.groups) {
-            if (this.conf[DRAW_GROUP](group)) {
-                group_id = +group_id;
+        for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
+            if (!radii.has(group_id)) {
+                radii.set(group_id, [0])
+            }
 
-                if (!radii.has(group_id)) {
-                    radii.set(group_id, [0])
-                }
+            this.d3_svg.append("circle")
+                .attr("r", Math.max(...radii.get(group_id)))
+                .attr("cx", group.x)
+                .attr("cy", group.y)
+                .attr("class", "tree_group")
+                .attr("id", `node_group_${group_id}`)
+                .append("svg:title")
+                .text(group_id);
 
+            for (const r of radii.get(group_id)) {
                 this.d3_svg.append("circle")
-                    .attr("r", Math.max(...radii.get(group_id)))
+                    .attr("r", r)
                     .attr("cx", group.x)
                     .attr("cy", group.y)
-                    .attr("class", "tree_group")
-                    .attr("id", `node_group_${group_id}`)
-                    .append("svg:title")
-                    .text(group_id);
-
-                for (const r of radii.get(group_id)) {
-                    this.d3_svg.append("circle")
-                        .attr("r", r)
-                        .attr("cx", group.x)
-                        .attr("cy", group.y)
-                        .attr("class", "group_orbit")
-                        .attr("data-orbit-of", group_id)
-                }
+                    .attr("class", "group_orbit")
+                    .attr("data-orbit-of", group_id)
             }
         }
     }
 
     drawEdges(edges_cb) {
-        if (edges_cb) {
-            this.conf[DRAW_EDGE] = edges_cb;
-        }
+        for (const [node, adj] of this.edgesDrawn(edges_cb)) {
+            const class_names = ["tree_edge", ...node.types, ...adj.types];
 
-        for (const node of this.tree.nodes.values()) {
-            const x1 = node.x;
-            const y1 = node.y;
-
-            for (const adj_id of node.adjacent) {
-                const adj = this.tree.nodes.get(adj_id);
-
-                if (this.conf[DRAW_EDGE](node, adj)) {
-                    const class_names = ["tree_edge", ...node.types, ...adj.types];
-
-                    // same orbit and same group
-                    if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
-                        this.d3_svg.append("path")
-                            .attr("class", class_names.join(" "))
-                            .attr("d", SvgDrawer.describeArc(node, adj))
-                            .attr("fill", "none");//*/
-                    } else {
-                        this.d3_svg.append("line")
-                            .attr("class", class_names.join(" "))
-                            .attr("x1", x1)
-                            .attr("y1", y1)
-                            .attr("x2", adj.x)
-                            .attr("y2", adj.y)
-                    }
-                }
+            // same orbit and same group
+            if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
+                this.d3_svg.append("path")
+                    .attr("class", class_names.join(" "))
+                    .attr("d", SvgDrawer.describeArc(node, adj))
+                    .attr("fill", "none");//*/
+            } else {
+                this.d3_svg.append("line")
+                    .attr("class", class_names.join(" "))
+                    .attr("x1", node.x)
+                    .attr("y1", node.y)
+                    .attr("x2", adj.x)
+                    .attr("y2", adj.y)
             }
         }
     }

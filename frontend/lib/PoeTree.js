@@ -19,6 +19,13 @@ class PoeTree {
             return [n.id, new PoeNode(n, tree_data.groups)]
         }));
 
+        this.edges = []
+        for (const node of this.nodes.values()) {
+            for (const adj_id of node.adjacent) {
+                this.edges.push([node, this.nodes.get(adj_id)]);
+            }
+        }
+
         /*
          * although we get min/max coords they don't include the ascendancy
          * so we do its ourselves

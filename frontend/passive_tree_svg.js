@@ -5,9 +5,7 @@ const drawTreeSvg = async function (id) {
     const d3_svg = d3.select("#" + $tree_svg.attr("id"));
 
     const tree_drawer = new SvgDrawer(passive_tree, d3_svg);
-
-    // adjust the viewbox
-    tree_drawer.viewFull();
+    //const tree_drawer = new CanvasDrawer(passive_tree, $("canvas.passive_tree").get(0))
 
     // draw edges
     tree_drawer.drawEdges(function (source, target) {
@@ -20,12 +18,15 @@ const drawTreeSvg = async function (id) {
     });
 
     // group orbits
-    //tree_drawer.drawGroups();
+    tree_drawer.drawGroups();
 
     // and the actual nodes
     tree_drawer.drawNodes(function (node) {
         return !node.mastery && !node.start && !node.ascendancy
     });
+
+    // adjust the viewbox
+    tree_drawer.viewFull();
 
     return $tree_svg;
 };

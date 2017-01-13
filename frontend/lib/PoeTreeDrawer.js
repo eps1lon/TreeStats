@@ -18,16 +18,52 @@ class PoeTreeDrawer {
         };
     }
 
+    *nodesDrawn(nodes_cb) {
+        if (nodes_cb) {
+            this.conf[DRAW_NODE] = nodes_cb;
+        }
+
+        for (const [node_id, node] of this.tree.nodes) {
+            if (this.conf[DRAW_NODE](node)) {
+                yield [node_id, node];
+            }
+        }
+    }
+
     drawNodes() {
         throw "PoeTreeDrawer.drawNodes not implemented";
+    }
+
+    *groupsDrawn(groups_cb) {
+        if (groups_cb) {
+            this.conf[DRAW_GROUP] = groups_cb;
+        }
+
+        for (const [group_id, group] of this.tree.groups) {
+            if (this.conf[DRAW_GROUP](group)) {
+                yield [+group_id, group];
+            }
+        }
     }
 
     drawGroups() {
         throw "PoeTreeDrawer.drawGroups not implemented";
     }
 
+    *edgesDrawn(edges_cb) {
+        if (edges_cb) {
+            this.conf[DRAW_EDGE] = edges_cb;
+        }
+
+        for (const [node, adj] of this.tree.edges) {
+            if (this.conf[DRAW_EDGE](node, adj)) {
+                yield [node, adj];
+            }
+        }
+    }
+
     drawEdges() {
-        throw "PoeTreeDrawer.drawEdges not implemented";
+        throw "PoeTreeDrawer.drawGroups not implemented";
     }
 
     viewFull() {
