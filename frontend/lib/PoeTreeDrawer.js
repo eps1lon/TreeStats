@@ -90,7 +90,28 @@ class PoeTreeDrawer {
         this.draw();
     }
 
+    get radii() {
+        // group_id => radii of nodes of that group
+        const radii = new Map();
+
+        for (const [_, node] of this.nodesDrawn()) {
+            if (radii.has(node.group_id)) {
+                radii.get(node.group_id).add(node.radius)
+            } else {
+                radii.set(node.group_id, new Set([node.radius]))
+            }
+        }
+
+        return radii;
+    }
+
+    /**
+     * default cb to check if something should be drawn
+     * which defaults to true
+     *
+     * @returns {boolean}
+     */
     static drawAll() {
-        return true
+        return true;
     }
 }

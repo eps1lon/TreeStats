@@ -64,7 +64,9 @@ $(document).ready(function () {
     })();
 
     const $heatmap_container = $("#heatmap");
-    const tree = drawTreeSvg("passive_tree");
+
+    // draw tree
+    const tree = drawTree(".passive_tree:visible");
 
     // adjust heatmap
     tree.then(function ($tree) {
@@ -185,6 +187,6 @@ $(document).ready(function () {
 
     db.then(function () {
         $("#heatmap_calculate").prop("disabled", false);
-        //$("#heatmap_calculate").click();
+        $("#heatmap_calculate").click();
     })
 });

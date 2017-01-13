@@ -20,15 +20,7 @@ class SvgDrawer extends PoeTreeDrawer {
 
     drawGroups(groups_cb) {
         // group_id => radii of nodes of that group
-        let radii = new Map();
-
-        for (let node of this.tree.nodes.values()) {
-            if (radii.has(node.group_id)) {
-                radii.get(node.group_id).add(node.radius)
-            } else {
-                radii.set(node.group_id, new Set([node.radius]))
-            }
-        }
+        const radii = this.radii;
 
         for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
             if (!radii.has(group_id)) {

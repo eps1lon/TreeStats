@@ -14,6 +14,9 @@ const types = [
     "jewel_socket"
 ];
 
+
+const tau = 2 * Math.PI;
+
 class PoeNode {
     constructor(props, groups) {
         this.props = props;
@@ -103,7 +106,7 @@ class PoeNode {
             "ascendancy": 27,
             "jewel_socket": 40,
             "normal": 27
-        }
+        };
 
         return sizes[Object.keys(sizes).filter(t => this[t])[0]]
     }
@@ -112,15 +115,21 @@ class PoeNode {
      * calculates the radiant angle at which the node is located in its orbit
      *
      * consider a clock
-     * the oidx starts at 0:00 and moves counter clockwise
+     * the oidx starts at 0:00 and moves clockwise
      * angles in math increases counter clockwise starting at 3:00
      * we need to adjust the angle accordingly
      *
      * @returns {number}
      */
     get angle() {
-        const tau = 2 * Math.PI
         return (tau * (1 - this.props.oidx / skills_per_orbit[this.props.o]) + tau / 4) % tau
+    }
+
+    /**
+     * the angle if counted clockwise
+     */
+    get angle_clockwise() {
+        return (tau * this.props.oidx / skills_per_orbit[this.props.o] - tau / 4) % tau
     }
 
     get x() {

@@ -6,10 +6,14 @@ body {
     position: relative;
 }
 
-#heatmap, #passive_tree {
+#heatmap, .passive_tree {
     position: absolute !important;
     top: 0px;
     left: 0px;
+}
+
+svg.passive_tree {
+    display: none;
 }
 
 #heatmap_legend {
@@ -36,4 +40,8 @@ body {
     height: 1em;
     width: 100%;
     border: 1px solid black;
+}
+
+#heatmap_wrapper {
+    height: 800px;
 }
