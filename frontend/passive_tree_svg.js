@@ -20,7 +20,7 @@ const drawTreeSvg = async function (id) {
     });
 
     // group orbits
-    //passive_tree.drawGroups(d3_svg);
+    //tree_drawer.drawGroups();
 
     // and the actual nodes
     tree_drawer.drawNodes(function (node) {

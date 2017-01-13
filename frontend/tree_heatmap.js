@@ -185,6 +185,6 @@ $(document).ready(function () {
 
     db.then(function () {
         $("#heatmap_calculate").prop("disabled", false);
-        $("#heatmap_calculate").click();
+        //$("#heatmap_calculate").click();
     })
 });

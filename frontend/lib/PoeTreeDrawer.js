@@ -12,9 +12,9 @@ class PoeTreeDrawer {
         this.tree = poe_tree;
 
         this.conf = {
-            nodes: PoeTreeDrawer.drawAll,
-            edges: PoeTreeDrawer.drawAll,
-            groups: PoeTreeDrawer.drawAll
+            [DRAW_NODE]: PoeTreeDrawer.drawAll,
+            [DRAW_EDGE]: PoeTreeDrawer.drawAll,
+            [DRAW_GROUP]: PoeTreeDrawer.drawAll
         };
     }
 
