@@ -69,22 +69,6 @@ $(document).ready(function () {
     // TODO add opcity, jquerify
     const $heatmap_container = $("#heatmap");
 
-    // draw tree
-    tree_indicator.busy();
-    const tree = drawTree(".passive_tree:visible");
-
-    // adjust heatmap
-    tree.then(function ($tree) {
-        $heatmap_container.width($tree.width());
-        $heatmap_container.height($tree.height());
-
-        tree_indicator.ready();
-    });
-
-    db.then(function () {
-        $("#heatmap_calculate").click();
-    });
-
     // ui
     // display leagues
     for (let [league_id, league] of POE.leagues) {
@@ -100,7 +84,13 @@ $(document).ready(function () {
     let data_cursor = null;
 
     // the calculated data from the cursor for the heatmap
-    let heatmap_data = {};
+    let heatmap_data = {
+        max: 0,
+        data: []
+    };
+
+    // the passive tree drawer
+    let tree = null;
 
     // event handlers
     // fetches the data and calculates the heatmap_data
@@ -132,13 +122,15 @@ $(document).ready(function () {
             data_cursor.exec(function (e, rows) {
                 db_indicator.ready();
 
+                const draw_ascendancies = $("#tree_show_ascendancies").is(":checked");
+
                 const aggregate = new NodeAggregation(rows);
                 // TODO blacklist by looking at displayed nodes
                 const summarized = aggregate.sum(function (node_id) {
                     const node = passive_tree.nodes.get(node_id);
                     if (node) {
                         // skip ascendancies
-                        return node.ascendancy;
+                        return !draw_ascendancies && node.ascendancy;
                     }
                     return false;
                 });
@@ -213,6 +205,26 @@ $(document).ready(function () {
         heatmap_indicator.ready();
     });
 
+    // draw tree
+    $('#tree_redraw').click(function () {
+        tree_indicator.busy();
+        tree = drawTree(".passive_tree:visible", {
+            ascendancy: $("#tree_show_ascendancies").is(":checked")
+        });
+
+        // adjust heatmap
+        tree.then(function ($tree) {
+            $heatmap_container.width($tree.width());
+            $heatmap_container.height($tree.height());
+
+            tree_indicator.ready();
+
+            db.then(function () {
+                $("#heatmap_redraw").click();
+            });
+        });
+    });
+
     // download heatmap
     $("#download_heatmap").click(function () {
         this.href = heatmap.getDataURL();
@@ -232,4 +244,13 @@ $(document).ready(function () {
             $("#heatmap_redraw").click();
         }
     });
+
+    // init
+    // thats actually a pretty dirty parallel task
+    // tree is drawing and on complete redrawing the heatmap
+    // while its data is still being calculated in #heatmap_calculate.click
+    // solution would be to extract every async part into an actual async function
+    // and let it run thenified in the event handlers
+    $("#tree_redraw").click();
+    $("#heatmap_calculate").click();
 });

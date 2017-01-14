@@ -1,6 +1,23 @@
-const drawTree = async function (query_selector) {
+const drawTree = async function (query_selector, user_conf = {}) {
     // the jquery object of the passive tree
     const $tree = $(query_selector);
+
+    /**
+     * if a certain tree elem should be drawn
+     *
+     * this means (isType => drawType) <=> (drawType || !isType)
+     *
+     * @type {*}
+     */
+    const conf = Object.assign({
+        // default
+        start: false,
+        scionPathOf: false,
+        ascendancy: true,
+        mastery: false
+    }, user_conf);
+
+    console.log(conf, user_conf)
 
     /**
      * @type {PoeTreeDrawer}
@@ -21,11 +38,11 @@ const drawTree = async function (query_selector) {
     // draw edges
     tree_drawer.drawEdges(function (source, target) {
         // no start node connection
-        return !source.start && !target.start
+        return (conf.start || !source.start && !target.start)
             // no scion path of x edges
-            && !PoeTree.scionPathOfEdge(source, target)
+            && (conf.scionPathOf || !PoeTree.scionPathOfEdge(source, target))
             // no ascendancy edges
-            && !source.ascendancy
+            && (conf.ascendancy || !source.ascendancy)
     });
 
     // group orbits
@@ -33,7 +50,9 @@ const drawTree = async function (query_selector) {
 
     // and the actual nodes
     tree_drawer.drawNodes(function (node) {
-        return !node.mastery && !node.start && !node.ascendancy
+        return (conf.mastery || !node.mastery)
+            && (conf.start || !node.start)
+            && (conf.ascendancy || !node.ascendancy)
     });
 
     return $tree;
