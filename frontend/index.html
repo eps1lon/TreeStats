@@ -23,6 +23,8 @@
     <script src="lib/PoeTreeDrawer/SvgDrawer.js"></script>
     <script src="lib/PoeTreeDrawer/CanvasDrawer.js"></script>
 
+    <script src="lib/BusyIndicator.js"></script>
+
     <script src="tree_heatmap.js"></script>
     <script src="passive_tree.js"></script>
     <link type="text/css" rel="stylesheet" href="style/tree.css">
@@ -51,6 +53,8 @@
         <input type="number" min="0" step="200" value="0" id="filter_offset">
 
         <input type="submit" id="heatmap_calculate" disabled="disabled" value="display heatmap">
+        <span class="busy-indicator"></span>
+
         <input id="filter_submit_onchange" class="submit_onchange" type="checkbox" checked="checked">
         <label for="filter_submit_onchange">automatically submit on reconfigure</label>
     </fieldset>
@@ -71,6 +75,8 @@
         <input type="number" min="0" max="100" step="1" value="85" id="heatmap_blur">
 
         <input type="submit" id="heatmap_redraw" disabled="disabled" value="redraw heatmap">
+        <span class="busy-indicator"></span>
+
         <input id="heatmap_submit_onchange" class="submit_onchange" type="checkbox" checked="checked">
         <label for="heatmap_submit_onchange">automatically submit on reconfigure</label>
 
@@ -90,6 +96,8 @@
         <input type="checkbox" id="tree_use_assets">
 
         <input type="submit" id="tree_redraw" disabled="disabled" value="redraw tree">
+        <span class="busy-indicator"></span>
+
         <input id="tree_submit_onchange" class="submit_onchange" type="checkbox" checked="checked">
         <label for="tree_submit_onchange">automatically submit on reconfigure</label>
     </fieldset>

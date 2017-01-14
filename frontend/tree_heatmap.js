@@ -61,16 +61,28 @@ $(document).ready(function () {
         };
     })('#heatmap_legend img');
 
+    // busy indicators
+    const heatmap_indicator = new BusyIndicator("#heatmap_conf input[type='submit']");
+    const tree_indicator = new BusyIndicator("#tree_conf input[type='submit']");
+    const db_indicator = new BusyIndicator("#filter input[type='submit']");
+
     // TODO add opcity, jquerify
     const $heatmap_container = $("#heatmap");
 
     // draw tree
+    tree_indicator.busy();
     const tree = drawTree(".passive_tree:visible");
 
     // adjust heatmap
     tree.then(function ($tree) {
         $heatmap_container.width($tree.width());
         $heatmap_container.height($tree.height());
+
+        tree_indicator.ready();
+    });
+
+    db.then(function () {
+        $("#heatmap_calculate").click();
     });
 
     // ui
@@ -93,6 +105,8 @@ $(document).ready(function () {
     // event handlers
     // fetches the data and calculates the heatmap_data
     $("#heatmap_calculate").click(function () {
+        db_indicator.busy();
+
         const filter = {};
 
         const league_id = $("#filter_leagues").val();
@@ -116,6 +130,7 @@ $(document).ready(function () {
                 .skip(+$("#filter_offset").val());
 
             data_cursor.exec(function (e, rows) {
+                db_indicator.ready();
 
                 const aggregate = new NodeAggregation(rows);
                 // TODO blacklist by looking at displayed nodes
@@ -174,6 +189,8 @@ $(document).ready(function () {
 
     // draw heatmap
     $("#heatmap_redraw").click(function () {
+        heatmap_indicator.busy();
+
         // clear old
         $(".heatmap-canvas", $heatmap_container).remove();
 
@@ -193,6 +210,7 @@ $(document).ready(function () {
 
         // display the data
         heatmap.setData(heatmap_data);
+        heatmap_indicator.ready();
     });
 
     // download heatmap
@@ -203,25 +221,15 @@ $(document).ready(function () {
 
     // data filter
     $("#filter input, #filter select").change(function () {
-        if ($('#filter_submit_onchange').prop("checked")) {
+        if (!db_indicator.is_busy && $('#filter_submit_onchange').prop("checked")) {
             $("#heatmap_calculate").click();
         }
     });
 
     // heatmap conf
     $("#heatmap_conf input, #heatmap_conf select").change(function () {
-        if ($("#heatmap_submit_onchange").prop("checked")) {
+        if (!heatmap_indicator.is_busy && $("#heatmap_submit_onchange").prop("checked")) {
             $("#heatmap_redraw").click();
         }
     });
-
-    db.then(function () {
-        $("#heatmap_calculate, #heatmap_redraw").prop("disabled", false);
-
-        $("#heatmap_calculate").click();
-    });
-
-    tree.then(function () {
-        $("#tree_redraw").prop("disabled", false);
-    })
 });
