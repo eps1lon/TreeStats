@@ -3,7 +3,7 @@
  * @param filename
  * @returns {Promise}
  */
-async function csvToDb(filename) {
+const csvToDb = async function (filename) {
     return await PapaParsePromise(filename, {
         download: true,
         dynamicTyping: true,
@@ -26,20 +26,18 @@ let csv_file_production = "../backend/task/get_trees/1483973137391_250_get_trees
 let db = csvToDb(csv_file_production);
 
 $(document).ready(function () {
-    // TODO add opcity, jquerify
-
     /**
      * updates the legend for the heatmap
      * @see {https://www.patrick-wied.at/static/heatmapjs/example-legend-tooltip.html}
      *
      * @param data the heatmap data
      */
-    const updateHeatmapLegend = (function () {
+    const updateHeatmapLegend = (function (gradient_query_selector) {
         const legendCanvas = document.createElement('canvas');
         legendCanvas.width = 100;
         legendCanvas.height = 10;
 
-        const gradientImg = document.querySelector('#heatmap_legend img');
+        const gradientImg = document.querySelector(gradient_query_selector);
         let legendCtx = legendCanvas.getContext('2d');
         let gradientCfg = {};
 
@@ -61,8 +59,9 @@ $(document).ready(function () {
                 gradientImg.src = legendCanvas.toDataURL();
             }
         };
-    })();
+    })('#heatmap_legend img');
 
+    // TODO add opcity, jquerify
     const $heatmap_container = $("#heatmap");
 
     // draw tree
@@ -72,7 +71,7 @@ $(document).ready(function () {
     tree.then(function ($tree) {
         $heatmap_container.width($tree.width());
         $heatmap_container.height($tree.height());
-    })
+    });
 
     // ui
     // display leagues
@@ -85,48 +84,43 @@ $(document).ready(function () {
         $("#filter_classes").append(`<option value="${class_id}">${klass.name}</option>`);
     }
 
+    // the cursor to the rows
+    let data_cursor = null;
+
+    // the calculated data from the cursor for the heatmap
+    let heatmap_data = {};
+
     // event handlers
+    // fetches the data and calculates the heatmap_data
+    $("#heatmap_calculate").click(function () {
+        const filter = {};
 
-    // only clickable when db is synced
-    db.then(function (db) {
-        $("#heatmap_calculate, #heatmap_redraw").click(function () {
-            const filter = {};
+        const league_id = $("#filter_leagues").val();
+        const league_name = $("#filter_leagues option:selected").text();
+        if (league_id) {
+            filter.league = +league_id;
+        }
 
-            const league_id = $("#filter_leagues").val();
-            const league_name = $("#filter_leagues option:selected").text();
-            if (league_id) {
-                filter.league = +league_id;
-            }
+        const class_id = $("#filter_classes").val();
+        if (class_id) {
+            filter.class = +class_id;
+        }
 
-            const class_id = $("#filter_classes").val();
-            if (class_id) {
-                filter.class = +class_id;
-            }
+        // id like to use await but nedb doesnt support promises
+        // and we cant use async functions as dom event handlers
+        db.then(function (rows) {
+            data_cursor = rows
+                .find(filter)
+                .sort({xp: -1})
+                .limit(+$("#filter_limit").val())
+                .skip(+$("#filter_offset").val());
 
-            // id like to use await but nedb doesnt support promises
-            // and we cant use async functions as dom event handlers
-            const rows = db.find(filter, function (e, rows) {
-                // clear old
-                $(".heatmap-canvas", $heatmap_container).remove();
-
-                // we need to create this here every time
-                // reconfiguring the container is not possible
-                // and we need to do this since the canvas size
-                // is set on create and we need to adjust the
-                // size after the tree is set
-                const heatmap = h337.create({
-                    container: $heatmap_container.get(0),
-                    minOpacity: $("#heatmap_min_opacity").val() / 100,
-                    maxOpacity: $("#heatmap_max_opacity").val() / 100,
-                    radius: $("#heatmap_radius").val(),
-                    blur: $("#heatmap_blur").val() / 100,
-                    onExtremaChange: updateHeatmapLegend
-                });
+            data_cursor.exec(function (e, rows) {
 
                 const aggregate = new NodeAggregation(rows);
                 // TODO blacklist by looking at displayed nodes
                 const summarized = aggregate.sum(function (node_id) {
-                    const node = passive_tree.nodes.get(node_id)
+                    const node = passive_tree.nodes.get(node_id);
                     if (node) {
                         // skip ascendancies
                         return node.ascendancy;
@@ -134,9 +128,8 @@ $(document).ready(function () {
                     return false;
                 });
 
-
                 // candidate for max value but differences are not recognizeable anymore
-                const passives_taken = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
+                //const passives_taken = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
 
                 // calculate the max
                 const max = Math.max(...summarized.values()); // most taken
@@ -151,7 +144,7 @@ $(document).ready(function () {
                     const node = passive_tree.nodes.get(+node_id);
 
                     if (!node) {
-                        console.log(node_id)
+                        console.log(node_id);
                         console.log(sum)
                     }
 
@@ -162,33 +155,61 @@ $(document).ready(function () {
                     }
                 });
 
-                // object for heatmap.setData
-                const heatmap_data = {
+                // update the heatmap data
+                heatmap_data = {
                     max: max,
                     data: data
                 };
 
-                // display the data
-                heatmap.setData(heatmap_data);
+                // and draw
+                $("#heatmap_redraw").click();
 
                 // explain the data
                 $('#tree_stats_header').text(`nodes taken sum heatmap for \
-                                          top ${rows.length} public passives \
-                                          on ${league_name} ladder`);
+                                              top ${rows.length} public passives \
+                                              on ${league_name} ladder`);
             });
+        })
+    });
+
+    // draw heatmap
+    $("#heatmap_redraw").click(function () {
+        // clear old
+        $(".heatmap-canvas", $heatmap_container).remove();
+
+        // we need to create this here every time
+        // reconfiguring the container is not possible
+        // and we need to do this since the canvas size
+        // is set on create and we need to adjust the
+        // size after the tree is set
+        const heatmap = h337.create({
+            container: $heatmap_container.get(0),
+            minOpacity: $("#heatmap_min_opacity").val() / 100,
+            maxOpacity: $("#heatmap_max_opacity").val() / 100,
+            radius: $("#heatmap_radius").val(),
+            blur: $("#heatmap_blur").val() / 100,
+            onExtremaChange: updateHeatmapLegend
         });
-    })
+
+        // display the data
+        heatmap.setData(heatmap_data);
+    });
 
     // download heatmap
     $("#download_heatmap").click(function () {
-        const data_url = heatmap.getDataURL()
-
-        this.href = data_url
+        this.href = heatmap.getDataURL();
         this.download = "heatmap_breach.png"
     });
 
+    // data filter
+    $("#filter input, #filter select").change(function () {
+        if ($('#filter_submit_onchange').prop("checked")) {
+            $("#heatmap_calculate").click();
+        }
+    });
+
     // heatmap conf
-    $("#heatmap_conf input").change(function () {
+    $("#heatmap_conf input, #heatmap_conf select").change(function () {
         if ($("#heatmap_submit_onchange").prop("checked")) {
             $("#heatmap_redraw").click();
         }
