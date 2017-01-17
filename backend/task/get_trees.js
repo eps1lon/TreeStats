@@ -263,7 +263,22 @@ const ladderComplete = function (results, old_trees) {
 
     logger.info(`fetching ${passives_urls.length} passives`);
 
-    nodeAsync.mapLimit(passives_urls, async_limit, request, (e, results) => {
+    // progress bar
+    let progress = 0; // number of urls fetched
+    const in_steps = passives_urls.length / 10 | 0; // every ~10%
+
+    nodeAsync.mapLimit(passives_urls, async_limit, (url, callback) => {
+        // just a wrapper that updates the progress
+        return request(url, null, (err, transformed) => {
+            progress++;
+
+            if (progress % in_steps == 0) {
+                logger.info(`finished ${(100 * progress / passives_urls.length).toFixed(2)}%`);
+            }
+
+            callback(err, transformed);
+        })
+    }, (e, results) => {
         if (e) {
             logger.error(e)
         } else {
