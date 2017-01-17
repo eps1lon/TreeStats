@@ -278,19 +278,19 @@ const passivesComplete = function (results) {
     let trees = [];
 
     for (let result of results) {
+        const passive_url = result.request.href;
         let passives = undefined;
+
         try {
             passives = JSON.parse(result.body);
         } catch (e) {
-            logger.error(result);
+            logger.warn(`bad request for ${passive_url}`);
             continue;
         }
 
 
         if (passives) {
             const nodes = passives['hashes'];
-
-            const passive_url = result.request.href;
 
             const entry = entries.get(passives_urls_characters.get(passive_url));
 
@@ -301,7 +301,7 @@ const passivesComplete = function (results) {
             }, entry))
         } else {
             // FIXME first breach result returns false but browser is ok
-            logger.debug(result.request.href)
+            logger.debug(passive_url)
         }
     }
 
