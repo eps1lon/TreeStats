@@ -17,8 +17,6 @@ const drawTree = async function (query_selector, user_conf = {}) {
         mastery: false
     }, user_conf);
 
-    console.log(conf, user_conf)
-
     /**
      * @type {PoeTreeDrawer}
      */

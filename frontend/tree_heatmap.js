@@ -245,6 +245,13 @@ $(document).ready(function () {
         }
     });
 
+    // tree conf
+    $("#tree_conf input, #tree_conf select").change(function () {
+        if (!tree_indicator.is_busy && $('#tree_submit_onchange').prop("checked")) {
+            $("#tree_redraw").click();
+        }
+    });
+
     // init
     // thats actually a pretty dirty parallel task
     // tree is drawing and on complete redrawing the heatmap
