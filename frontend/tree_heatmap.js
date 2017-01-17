@@ -110,6 +110,13 @@ $(document).ready(function () {
             filter.class = +class_id;
         }
 
+        const active_since = $('#filter_last_active').val();
+        if (active_since) {
+            filter.last_active = {
+                $gte: new Date(active_since).valueOf()
+            }
+        }
+
         // id like to use await but nedb doesnt support promises
         // and we cant use async functions as dom event handlers
         db.then(function (rows) {

@@ -46,11 +46,14 @@
             <option value="">all</option>
         </select>
 
+        <label for="filter_last_active">active since</label>
+        <input id="filter_last_active" type="date" value="2017-01-01">
+
         <label for="filter_limit">limit</label>
-        <input type="number" min="0" step="200" value="15000" id="filter_limit">
+        <input type="number" min="0" max="15000" step="200" value="15000" id="filter_limit">
 
         <label for="filter_offset">offset</label>
-        <input type="number" min="0" step="200" value="0" id="filter_offset">
+        <input type="number" min="0"max="15000" step="200" value="0" id="filter_offset">
 
         <input type="submit" id="heatmap_calculate" disabled="disabled" value="display heatmap">
         <span class="busy-indicator"></span>
@@ -69,7 +72,7 @@
         <input type="number" min="0" max="100" step="1" value="55" id="heatmap_max_opacity">
 
         <label for="heatmap_radius">radius of data points</label>
-        <input type="number" min="0" step="1" value="40" id="heatmap_radius">
+        <input type="number" min="0" max="1000" step="1" value="40" id="heatmap_radius">
 
         <label for="heatmap_blur">blur of gradient</label>
         <input type="number" min="0" max="100" step="1" value="85" id="heatmap_blur">
