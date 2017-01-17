@@ -278,8 +278,9 @@ const passivesComplete = function (results) {
     let trees = [];
 
     for (let result of results) {
+        let passives = undefined;
         try {
-            const passives = JSON.parse(result.body);
+            passives = JSON.parse(result.body);
         } catch (e) {
             logger.error(result);
             continue;
