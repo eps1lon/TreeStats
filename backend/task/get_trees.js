@@ -278,7 +278,13 @@ const passivesComplete = function (results) {
     let trees = [];
 
     for (let result of results) {
-        const passives = JSON.parse(result.body);
+        try {
+            const passives = JSON.parse(result.body);
+        } catch (e) {
+            logger.error(result);
+            continue;
+        }
+
 
         if (passives) {
             const nodes = passives['hashes'];
