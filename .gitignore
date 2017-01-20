@@ -1,6 +1,5 @@
+/* webstorm */
 .idea
-backend/node_modules
-
-backend/task/get_trees/*
-
-backend/task/log/*
+node_modules
+task/get_trees/*
+task/log/*  

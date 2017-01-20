@@ -1,0 +1,11 @@
+// Visual Studio Code settings
+// style guide only
+{
+    "editor.rulers": [
+        80, 120
+    ],
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.wrappingColumn": -1,
+    "eslint.enable": true
+}

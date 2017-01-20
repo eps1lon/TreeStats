@@ -1,0 +1,24 @@
+{
+  "name": "poe-tree-stats",
+  "version": "0.0.1",
+  "dependencies": {
+    "Buffer": "0.0.0",
+    "async": "^2.1.4",
+    "csv": "^1.1.0",
+    "d3": "^4.4.2",
+    "jquery": "^3.1.1",
+    "log4js": "^1.1.0",
+    "nedb": "^1.8.0",
+    "path": "^0.12.7",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.14.0",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "mocha --recursive"
+  }
+}
