@@ -95,6 +95,7 @@ const passivesApi = function (character, account) {
  * @returns {*}
  */
 const outFilename = function (root, now) {
+    // adjust gitignore accordingly
     return path.join(root, `${now}_${tree_ident}_get_trees.csv`);
 };
 

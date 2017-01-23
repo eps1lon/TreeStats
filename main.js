@@ -18,8 +18,8 @@ const h337 = require('heatmap.js');
 // instanciation
 const passive_tree = new PoeTree(passive_skill_tree.passiveSkillTreeData);
 
-const csv_file_development = "./task/get_trees/1484038613856_250_get_trees.csv";
-let csv_file_production = "./task/get_trees/1483973137391_250_get_trees.csv";
+const csv_file_development = "./task/get_trees/example_small.csv";
+let csv_file_production = "./task/get_trees/example_big.csv";
 
 let db = csvToDb(csv_file_development);
 
@@ -60,9 +60,9 @@ $(document).ready(function () {
     })('#heatmap_legend img');
 
     // busy indicators
-    const heatmap_indicator = new BusyIndicator.instance("#heatmap_conf input[type='submit']");
-    const tree_indicator = new BusyIndicator.instance("#tree_conf input[type='submit']");
-    const db_indicator = new BusyIndicator.instance("#filter input[type='submit']");
+    const heatmap_indicator = new BusyIndicator("#heatmap_conf input[type='submit']");
+    const tree_indicator = new BusyIndicator("#tree_conf input[type='submit']");
+    const db_indicator = new BusyIndicator("#filter input[type='submit']");
 
     // TODO add opcity, jquerify
     const $heatmap_container = $("#heatmap");
