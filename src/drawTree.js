@@ -1,11 +1,11 @@
 const $ = require('jquery');
 const d3 = require('d3-selection');
 
-const PoeTree = require('./PoeTree');
+const PoeTree = require('./poe/PassiveTree');
 
 // possible PoeTreeDrawer implementations
-const CanvasDrawer = require('./PoeTreeDrawer/CanvasDrawer');
-const SvgDrawer = require('./PoeTreeDrawer/SvgDrawer');
+const CanvasDrawer = require('./poe/TreeDrawer/CanvasDrawer');
+const SvgDrawer = require('./poe/TreeDrawer/SvgDrawer');
 
 /**
  * factory
@@ -35,7 +35,7 @@ module.exports = async function (passive_tree, query_selector, user_conf = {}) {
     }, user_conf);
 
     /**
-     * @type {PoeTreeDrawer}
+     * @type {PassiveTreeDrawer}
      */
     let tree_drawer;
 

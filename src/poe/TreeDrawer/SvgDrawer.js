@@ -1,10 +1,10 @@
-const PoeTreeDrawer = require('../PoeTreeDrawer');
+const PassiveTreeDrawer = require('../PassiveTreeDrawer');
 const d3 = require('d3');
 
-module.exports = class SvgDrawer extends PoeTreeDrawer {
+module.exports = class SvgDrawer extends PassiveTreeDrawer {
     /**
      * @constructor
-     * @param {!PoeTree} passive_tree
+     * @param {!PassiveTree} passive_tree
      * @param {!D3Selection} d3_selection
      */
     constructor(passive_tree, d3_selection) {

@@ -1,7 +1,7 @@
-const PoeTreeDrawer = require("../PoeTreeDrawer");
+const PassiveTreeDrawer = require("../PassiveTreeDrawer");
 const $ = require('jquery');
 
-module.exports = class CanvasDrawer extends PoeTreeDrawer {
+module.exports = class CanvasDrawer extends PassiveTreeDrawer {
     constructor(passive_tree, canvas) {
         super(passive_tree);
 

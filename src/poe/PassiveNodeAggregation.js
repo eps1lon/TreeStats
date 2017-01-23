@@ -1,4 +1,4 @@
-const TreeUrl = require('./TreeUrl');
+const PassiveTreeUrl = require('./PassiveTreeUrl');
 
 const NODES_KEY = "nodes";
 
@@ -52,7 +52,7 @@ module.exports = class NodeAggregation {
             let nodes = []
 
             try {
-                nodes = TreeUrl.decode(row[NODES_KEY]).nodes;
+                nodes = PassiveTreeUrl.decode(row[NODES_KEY]).nodes;
             } catch (e) {
                 console.warn(e);
             }

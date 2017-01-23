@@ -1,5 +1,5 @@
-const PoeNodeInst = require('./PoeNode');
-const PoeNode = require('./PoeNodeConst');
+const PassiveNodeInstance = require('./PassiveNode');
+const PassiveNode = require('./PassiveNodeConst');
 
 module.exports = class {
     /**
@@ -19,7 +19,7 @@ module.exports = class {
         //noinspection JSUnresolvedFunction
         this.nodes = new Map(this.data.nodes.map(function (n) {
             // [key, value]
-            return [n.id, new PoeNodeInst(n, tree_data.groups)]
+            return [n.id, new PassiveNodeInstance(n, tree_data.groups)]
         }));
 
         this.edges = []
@@ -42,7 +42,7 @@ module.exports = class {
             Number.NEGATIVE_INFINITY  // max_y
         ];
 
-        const max_radius = Math.max(...PoeNode.orbit_radii);
+        const max_radius = Math.max(...PassiveNode.orbit_radii);
         for (let group of this.groups.values()) {
             this.dimensions = [
                 Math.min(group.x - max_radius, this.dimensions[0]),

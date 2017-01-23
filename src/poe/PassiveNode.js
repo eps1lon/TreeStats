@@ -1,4 +1,4 @@
-const self = require('./PoeNodeConst.js');
+const self = require('./PassiveNodeConst');
 const tau = 2 * Math.PI;
 
 module.exports = class {

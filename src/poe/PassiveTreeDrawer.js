@@ -7,14 +7,14 @@ const DRAW_GROUP = Symbol("key for drawGroup cb");
  * so throw some error on every method
  * so signal no impl
  */
-class PoeTreeDrawer {
+module.exports = class PassiveTreeDrawer {
     constructor(poe_tree) {
         this.tree = poe_tree;
 
         this.conf = {
-            [DRAW_NODE]: PoeTreeDrawer.drawAll,
-            [DRAW_EDGE]: PoeTreeDrawer.drawAll,
-            [DRAW_GROUP]: PoeTreeDrawer.drawAll
+            [DRAW_NODE]: PassiveTreeDrawer.drawAll,
+            [DRAW_EDGE]: PassiveTreeDrawer.drawAll,
+            [DRAW_GROUP]: PassiveTreeDrawer.drawAll
         };
     }
 
@@ -31,7 +31,7 @@ class PoeTreeDrawer {
     }
 
     drawNodes() {
-        throw "PoeTreeDrawer.drawNodes not implemented";
+        throw "PassiveTreeDrawer.drawNodes not implemented";
     }
 
     *groupsDrawn(groups_cb) {
@@ -47,7 +47,7 @@ class PoeTreeDrawer {
     }
 
     drawGroups() {
-        throw "PoeTreeDrawer.drawGroups not implemented";
+        throw "PassiveTreeDrawer.drawGroups not implemented";
     }
 
     *edgesDrawn(edges_cb) {
@@ -63,11 +63,11 @@ class PoeTreeDrawer {
     }
 
     drawEdges() {
-        throw "PoeTreeDrawer.drawGroups not implemented";
+        throw "PassiveTreeDrawer.drawGroups not implemented";
     }
 
     viewFull() {
-        throw "PoeTreeDrawer.viewFull not implemented";
+        throw "PassiveTreeDrawer.viewFull not implemented";
     }
 
     draw(user_conf = {}) {
@@ -82,7 +82,7 @@ class PoeTreeDrawer {
     }
 
     clear() {
-        throw "PoeTreeDrawer.clear not implemented";
+        throw "PassiveTreeDrawer.clear not implemented";
     }
 
     refresh() {
@@ -115,5 +115,3 @@ class PoeTreeDrawer {
         return true;
     }
 }
-
-module.exports = PoeTreeDrawer;

@@ -18159,111 +18159,7 @@ exports.clearImmediate = clearImmediate;
 
 
 /***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const PoeNodeInst = __webpack_require__(109);
-const PoeNode = __webpack_require__(40);
-
-module.exports = class {
-    /**
-     * checks if the edge between these nodes is Path of X to X edge
-     *
-     * @param source
-     * @param target
-     * @returns {boolean}
-     */
-    static scionPathOfEdge(source, target) {
-        return source.ascendancy != target.ascendancy
-    }
-
-    constructor(tree_data) {
-        this.data = tree_data;
-        this.groups = new Map(Object.entries(this.data.groups));
-        //noinspection JSUnresolvedFunction
-        this.nodes = new Map(this.data.nodes.map(function (n) {
-            // [key, value]
-            return [n.id, new PoeNodeInst(n, tree_data.groups)]
-        }));
-
-        this.edges = []
-        for (const node of this.nodes.values()) {
-            for (const adj_id of node.adjacent) {
-                this.edges.push([node, this.nodes.get(adj_id)]);
-            }
-        }
-
-        /*
-         * although we get min/max coords they don't include the ascendancy
-         * so we do its ourselves
-         * could do it via nodes but if we use the groups with the orbits
-         * we get a nice padding that could still be not enough if we draw the nodes to big
-         */
-        this.dimensions = [
-            Number.POSITIVE_INFINITY, // min_x
-            Number.POSITIVE_INFINITY, // min_y
-            Number.NEGATIVE_INFINITY, // max_x
-            Number.NEGATIVE_INFINITY  // max_y
-        ];
-
-        const max_radius = Math.max(...PoeNode.orbit_radii);
-        for (let group of this.groups.values()) {
-            this.dimensions = [
-                Math.min(group.x - max_radius, this.dimensions[0]),
-                Math.min(group.y - max_radius, this.dimensions[1]),
-                Math.max(group.x + max_radius, this.dimensions[2]),
-                Math.max(group.y + max_radius, this.dimensions[3])
-            ]
-
-        }
-    }
-
-    /**
-     * svg viewbox
-     * @returns {[*]}
-     */
-    get viewbox() {
-        return [
-            this.dimensions[0],
-            this.dimensions[1],
-            this.width,
-            this.height
-        ];
-    }
-
-    get width() {
-        return this.dimensions[2] - this.dimensions[0]
-    }
-
-    get height() {
-        return this.dimensions[3] - this.dimensions[1]
-    }
-
-    /**
-     * scales the given x in this tree to the matching x on a new container with a different width
-     * assuming top left is 0,0
-     *
-     * @param x
-     * @param new_width
-     * @returns {number}
-     */
-    xScaled(x, new_width) {
-        return (x - this.dimensions[0]) * new_width / this.width
-    }
-
-    /**
-     * see this.xScaled
-     *
-     * @param y
-     * @param new_height
-     * @returns {number}
-     */
-    yScaled(y, new_height) {
-        return (y - this.dimensions[1]) * new_height / this.height
-    }
-}
-
-/***/ }),
+/* 28 */,
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -20322,170 +20218,8 @@ function indexOf(xs, x) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 40 */
-/***/ (function(module, exports) {
-
-/**
- * const relevant to PoeNode
- * 
- * main goal was to PoeNode = require('PoeNode.js'); node = new PoeNode(); types = PoeNode.types
- * but there is no such thing as static getter
- */
-module.exports = Object.freeze({
-    orbit_radii: [0, 82, 162, 335, 493],
-    skills_per_orbit: [1, 6, 12, 12, 40],
-    /**
-     * special node types
-     * @type {[*]}
-     */
-    types: [
-        "keystone",
-        "mastery",
-        "notable",
-        "start",
-        "ascendancy",
-        "jewel_socket"
-    ],
-    /**
-     * sprite sizes of the types
-     * @type {}
-     */
-    sizes: {
-        "keystone": 53,
-        "mastery": 99,
-        "notable": 38,
-        "start": 40,
-        "ascendancy": 27,
-        "jewel_socket": 40,
-        "normal": 27
-    }
-});
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports) {
-
-const DRAW_EDGE = Symbol("key for drawEdge cb");
-const DRAW_NODE = Symbol("key for drawNode cb");
-const DRAW_GROUP = Symbol("key for drawGroup cb");
-
-/**
- * thats an abstract class
- * so throw some error on every method
- * so signal no impl
- */
-class PoeTreeDrawer {
-    constructor(poe_tree) {
-        this.tree = poe_tree;
-
-        this.conf = {
-            [DRAW_NODE]: PoeTreeDrawer.drawAll,
-            [DRAW_EDGE]: PoeTreeDrawer.drawAll,
-            [DRAW_GROUP]: PoeTreeDrawer.drawAll
-        };
-    }
-
-    *nodesDrawn(nodes_cb) {
-        if (nodes_cb) {
-            this.conf[DRAW_NODE] = nodes_cb;
-        }
-
-        for (const [node_id, node] of this.tree.nodes) {
-            if (this.conf[DRAW_NODE](node)) {
-                yield [node_id, node];
-            }
-        }
-    }
-
-    drawNodes() {
-        throw "PoeTreeDrawer.drawNodes not implemented";
-    }
-
-    *groupsDrawn(groups_cb) {
-        if (groups_cb) {
-            this.conf[DRAW_GROUP] = groups_cb;
-        }
-
-        for (const [group_id, group] of this.tree.groups) {
-            if (this.conf[DRAW_GROUP](group)) {
-                yield [+group_id, group];
-            }
-        }
-    }
-
-    drawGroups() {
-        throw "PoeTreeDrawer.drawGroups not implemented";
-    }
-
-    *edgesDrawn(edges_cb) {
-        if (edges_cb) {
-            this.conf[DRAW_EDGE] = edges_cb;
-        }
-
-        for (const [node, adj] of this.tree.edges) {
-            if (this.conf[DRAW_EDGE](node, adj)) {
-                yield [node, adj];
-            }
-        }
-    }
-
-    drawEdges() {
-        throw "PoeTreeDrawer.drawGroups not implemented";
-    }
-
-    viewFull() {
-        throw "PoeTreeDrawer.viewFull not implemented";
-    }
-
-    draw(user_conf = {}) {
-        this.conf = Object.assign(this.conf, user_conf);
-
-        // clear old
-        this.clear();
-
-        this.drawGroups(this.conf[DRAW_GROUP]);
-        this.drawNodes(this.conf[DRAW_NODE]);
-        this.drawEdges(this.conf[DRAW_EDGE]);
-    }
-
-    clear() {
-        throw "PoeTreeDrawer.clear not implemented";
-    }
-
-    refresh() {
-        this.clear();
-        this.draw();
-    }
-
-    get radii() {
-        // group_id => radii of nodes of that group
-        const radii = new Map();
-
-        for (const [_, node] of this.nodesDrawn()) {
-            if (radii.has(node.group_id)) {
-                radii.get(node.group_id).add(node.radius)
-            } else {
-                radii.set(node.group_id, new Set([node.radius]))
-            }
-        }
-
-        return radii;
-    }
-
-    /**
-     * default cb to check if something should be drawn
-     * which defaults to true
-     *
-     * @returns {boolean}
-     */
-    static drawAll() {
-        return true;
-    }
-}
-
-module.exports = PoeTreeDrawer;
-
-/***/ }),
+/* 40 */,
+/* 41 */,
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21254,149 +20988,8 @@ module.exports = class BusyIndicator {
 };
 
 /***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const TreeUrl = __webpack_require__(112);
-
-const NODES_KEY = "nodes";
-
-module.exports = class NodeAggregation {
-    constructor(rows) {
-        this.rows = rows
-    }
-
-    /**
-     * increments the value for the given key or creates it
-     *
-     * @param map
-     * @param key
-     */
-    static incMapKey(map, key) {
-        if (map.has(key)) {
-            map.set(key, map.get(key) + 1)
-        } else {
-            map.set(key, 1)
-        }
-    }
-
-    static get nodes_key() {
-        return NODES_KEY
-    }
-
-    /**
-     * filters each row by the given fn
-     *
-     * @param fn
-     * @returns {NodeAggregation}
-     */
-    filter(fn) {
-        return new NodeAggregation(this.rows.filter(fn))
-    }
-
-    /**
-     * sums up the occurrence of nodes in its rows
-     *
-     * @returns {Map}
-     */
-    sum(blacklist_fn) {
-        if (!blacklist_fn) {
-            // blacklist none per default
-            blacklist_fn = () => false
-        }
-
-        let aggregated = new Map();
-
-        for (let row of this.rows) {
-            let nodes = []
-
-            try {
-                nodes = TreeUrl.decode(row[NODES_KEY]).nodes;
-            } catch (e) {
-                console.warn(e);
-            }
-
-            for (const node_id of nodes) {
-                if (!blacklist_fn(node_id)) {
-                    NodeAggregation.incMapKey(aggregated, node_id);
-                }
-            }
-        }
-
-        return aggregated
-    }
-
-    /**
-     * calculates the gradient between 2 maps
-     * if a key is not set in one of the maps 0 is assumed
-     *
-     * @param map1
-     * @param map2
-     * @returns {Map}
-     */
-    static grad(map1, map2) {
-        let gradient = new Map();
-
-        for (let key of new Set(...aggregated1.keys(), ...aggregated2.keys())) {
-            const val1 = aggregated1.get(key) || 0;
-            const val2 = aggregated2.get(key) || 0;
-
-            gradient.set(key, val1 - val2)
-        }
-
-        return gradient
-    }
-};
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports) {
-
-/**
- * 
- */
-module.exports = {
-    leagues: new Map([
-        [1, {name: "Breach", active: true, permanent: false}],
-        [2, {name: "Hardcore Breach", active: true, permanent: false}]
-    ]),
-    classes: new Map([
-        // name, parent is the parent class for ascendancies ie
-        // character_class, ascendancy is used for url generation
-        [1,  {name: "Marauder",     parent: null, character_class: 1, ascendancy: 0}],
-        [2,  {name: "Templar",      parent: null, character_class: 5, ascendancy: 0}],
-        [3,  {name: "Witch",        parent: null, character_class: 3, ascendancy: 0}],
-        [4,  {name: "Shadow",       parent: null, character_class: 6, ascendancy: 0}],
-        [5,  {name: "Ranger",       parent: null, character_class: 2, ascendancy: 0}],
-        [6,  {name: "Duelist",      parent: null, character_class: 4, ascendancy: 0}],
-        [7,  {name: "Scion",        parent: null, character_class: 7, ascendancy: 0}],
-        [8,  {name: "Berserker",    parent: 1,    character_class: 1, ascendancy: 2}],
-        [9,  {name: "Chieftain",    parent: 1,    character_class: 1, ascendancy: 3}],
-        [10, {name: "Juggernaut",   parent: 1,    character_class: 1, ascendancy: 1}],
-        [11, {name: "Inquisitor",   parent: 2,    character_class: 5, ascendancy: 1}],
-        [12, {name: "Guardian",     parent: 2,    character_class: 5, ascendancy: 3}],
-        [13, {name: "Hierophant",   parent: 2,    character_class: 5, ascendancy: 2}],
-        [14, {name: "Necromancer",  parent: 3,    character_class: 3, ascendancy: 3}],
-        [15, {name: "Occultist",    parent: 3,    character_class: 3, ascendancy: 1}],
-        [16, {name: "Elementalist", parent: 3,    character_class: 3, ascendancy: 2}],
-        [17, {name: "Assassin",     parent: 4,    character_class: 6, ascendancy: 1}],
-        [18, {name: "Saboteur",     parent: 4,    character_class: 6, ascendancy: 3}],
-        [19, {name: "Trickster",    parent: 4,    character_class: 6, ascendancy: 2}],
-        [20, {name: "Deadeye",      parent: 5,    character_class: 2, ascendancy: 2}],
-        [21, {name: "Raider",       parent: 5,    character_class: 2, ascendancy: 1}],
-        [22, {name: "Pathfinder",   parent: 5,    character_class: 2, ascendancy: 3}],
-        [23, {name: "Slayer",       parent: 6,    character_class: 4, ascendancy: 1}],
-        [24, {name: "Gladiator",    parent: 6,    character_class: 4, ascendancy: 2}],
-        [25, {name: "Champion",     parent: 6,    character_class: 4, ascendancy: 3}],
-        [26, {name: "Ascendant",    parent: 7,    character_class: 7, ascendancy: 1}]
-    ]),
-    trees: new Map([
-        ["250", {name: "2.5.0 Breach", version: 4}]
-    ]),
-    current_tree: "250"
-}
-
-/***/ }),
+/* 44 */,
+/* 45 */,
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -21444,11 +21037,11 @@ module.exports = async function (filename) {
 const $ = __webpack_require__(12);
 const d3 = __webpack_require__(54);
 
-const PoeTree = __webpack_require__(28);
+const PoeTree = __webpack_require__(116);
 
 // possible PoeTreeDrawer implementations
-const CanvasDrawer = __webpack_require__(110);
-const SvgDrawer = __webpack_require__(111);
+const CanvasDrawer = __webpack_require__(117);
+const SvgDrawer = __webpack_require__(118);
 
 /**
  * factory
@@ -21478,7 +21071,7 @@ module.exports = async function (passive_tree, query_selector, user_conf = {}) {
     }, user_conf);
 
     /**
-     * @type {PoeTreeDrawer}
+     * @type {PassiveTreeDrawer}
      */
     let tree_drawer;
 
@@ -44682,489 +44275,10 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 109 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const self = __webpack_require__(40);
-const tau = 2 * Math.PI;
-
-module.exports = class {
-    constructor(props, groups) {
-        this.props = props;
-        this.group = groups[this.group_id];
-    }
-
-    get name() {
-        return this.props.dn
-    }
-
-    get orbit() {
-        return this.props.o
-    }
-
-    get keystone() {
-        return this.props.ks
-    }
-
-    get mastery() {
-        return this.props.m
-    }
-
-    get notable() {
-        return this.props.not
-    }
-
-    get ascendancy() {
-        return !!this.props.ascendancyName
-    }
-
-    get jewel_socket() {
-        return this.props.isJewelSocket
-    }
-
-    // classes used to have a common start point
-    get start() {
-        return this.props.spc.length > 0
-    }
-
-    get adjacent() {
-        return this.props.out
-    }
-
-    /**
-     * normal node if not any special type
-     *
-     * @returns {boolean}
-     */
-    get normal() {
-        return !self.types.some(t => this[t])
-    }
-
-    /**
-     * although they should be mutually exclusive
-     * the data has flags for each of this type
-     * it should only return arrays with one element
-     *
-     * @returns {Array.<string>}
-     */
-    get types() {
-        // getters for the types
-       return [
-           ...self.types,
-           "normal"
-       ].filter(t => this[t])
-    }
-
-    get stats() {
-        return this.props.sd;
-    }
-
-    get group_id() {
-        return this.props.g
-    }
-
-    get radius() {
-        return self.orbit_radii[this.props.o]
-    }
-
-    get size() {
-        return self.sizes[Object.keys(self.sizes).filter(t => this[t])[0]]
-    }
-
-    /**
-     * calculates the radiant angle at which the node is located in its orbit
-     *
-     * consider a clock
-     * the oidx starts at 0:00 and moves clockwise
-     * angles in math increases counter clockwise starting at 3:00
-     * we need to adjust the angle accordingly
-     *
-     * @returns {number}
-     */
-    get angle() {
-        return (tau * (1 - this.props.oidx / self.skills_per_orbit[this.props.o]) + tau / 4) % tau
-    }
-
-    /**
-     * the angle if counted clockwise
-     */
-    get angle_clockwise() {
-        return (tau * this.props.oidx / self.skills_per_orbit[this.props.o] - tau / 4) % tau
-    }
-
-    get x() {
-        return this.group.x + this.radius * Math.cos(this.angle)
-    }
-
-    get y() {
-        return this.group.y - this.radius * Math.sin(this.angle)
-    }
-
-    get inspect() {
-        return Object.entries(Object.assign({
-            angle: this.angle,
-            x: this.x,
-            y: this.y,
-            g: Object.entries(this.group).join("\n")
-        }, this.props)).map(e => `${e[0]}: ${e[1]}`).join("\n")
-    }
-}
-
-/***/ }),
-/* 110 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const PoeTreeDrawer = __webpack_require__(41);
-const $ = __webpack_require__(12);
-
-module.exports = class CanvasDrawer extends PoeTreeDrawer {
-    constructor(passive_tree, canvas) {
-        super(passive_tree);
-
-        this.canvas = canvas;
-    }
-
-    /**
-     *
-     * @returns {CanvasRenderingContext2D|WebGLRenderingContext}
-     */
-    get ctx() {
-        return this.canvas.getContext("2d");
-    }
-
-    get width() {
-        return this.canvas.width;
-    }
-
-    get height() {
-        return this.canvas.height;
-    }
-
-    xScaled(x) {
-        return this.tree.xScaled(x, this.width)
-    }
-
-    yScaled(y) {
-        return this.tree.yScaled(y, this.height)
-    }
-
-    rScaled(r) {
-        return r * this.width / this.tree.width;
-    }
-
-    drawEdges(edges_cb) {
-        for (const [node, adj] of this.edgesDrawn(edges_cb)) {
-            this.ctx.beginPath();
-
-            // same orbit and same group
-            if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
-                this.drawArc(node, adj);
-            } else {
-                this.ctx.moveTo(this.xScaled(node.x), this.yScaled(node.y));
-                this.ctx.lineTo(this.xScaled(adj.x), this.yScaled(adj.y));
-            }
-
-            this.ctx.stroke();
-            this.ctx.closePath();
-        }
-    }
-
-    drawGroups(groups_cb) {
-        // group_id => radii of nodes of that group
-        const radii = this.radii;
-
-        for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
-            if (!radii.has(group_id)) {
-                radii.set(group_id, [0]);
-            }
-
-            this.ctx.beginPath();
-
-            this.ctx.arc(this.xScaled(group.x), this.yScaled(group.y)
-                        , this.rScaled(Math.max(...radii.get(group_id)))
-                        , 0, 2 * Math.PI);
-
-            this.ctx.stroke();
-            this.ctx.closePath();
-
-            for (const r of radii.get(group_id)) {
-                this.ctx.beginPath();
-                // Array(2).fill(2 * Math.PI * this.rScaled(r) / skills_per_orbit[orbit_radii.indexOf(r)])
-                this.ctx.setLineDash([1, 5]);
-
-                this.ctx.arc(this.xScaled(group.x), this.yScaled(group.y)
-                            , this.rScaled(r)
-                            , 0, 2 * Math.PI);
-
-                this.ctx.stroke();
-                this.ctx.closePath();
-            }
-        }
-    }
-
-    drawNodes(nodes_cb) {
-        for (const [_, node] of this.nodesDrawn(nodes_cb)) {
-            this.ctx.beginPath();
-            this.ctx.fillStyle = "red";
-
-            this.ctx.arc(this.xScaled(node.x), this.yScaled(node.y),
-                         this.rScaled(node.size), 0, 2 * Math.PI);
-
-            this.ctx.stroke();
-            this.ctx.fill();
-            this.ctx.closePath();
-        }
-    }
-
-    /**
-     * stretches the canvas to fill its parent while preserving the tree ratio
-     * clears the canvas so call first
-     */
-    viewFull() {
-        const wrapper = $(this.canvas).parent();
-        const scale = Math.max(wrapper.width() / this.tree.width
-                             , wrapper.height() / this.tree.height );
-
-        this.canvas.width = this.tree.width * scale;
-        this.canvas.height = this.tree.height * scale;
-    }
-
-    drawArc(node, adj) {
-        const tau = 2 * Math.PI;
-
-        let [start_angle, end_angle] = [node.angle_clockwise, adj.angle_clockwise];
-
-
-        if (start_angle > end_angle){
-            [start_angle, end_angle] = [end_angle, start_angle]
-        }
-
-        if (end_angle - start_angle > tau) {
-            end_angle = tau - Number.EPSILON;
-        }
-
-        const counter_clockwise = end_angle - start_angle > Math.PI;
-
-        this.ctx.arc(this.xScaled(node.group.x), this.yScaled(node.group.y)
-                    , this.rScaled(node.radius), start_angle, end_angle
-                    , counter_clockwise);
-    }
-}
-
-/***/ }),
-/* 111 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const PoeTreeDrawer = __webpack_require__(41);
-const d3 = __webpack_require__(89);
-
-module.exports = class SvgDrawer extends PoeTreeDrawer {
-    /**
-     * @constructor
-     * @param {!PoeTree} passive_tree
-     * @param {!D3Selection} d3_selection
-     */
-    constructor(passive_tree, d3_selection) {
-        super(passive_tree);
-
-        this.d3_svg = d3_selection;
-    }
-
-    drawNodes(nodes_cb) {
-        for (const [node_id, node] of this.nodesDrawn(nodes_cb)) {
-            this.d3_svg.append("circle")
-                .attr("r", node.size * 2)
-                .attr("cx", node.x)
-                .attr("cy", node.y)
-                .attr("class", ["tree_node", ...node.types].join(" "))
-                .attr("id", `node_${node_id}`)
-                .append("svg:title")
-                .text([node.name, ...node.stats].join("\n"));
-        }
-    }
-
-    drawGroups(groups_cb) {
-        // group_id => radii of nodes of that group
-        const radii = this.radii;
-
-        for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
-            if (!radii.has(group_id)) {
-                radii.set(group_id, [0])
-            }
-
-            this.d3_svg.append("circle")
-                .attr("r", Math.max(...radii.get(group_id)))
-                .attr("cx", group.x)
-                .attr("cy", group.y)
-                .attr("class", "tree_group")
-                .attr("id", `node_group_${group_id}`)
-                .append("svg:title")
-                .text(group_id);
-
-            for (const r of radii.get(group_id)) {
-                this.d3_svg.append("circle")
-                    .attr("r", r)
-                    .attr("cx", group.x)
-                    .attr("cy", group.y)
-                    .attr("class", "group_orbit")
-                    .attr("data-orbit-of", group_id)
-            }
-        }
-    }
-
-    drawEdges(edges_cb) {
-        for (const [node, adj] of this.edgesDrawn(edges_cb)) {
-            const class_names = ["tree_edge", ...node.types, ...adj.types];
-
-            // same orbit and same group
-            if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
-                this.d3_svg.append("path")
-                    .attr("class", class_names.join(" "))
-                    .attr("d", SvgDrawer.describeArc(node, adj))
-                    .attr("fill", "none");//*/
-            } else {
-                this.d3_svg.append("line")
-                    .attr("class", class_names.join(" "))
-                    .attr("x1", node.x)
-                    .attr("y1", node.y)
-                    .attr("x2", adj.x)
-                    .attr("y2", adj.y)
-            }
-        }
-    }
-
-    viewFull() {
-        this.d3_svg.attr("viewBox", this.tree.viewbox.join(" "))
-    }
-
-    /**
-     * computes a svg path for an arc between 2 nodes
-     * @param start {PoeNode}
-     * @param end {PoeNode}
-     * @returns {string}
-     */
-    static describeArc(start, end){
-        const x = start.group.x;
-        const y = start.group.y;
-        const r = start.radius;
-        const tau = 2 * Math.PI;
-
-        let start_angle = start.angle;
-        let end_angle = end.angle;
-
-        if (start_angle > end_angle){
-            [start_angle, end_angle] = [end_angle, start_angle]
-        }
-
-        if (end_angle - start_angle > tau) {
-            end_angle = tau - Number.EPSILON;
-        }
-
-        let sweep = 0;
-        if (end_angle - start_angle > Math.PI) {
-            sweep = 1;
-        }
-
-        return [
-            //'M', x, y,
-            'M', x + Math.cos(start_angle) * r, y - (Math.sin(start_angle) * r),
-            'A', r, r, 0, 0, sweep, x + Math.cos(end_angle) * r, y - (Math.sin(end_angle) * r),
-            //'L', x, y
-        ].join(' ');
-    }
-}
-
-/***/ }),
-/* 112 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Buffer = __webpack_require__(49);
-
-module.exports = {
-    /**
-     *
-     * @param str the encoded string from an url
-     * @returns {{version: *, starting_class: *, ascendancy: *, fullscreen: number, nodes: Array}}
-     */
-    decode: function(str) {
-        // deduced from loadHistoryUrl
-        const buf = Buffer(str.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
-
-        let i = 0;
-
-        const version = buf.readInt32BE(i);
-        i += 4;
-
-        const starting_class = buf.readInt8(i);
-        i += 1;
-
-        const ascendancy = buf.readInt8(i);
-        i += 1;
-
-        let fullscreen = 0;
-        // source says > 0, PoESkillTree > 3
-        // we will adjust our offset before we start looping
-        if (version > 0) {
-            fullscreen = buf.readInt8(i);
-            i += 1
-        }
-
-        const nodes = [];
-
-        // see version comment
-        for (i -= (buf.length - i) % 2; i < buf.length; i += 2) {
-            nodes.push(buf.readUInt16BE(i))
-        }
-
-        return {
-            version: version,
-            starting_class: starting_class,
-            ascendancy: ascendancy,
-            fullscreen: fullscreen,
-            nodes: nodes
-        };
-    },
-    /**
-     * computes string for usage in tree planers
-     *
-     * @param version
-     * @param starting_class
-     * @param ascendancy
-     * @param nodes
-     * @param fullscreen
-     * @returns {string}
-     */
-    encode: function (version, starting_class, ascendancy, nodes, fullscreen = 0) {
-        const size = nodes.length * 2 + 6 + (version > 0 ? 1 : 0);
-        let i = 0;
-
-        const buf = new Buffer(size);
-
-        buf.writeInt32BE(version, i);
-        i += 4;
-
-        buf.writeInt8(starting_class, i);
-        i += 1;
-
-        buf.writeInt8(ascendancy, i);
-        i += 1;
-
-        if (version > 0) {
-            buf.writeInt8(fullscreen, i);
-            i += 1;
-        }
-
-        for (let node of nodes) {
-            buf.writeUInt16BE(node, i);
-
-            i += 2;
-        }
-
-        return buf.toString("base64").replace(/\+/g, '-').replace(/\//g, '_')
-    }
-};
-
-/***/ }),
+/* 109 */,
+/* 110 */,
+/* 111 */,
+/* 112 */,
 /* 113 */
 /***/ (function(module, exports) {
 
@@ -45192,11 +44306,11 @@ module.exports = opts;
 
 // deps
 const BusyIndicator = __webpack_require__(43);
-const NodeAggregation = __webpack_require__(44);
+const NodeAggregation = __webpack_require__(124);
 
 // Poe deps
-const PoeTree = __webpack_require__(28);
-const POE = __webpack_require__(45);
+const PoeTree = __webpack_require__(116);
+const POE = __webpack_require__(121);
 const passive_skill_tree = __webpack_require__(48)(`./${POE.current_tree}/tree`);
 
 // func deps
@@ -45459,6 +44573,899 @@ $(document).ready(function () {
     $("#tree_redraw").click();
     $("#heatmap_calculate").click();
 });
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const PassiveNodeInstance = __webpack_require__(119);
+const PassiveNode = __webpack_require__(120);
+
+module.exports = class {
+    /**
+     * checks if the edge between these nodes is Path of X to X edge
+     *
+     * @param source
+     * @param target
+     * @returns {boolean}
+     */
+    static scionPathOfEdge(source, target) {
+        return source.ascendancy != target.ascendancy
+    }
+
+    constructor(tree_data) {
+        this.data = tree_data;
+        this.groups = new Map(Object.entries(this.data.groups));
+        //noinspection JSUnresolvedFunction
+        this.nodes = new Map(this.data.nodes.map(function (n) {
+            // [key, value]
+            return [n.id, new PassiveNodeInstance(n, tree_data.groups)]
+        }));
+
+        this.edges = []
+        for (const node of this.nodes.values()) {
+            for (const adj_id of node.adjacent) {
+                this.edges.push([node, this.nodes.get(adj_id)]);
+            }
+        }
+
+        /*
+         * although we get min/max coords they don't include the ascendancy
+         * so we do its ourselves
+         * could do it via nodes but if we use the groups with the orbits
+         * we get a nice padding that could still be not enough if we draw the nodes to big
+         */
+        this.dimensions = [
+            Number.POSITIVE_INFINITY, // min_x
+            Number.POSITIVE_INFINITY, // min_y
+            Number.NEGATIVE_INFINITY, // max_x
+            Number.NEGATIVE_INFINITY  // max_y
+        ];
+
+        const max_radius = Math.max(...PassiveNode.orbit_radii);
+        for (let group of this.groups.values()) {
+            this.dimensions = [
+                Math.min(group.x - max_radius, this.dimensions[0]),
+                Math.min(group.y - max_radius, this.dimensions[1]),
+                Math.max(group.x + max_radius, this.dimensions[2]),
+                Math.max(group.y + max_radius, this.dimensions[3])
+            ]
+
+        }
+    }
+
+    /**
+     * svg viewbox
+     * @returns {[*]}
+     */
+    get viewbox() {
+        return [
+            this.dimensions[0],
+            this.dimensions[1],
+            this.width,
+            this.height
+        ];
+    }
+
+    get width() {
+        return this.dimensions[2] - this.dimensions[0]
+    }
+
+    get height() {
+        return this.dimensions[3] - this.dimensions[1]
+    }
+
+    /**
+     * scales the given x in this tree to the matching x on a new container with a different width
+     * assuming top left is 0,0
+     *
+     * @param x
+     * @param new_width
+     * @returns {number}
+     */
+    xScaled(x, new_width) {
+        return (x - this.dimensions[0]) * new_width / this.width
+    }
+
+    /**
+     * see this.xScaled
+     *
+     * @param y
+     * @param new_height
+     * @returns {number}
+     */
+    yScaled(y, new_height) {
+        return (y - this.dimensions[1]) * new_height / this.height
+    }
+}
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const PassiveTreeDrawer = __webpack_require__(122);
+const $ = __webpack_require__(12);
+
+module.exports = class CanvasDrawer extends PassiveTreeDrawer {
+    constructor(passive_tree, canvas) {
+        super(passive_tree);
+
+        this.canvas = canvas;
+    }
+
+    /**
+     *
+     * @returns {CanvasRenderingContext2D|WebGLRenderingContext}
+     */
+    get ctx() {
+        return this.canvas.getContext("2d");
+    }
+
+    get width() {
+        return this.canvas.width;
+    }
+
+    get height() {
+        return this.canvas.height;
+    }
+
+    xScaled(x) {
+        return this.tree.xScaled(x, this.width)
+    }
+
+    yScaled(y) {
+        return this.tree.yScaled(y, this.height)
+    }
+
+    rScaled(r) {
+        return r * this.width / this.tree.width;
+    }
+
+    drawEdges(edges_cb) {
+        for (const [node, adj] of this.edgesDrawn(edges_cb)) {
+            this.ctx.beginPath();
+
+            // same orbit and same group
+            if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
+                this.drawArc(node, adj);
+            } else {
+                this.ctx.moveTo(this.xScaled(node.x), this.yScaled(node.y));
+                this.ctx.lineTo(this.xScaled(adj.x), this.yScaled(adj.y));
+            }
+
+            this.ctx.stroke();
+            this.ctx.closePath();
+        }
+    }
+
+    drawGroups(groups_cb) {
+        // group_id => radii of nodes of that group
+        const radii = this.radii;
+
+        for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
+            if (!radii.has(group_id)) {
+                radii.set(group_id, [0]);
+            }
+
+            this.ctx.beginPath();
+
+            this.ctx.arc(this.xScaled(group.x), this.yScaled(group.y)
+                        , this.rScaled(Math.max(...radii.get(group_id)))
+                        , 0, 2 * Math.PI);
+
+            this.ctx.stroke();
+            this.ctx.closePath();
+
+            for (const r of radii.get(group_id)) {
+                this.ctx.beginPath();
+                // Array(2).fill(2 * Math.PI * this.rScaled(r) / skills_per_orbit[orbit_radii.indexOf(r)])
+                this.ctx.setLineDash([1, 5]);
+
+                this.ctx.arc(this.xScaled(group.x), this.yScaled(group.y)
+                            , this.rScaled(r)
+                            , 0, 2 * Math.PI);
+
+                this.ctx.stroke();
+                this.ctx.closePath();
+            }
+        }
+    }
+
+    drawNodes(nodes_cb) {
+        for (const [_, node] of this.nodesDrawn(nodes_cb)) {
+            this.ctx.beginPath();
+            this.ctx.fillStyle = "red";
+
+            this.ctx.arc(this.xScaled(node.x), this.yScaled(node.y),
+                         this.rScaled(node.size), 0, 2 * Math.PI);
+
+            this.ctx.stroke();
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
+    }
+
+    /**
+     * stretches the canvas to fill its parent while preserving the tree ratio
+     * clears the canvas so call first
+     */
+    viewFull() {
+        const wrapper = $(this.canvas).parent();
+        const scale = Math.max(wrapper.width() / this.tree.width
+                             , wrapper.height() / this.tree.height );
+
+        this.canvas.width = this.tree.width * scale;
+        this.canvas.height = this.tree.height * scale;
+    }
+
+    drawArc(node, adj) {
+        const tau = 2 * Math.PI;
+
+        let [start_angle, end_angle] = [node.angle_clockwise, adj.angle_clockwise];
+
+
+        if (start_angle > end_angle){
+            [start_angle, end_angle] = [end_angle, start_angle]
+        }
+
+        if (end_angle - start_angle > tau) {
+            end_angle = tau - Number.EPSILON;
+        }
+
+        const counter_clockwise = end_angle - start_angle > Math.PI;
+
+        this.ctx.arc(this.xScaled(node.group.x), this.yScaled(node.group.y)
+                    , this.rScaled(node.radius), start_angle, end_angle
+                    , counter_clockwise);
+    }
+}
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const PassiveTreeDrawer = __webpack_require__(122);
+const d3 = __webpack_require__(89);
+
+module.exports = class SvgDrawer extends PassiveTreeDrawer {
+    /**
+     * @constructor
+     * @param {!PassiveTree} passive_tree
+     * @param {!D3Selection} d3_selection
+     */
+    constructor(passive_tree, d3_selection) {
+        super(passive_tree);
+
+        this.d3_svg = d3_selection;
+    }
+
+    drawNodes(nodes_cb) {
+        for (const [node_id, node] of this.nodesDrawn(nodes_cb)) {
+            this.d3_svg.append("circle")
+                .attr("r", node.size * 2)
+                .attr("cx", node.x)
+                .attr("cy", node.y)
+                .attr("class", ["tree_node", ...node.types].join(" "))
+                .attr("id", `node_${node_id}`)
+                .append("svg:title")
+                .text([node.name, ...node.stats].join("\n"));
+        }
+    }
+
+    drawGroups(groups_cb) {
+        // group_id => radii of nodes of that group
+        const radii = this.radii;
+
+        for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
+            if (!radii.has(group_id)) {
+                radii.set(group_id, [0])
+            }
+
+            this.d3_svg.append("circle")
+                .attr("r", Math.max(...radii.get(group_id)))
+                .attr("cx", group.x)
+                .attr("cy", group.y)
+                .attr("class", "tree_group")
+                .attr("id", `node_group_${group_id}`)
+                .append("svg:title")
+                .text(group_id);
+
+            for (const r of radii.get(group_id)) {
+                this.d3_svg.append("circle")
+                    .attr("r", r)
+                    .attr("cx", group.x)
+                    .attr("cy", group.y)
+                    .attr("class", "group_orbit")
+                    .attr("data-orbit-of", group_id)
+            }
+        }
+    }
+
+    drawEdges(edges_cb) {
+        for (const [node, adj] of this.edgesDrawn(edges_cb)) {
+            const class_names = ["tree_edge", ...node.types, ...adj.types];
+
+            // same orbit and same group
+            if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
+                this.d3_svg.append("path")
+                    .attr("class", class_names.join(" "))
+                    .attr("d", SvgDrawer.describeArc(node, adj))
+                    .attr("fill", "none");//*/
+            } else {
+                this.d3_svg.append("line")
+                    .attr("class", class_names.join(" "))
+                    .attr("x1", node.x)
+                    .attr("y1", node.y)
+                    .attr("x2", adj.x)
+                    .attr("y2", adj.y)
+            }
+        }
+    }
+
+    viewFull() {
+        this.d3_svg.attr("viewBox", this.tree.viewbox.join(" "))
+    }
+
+    /**
+     * computes a svg path for an arc between 2 nodes
+     * @param start {PoeNode}
+     * @param end {PoeNode}
+     * @returns {string}
+     */
+    static describeArc(start, end){
+        const x = start.group.x;
+        const y = start.group.y;
+        const r = start.radius;
+        const tau = 2 * Math.PI;
+
+        let start_angle = start.angle;
+        let end_angle = end.angle;
+
+        if (start_angle > end_angle){
+            [start_angle, end_angle] = [end_angle, start_angle]
+        }
+
+        if (end_angle - start_angle > tau) {
+            end_angle = tau - Number.EPSILON;
+        }
+
+        let sweep = 0;
+        if (end_angle - start_angle > Math.PI) {
+            sweep = 1;
+        }
+
+        return [
+            //'M', x, y,
+            'M', x + Math.cos(start_angle) * r, y - (Math.sin(start_angle) * r),
+            'A', r, r, 0, 0, sweep, x + Math.cos(end_angle) * r, y - (Math.sin(end_angle) * r),
+            //'L', x, y
+        ].join(' ');
+    }
+}
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const self = __webpack_require__(120);
+const tau = 2 * Math.PI;
+
+module.exports = class {
+    constructor(props, groups) {
+        this.props = props;
+        this.group = groups[this.group_id];
+    }
+
+    get name() {
+        return this.props.dn
+    }
+
+    get orbit() {
+        return this.props.o
+    }
+
+    get keystone() {
+        return this.props.ks
+    }
+
+    get mastery() {
+        return this.props.m
+    }
+
+    get notable() {
+        return this.props.not
+    }
+
+    get ascendancy() {
+        return !!this.props.ascendancyName
+    }
+
+    get jewel_socket() {
+        return this.props.isJewelSocket
+    }
+
+    // classes used to have a common start point
+    get start() {
+        return this.props.spc.length > 0
+    }
+
+    get adjacent() {
+        return this.props.out
+    }
+
+    /**
+     * normal node if not any special type
+     *
+     * @returns {boolean}
+     */
+    get normal() {
+        return !self.types.some(t => this[t])
+    }
+
+    /**
+     * although they should be mutually exclusive
+     * the data has flags for each of this type
+     * it should only return arrays with one element
+     *
+     * @returns {Array.<string>}
+     */
+    get types() {
+        // getters for the types
+       return [
+           ...self.types,
+           "normal"
+       ].filter(t => this[t])
+    }
+
+    get stats() {
+        return this.props.sd;
+    }
+
+    get group_id() {
+        return this.props.g
+    }
+
+    get radius() {
+        return self.orbit_radii[this.props.o]
+    }
+
+    get size() {
+        return self.sizes[Object.keys(self.sizes).filter(t => this[t])[0]]
+    }
+
+    /**
+     * calculates the radiant angle at which the node is located in its orbit
+     *
+     * consider a clock
+     * the oidx starts at 0:00 and moves clockwise
+     * angles in math increases counter clockwise starting at 3:00
+     * we need to adjust the angle accordingly
+     *
+     * @returns {number}
+     */
+    get angle() {
+        return (tau * (1 - this.props.oidx / self.skills_per_orbit[this.props.o]) + tau / 4) % tau
+    }
+
+    /**
+     * the angle if counted clockwise
+     */
+    get angle_clockwise() {
+        return (tau * this.props.oidx / self.skills_per_orbit[this.props.o] - tau / 4) % tau
+    }
+
+    get x() {
+        return this.group.x + this.radius * Math.cos(this.angle)
+    }
+
+    get y() {
+        return this.group.y - this.radius * Math.sin(this.angle)
+    }
+
+    get inspect() {
+        return Object.entries(Object.assign({
+            angle: this.angle,
+            x: this.x,
+            y: this.y,
+            g: Object.entries(this.group).join("\n")
+        }, this.props)).map(e => `${e[0]}: ${e[1]}`).join("\n")
+    }
+}
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports) {
+
+/**
+ * const relevant to PoeNode
+ * 
+ * main goal was to PoeNode = require('PoeNode.js'); node = new PoeNode(); types = PoeNode.types
+ * but there is no such thing as static getter
+ */
+module.exports = Object.freeze({
+    orbit_radii: [0, 82, 162, 335, 493],
+    skills_per_orbit: [1, 6, 12, 12, 40],
+    /**
+     * special node types
+     * @type {[*]}
+     */
+    types: [
+        "keystone",
+        "mastery",
+        "notable",
+        "start",
+        "ascendancy",
+        "jewel_socket"
+    ],
+    /**
+     * sprite sizes of the types
+     * @type {}
+     */
+    sizes: {
+        "keystone": 53,
+        "mastery": 99,
+        "notable": 38,
+        "start": 40,
+        "ascendancy": 27,
+        "jewel_socket": 40,
+        "normal": 27
+    }
+});
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports) {
+
+/**
+ * 
+ */
+module.exports = {
+    leagues: new Map([
+        [1, {name: "Breach", active: true, permanent: false}],
+        [2, {name: "Hardcore Breach", active: true, permanent: false}]
+    ]),
+    classes: new Map([
+        // name, parent is the parent class for ascendancies ie
+        // character_class, ascendancy is used for url generation
+        [1,  {name: "Marauder",     parent: null, character_class: 1, ascendancy: 0}],
+        [2,  {name: "Templar",      parent: null, character_class: 5, ascendancy: 0}],
+        [3,  {name: "Witch",        parent: null, character_class: 3, ascendancy: 0}],
+        [4,  {name: "Shadow",       parent: null, character_class: 6, ascendancy: 0}],
+        [5,  {name: "Ranger",       parent: null, character_class: 2, ascendancy: 0}],
+        [6,  {name: "Duelist",      parent: null, character_class: 4, ascendancy: 0}],
+        [7,  {name: "Scion",        parent: null, character_class: 7, ascendancy: 0}],
+        [8,  {name: "Berserker",    parent: 1,    character_class: 1, ascendancy: 2}],
+        [9,  {name: "Chieftain",    parent: 1,    character_class: 1, ascendancy: 3}],
+        [10, {name: "Juggernaut",   parent: 1,    character_class: 1, ascendancy: 1}],
+        [11, {name: "Inquisitor",   parent: 2,    character_class: 5, ascendancy: 1}],
+        [12, {name: "Guardian",     parent: 2,    character_class: 5, ascendancy: 3}],
+        [13, {name: "Hierophant",   parent: 2,    character_class: 5, ascendancy: 2}],
+        [14, {name: "Necromancer",  parent: 3,    character_class: 3, ascendancy: 3}],
+        [15, {name: "Occultist",    parent: 3,    character_class: 3, ascendancy: 1}],
+        [16, {name: "Elementalist", parent: 3,    character_class: 3, ascendancy: 2}],
+        [17, {name: "Assassin",     parent: 4,    character_class: 6, ascendancy: 1}],
+        [18, {name: "Saboteur",     parent: 4,    character_class: 6, ascendancy: 3}],
+        [19, {name: "Trickster",    parent: 4,    character_class: 6, ascendancy: 2}],
+        [20, {name: "Deadeye",      parent: 5,    character_class: 2, ascendancy: 2}],
+        [21, {name: "Raider",       parent: 5,    character_class: 2, ascendancy: 1}],
+        [22, {name: "Pathfinder",   parent: 5,    character_class: 2, ascendancy: 3}],
+        [23, {name: "Slayer",       parent: 6,    character_class: 4, ascendancy: 1}],
+        [24, {name: "Gladiator",    parent: 6,    character_class: 4, ascendancy: 2}],
+        [25, {name: "Champion",     parent: 6,    character_class: 4, ascendancy: 3}],
+        [26, {name: "Ascendant",    parent: 7,    character_class: 7, ascendancy: 1}]
+    ]),
+    trees: new Map([
+        ["250", {name: "2.5.0 Breach", version: 4}]
+    ]),
+    current_tree: "250"
+}
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports) {
+
+const DRAW_EDGE = Symbol("key for drawEdge cb");
+const DRAW_NODE = Symbol("key for drawNode cb");
+const DRAW_GROUP = Symbol("key for drawGroup cb");
+
+/**
+ * thats an abstract class
+ * so throw some error on every method
+ * so signal no impl
+ */
+module.exports = class PassiveTreeDrawer {
+    constructor(poe_tree) {
+        this.tree = poe_tree;
+
+        this.conf = {
+            [DRAW_NODE]: PassiveTreeDrawer.drawAll,
+            [DRAW_EDGE]: PassiveTreeDrawer.drawAll,
+            [DRAW_GROUP]: PassiveTreeDrawer.drawAll
+        };
+    }
+
+    *nodesDrawn(nodes_cb) {
+        if (nodes_cb) {
+            this.conf[DRAW_NODE] = nodes_cb;
+        }
+
+        for (const [node_id, node] of this.tree.nodes) {
+            if (this.conf[DRAW_NODE](node)) {
+                yield [node_id, node];
+            }
+        }
+    }
+
+    drawNodes() {
+        throw "PassiveTreeDrawer.drawNodes not implemented";
+    }
+
+    *groupsDrawn(groups_cb) {
+        if (groups_cb) {
+            this.conf[DRAW_GROUP] = groups_cb;
+        }
+
+        for (const [group_id, group] of this.tree.groups) {
+            if (this.conf[DRAW_GROUP](group)) {
+                yield [+group_id, group];
+            }
+        }
+    }
+
+    drawGroups() {
+        throw "PassiveTreeDrawer.drawGroups not implemented";
+    }
+
+    *edgesDrawn(edges_cb) {
+        if (edges_cb) {
+            this.conf[DRAW_EDGE] = edges_cb;
+        }
+
+        for (const [node, adj] of this.tree.edges) {
+            if (this.conf[DRAW_EDGE](node, adj)) {
+                yield [node, adj];
+            }
+        }
+    }
+
+    drawEdges() {
+        throw "PassiveTreeDrawer.drawGroups not implemented";
+    }
+
+    viewFull() {
+        throw "PassiveTreeDrawer.viewFull not implemented";
+    }
+
+    draw(user_conf = {}) {
+        this.conf = Object.assign(this.conf, user_conf);
+
+        // clear old
+        this.clear();
+
+        this.drawGroups(this.conf[DRAW_GROUP]);
+        this.drawNodes(this.conf[DRAW_NODE]);
+        this.drawEdges(this.conf[DRAW_EDGE]);
+    }
+
+    clear() {
+        throw "PassiveTreeDrawer.clear not implemented";
+    }
+
+    refresh() {
+        this.clear();
+        this.draw();
+    }
+
+    get radii() {
+        // group_id => radii of nodes of that group
+        const radii = new Map();
+
+        for (const [_, node] of this.nodesDrawn()) {
+            if (radii.has(node.group_id)) {
+                radii.get(node.group_id).add(node.radius)
+            } else {
+                radii.set(node.group_id, new Set([node.radius]))
+            }
+        }
+
+        return radii;
+    }
+
+    /**
+     * default cb to check if something should be drawn
+     * which defaults to true
+     *
+     * @returns {boolean}
+     */
+    static drawAll() {
+        return true;
+    }
+}
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Buffer = __webpack_require__(49);
+
+module.exports = {
+    /**
+     *
+     * @param str the encoded string from an url
+     * @returns {{version: *, starting_class: *, ascendancy: *, fullscreen: number, nodes: Array}}
+     */
+    decode: function(str) {
+        // deduced from loadHistoryUrl
+        const buf = Buffer(str.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+
+        let i = 0;
+
+        const version = buf.readInt32BE(i);
+        i += 4;
+
+        const starting_class = buf.readInt8(i);
+        i += 1;
+
+        const ascendancy = buf.readInt8(i);
+        i += 1;
+
+        let fullscreen = 0;
+        // source says > 0, PoESkillTree > 3
+        // we will adjust our offset before we start looping
+        if (version > 0) {
+            fullscreen = buf.readInt8(i);
+            i += 1
+        }
+
+        const nodes = [];
+
+        // see version comment
+        for (i -= (buf.length - i) % 2; i < buf.length; i += 2) {
+            nodes.push(buf.readUInt16BE(i))
+        }
+
+        return {
+            version: version,
+            starting_class: starting_class,
+            ascendancy: ascendancy,
+            fullscreen: fullscreen,
+            nodes: nodes
+        };
+    },
+    /**
+     * computes string for usage in tree planers
+     *
+     * @param version
+     * @param starting_class
+     * @param ascendancy
+     * @param nodes
+     * @param fullscreen
+     * @returns {string}
+     */
+    encode: function (version, starting_class, ascendancy, nodes, fullscreen = 0) {
+        const size = nodes.length * 2 + 6 + (version > 0 ? 1 : 0);
+        let i = 0;
+
+        const buf = new Buffer(size);
+
+        buf.writeInt32BE(version, i);
+        i += 4;
+
+        buf.writeInt8(starting_class, i);
+        i += 1;
+
+        buf.writeInt8(ascendancy, i);
+        i += 1;
+
+        if (version > 0) {
+            buf.writeInt8(fullscreen, i);
+            i += 1;
+        }
+
+        for (let node of nodes) {
+            buf.writeUInt16BE(node, i);
+
+            i += 2;
+        }
+
+        return buf.toString("base64").replace(/\+/g, '-').replace(/\//g, '_')
+    }
+};
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const PassiveTreeUrl = __webpack_require__(123);
+
+const NODES_KEY = "nodes";
+
+module.exports = class NodeAggregation {
+    constructor(rows) {
+        this.rows = rows
+    }
+
+    /**
+     * increments the value for the given key or creates it
+     *
+     * @param map
+     * @param key
+     */
+    static incMapKey(map, key) {
+        if (map.has(key)) {
+            map.set(key, map.get(key) + 1)
+        } else {
+            map.set(key, 1)
+        }
+    }
+
+    static get nodes_key() {
+        return NODES_KEY
+    }
+
+    /**
+     * filters each row by the given fn
+     *
+     * @param fn
+     * @returns {NodeAggregation}
+     */
+    filter(fn) {
+        return new NodeAggregation(this.rows.filter(fn))
+    }
+
+    /**
+     * sums up the occurrence of nodes in its rows
+     *
+     * @returns {Map}
+     */
+    sum(blacklist_fn) {
+        if (!blacklist_fn) {
+            // blacklist none per default
+            blacklist_fn = () => false
+        }
+
+        let aggregated = new Map();
+
+        for (let row of this.rows) {
+            let nodes = []
+
+            try {
+                nodes = PassiveTreeUrl.decode(row[NODES_KEY]).nodes;
+            } catch (e) {
+                console.warn(e);
+            }
+
+            for (const node_id of nodes) {
+                if (!blacklist_fn(node_id)) {
+                    NodeAggregation.incMapKey(aggregated, node_id);
+                }
+            }
+        }
+
+        return aggregated
+    }
+
+    /**
+     * calculates the gradient between 2 maps
+     * if a key is not set in one of the maps 0 is assumed
+     *
+     * @param map1
+     * @param map2
+     * @returns {Map}
+     */
+    static grad(map1, map2) {
+        let gradient = new Map();
+
+        for (let key of new Set(...aggregated1.keys(), ...aggregated2.keys())) {
+            const val1 = aggregated1.get(key) || 0;
+            const val2 = aggregated2.get(key) || 0;
+
+            gradient.set(key, val1 - val2)
+        }
+
+        return gradient
+    }
+};
 
 /***/ })
 /******/ ]);

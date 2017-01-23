@@ -1,10 +1,10 @@
 // deps
 const BusyIndicator = require('./src/BusyIndicator');
-const NodeAggregation = require('./src/NodeAggregation');
+const NodeAggregation = require('./src/poe/PassiveNodeAggregation');
 
 // Poe deps
-const PoeTree = require('./src/PoeTree');
-const POE = require('./src/PoeData');
+const PoeTree = require('./src/poe/PassiveTree');
+const POE = require('./src/poe/data');
 const passive_skill_tree = require(`./src/tree/${POE.current_tree}/tree`);
 
 // func deps
