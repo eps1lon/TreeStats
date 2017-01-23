@@ -1,5 +1,9 @@
 /* webstorm */
 .idea
+
+/* node */
 node_modules
+
+/* task server tmp */
 task/get_trees/*
 task/log/*  

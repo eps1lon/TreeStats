@@ -1,16 +1,9 @@
-//noinspection JSUnresolvedFunction
 const nodeAsync = require('async');
-//noinspection JSUnresolvedFunction
 const request = require('request');
-//noinspection JSUnresolvedFunction
-const path = require('path')
-//noinspection JSUnresolvedFunction
+const path = require('path');
 const fs = require('fs');
-//noinspection JSUnresolvedFunction
 const log4js = require('log4js');
-//noinspection JSUnresolvedFunction
 const csv = require('csv');
-//noinspection JSUnresolvedFunction
 const POE = require('./const.js');
 
 const treeUrl = require('./TreeUrl');
@@ -32,7 +25,6 @@ for (let [class_id, klass] of POE.classes) {
 }
 
 // passive fetches = |leagues| * total
-//noinspection JSUnresolvedVariable
 let [total, async_limit, ladder_limit, api_rate_limit] = process.argv.slice(2);
 // boundaries set by ggg api
 total = Math.min(15000, Math.max(1, total || 0));
