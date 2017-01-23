@@ -21526,6 +21526,25 @@ module.exports = async function (passive_tree, query_selector, user_conf = {}) {
             && (conf.ascendancy || !node.ascendancy)
     });
 
+    const $tt = $('#tree_node_tooltip');
+
+    $('.hover-helper')
+        .mouseover(function (event) {
+            const node_id = $(this).data('node_id');
+            const node = passive_tree.nodes.get(+node_id);
+
+            $tt
+                .css({
+                    left: event.pageX,
+                    top: event.pageY
+                })
+                .text([node.name, ...node.stats].join('\n'))
+                .show();
+        })
+        .mouseout(function () {
+            $tt.hide();
+        });
+
     return $tree;
 };
 
@@ -45121,15 +45140,23 @@ module.exports = class SvgDrawer extends PassiveTreeDrawer {
     }
 
     drawNodes(nodes_cb) {
+        const div = d3.select('#tree_node_tooltip');
+
         for (const [node_id, node] of this.nodesDrawn(nodes_cb)) {
             this.d3_svg.append("circle")
-                .attr("r", node.size * 2)
+                .attr('r', node.size * 1.5)
+                .attr('cx', node.x)
+                .attr('cy', node.y)
+                .attr('class', ['tree_node', ...node.types].join(' '))
+
+            // larger circle for easier hover
+            this.d3_svg.append("circle")
+                .attr("r", node.size * 3)
                 .attr("cx", node.x)
                 .attr("cy", node.y)
-                .attr("class", ["tree_node", ...node.types].join(" "))
+                .attr("class", ["tree_node", "hover-helper", ...node.types].join(" "))
                 .attr("id", `node_${node_id}`)
-                .append("svg:title")
-                .text([node.name, ...node.stats].join("\n"));
+                .attr('data-node_id', node_id)
         }
     }
 

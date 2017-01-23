@@ -71,5 +71,24 @@ module.exports = async function (passive_tree, query_selector, user_conf = {}) {
             && (conf.ascendancy || !node.ascendancy)
     });
 
+    const $tt = $('#tree_node_tooltip');
+
+    $('.hover-helper')
+        .mouseover(function (event) {
+            const node_id = $(this).data('node_id');
+            const node = passive_tree.nodes.get(+node_id);
+
+            $tt
+                .css({
+                    left: event.pageX,
+                    top: event.pageY
+                })
+                .text([node.name, ...node.stats].join('\n'))
+                .show();
+        })
+        .mouseout(function () {
+            $tt.hide();
+        });
+
     return $tree;
 };

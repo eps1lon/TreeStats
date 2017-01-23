@@ -15,11 +15,27 @@ svg {
     stroke-dasharray: 50;
 }
 
-.tree_node {
+.hover-helper {
+    fill-opacity: 0; /* fill none will disable tt */
+}
+
+.tree_node:not(.hover-helper) {
     fill: red;
 }
 
 .tree_edge {
     stroke: black;
     stroke-width: 10;
+}
+
+#tree_node_tooltip {	
+    position: absolute;			
+    text-align: center;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;
+    white-space: pre;			
 }
