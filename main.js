@@ -10,6 +10,7 @@ const passive_skill_tree = require(`./src/tree/${POE.current_tree}/tree`);
 // func deps
 const csvToDb = require('./src/csvToDb');
 const drawTree = require('./src/drawTree');
+const calculateHeatmapData = require('./src/calculateHeatmapData');
 
 // ext deps
 const $ = require('jquery');
@@ -115,74 +116,35 @@ $(document).ready(function () {
             }
         }
 
-        // id like to use await but nedb doesnt support promises
-        // and we cant use async functions as dom event handlers
-        db.then(function (rows) {
-            data_cursor = rows
-                .find({})
-                .sort({xp: -1})
-                .limit(+$("#filter_limit").val())
-                .skip(+$("#filter_offset").val());
+        const draw_ascendancies = $("#tree_show_ascendancies").is(":checked");
 
-            data_cursor.exec(function (e, rows) {
-                db_indicator.ready();
+        calculateHeatmapData(passive_tree, db, {
+            filter: filter,
+            limit: +$("#filter_limit").val(),
+            offset: +$("#filter_offset").val(),
+            sum_blacklist_fn: node_id => {
+                const node = passive_tree.nodes.get(node_id);
+                if (node) {
+                    // skip ascendancies
+                    return !draw_ascendancies && node.ascendancy;
+                }
+                return false;
+            }
+        }) // id like to use await but we cant use async functions as dom event handlers
+        .then(new_heatmap_data => {
+            db_indicator.ready();
+            console.log(new_heatmap_data);
 
-                const draw_ascendancies = $("#tree_show_ascendancies").is(":checked");
+            heatmap_data = new_heatmap_data;    
 
-                console.log(rows);
-                const aggregate = new NodeAggregation(rows);
-                // TODO blacklist by looking at displayed nodes
-                const summarized = aggregate.sum(function (node_id) {
-                    const node = passive_tree.nodes.get(node_id);
-                    if (node) {
-                        // skip ascendancies
-                        return !draw_ascendancies && node.ascendancy;
-                    }
-                    return false;
-                });
+            // and draw
+            $("#heatmap_redraw").click();
 
-                // candidate for max value but differences are not recognizeable anymore
-                //const passives_taken = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
-
-                // calculate the max
-                const max = Math.max(...summarized.values()); // most taken
-
-                // relative to trees which doesnt actually change the image, just doesnt look as dramatic
-                //const max = rows.length;
-
-                // create the data for the heatmaps.js api
-                const data = [...summarized].map(function (entry) {
-                    const [node_id, sum] = entry;
-
-                    const node = passive_tree.nodes.get(+node_id);
-
-                    if (!node) {
-                        console.log(node_id);
-                        console.log(sum)
-                    }
-
-                    return {
-                        x: passive_tree.xScaled(node.x, $heatmap_container.width()) | 0,
-                        y: passive_tree.yScaled(node.y, $heatmap_container.height()) | 0,
-                        value: sum
-                    }
-                });
-
-                // update the heatmap data
-                heatmap_data = {
-                    max: max,
-                    data: data
-                };
-
-                // and draw
-                $("#heatmap_redraw").click();
-
-                // explain the data
-                $('#tree_stats_header').text(`nodes taken sum heatmap for \
-                                              top ${rows.length} public passives \
-                                              on ${league_name} ladder`);
-            });
-        })
+            // explain the data
+            $('#tree_stats_header').text(`nodes taken sum heatmap for \
+                                            top ${heatmap_data.tally} public passives \
+                                            on ${league_name} ladder`);
+        });
     });
 
     // draw heatmap
@@ -207,7 +169,16 @@ $(document).ready(function () {
         });
 
         // display the data
-        heatmap.setData(heatmap_data);
+        heatmap.setData({
+            max: heatmap_data.max,
+            data: heatmap_data.data.map(d => {
+                return Object.assign({}, d, {
+                    x: passive_tree.xScaled(d.x, $heatmap_container.width()) | 0,
+                    y: passive_tree.yScaled(d.y, $heatmap_container.height()) | 0
+                });
+            })
+        });
+
         heatmap_indicator.ready();
     });
 
