@@ -18,6 +18,7 @@ module.exports = async function (filename) {
             })
             .then(body => {
                 csvParse(body, {
+                    auto_parse: true,
                     columns: true,
                     delimiter: ','
                 }, (err, rows) => {
