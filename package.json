@@ -18,6 +18,8 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "build": "webpack -p",
+    "devel": "webpack --colors --watch"
   }
 }
