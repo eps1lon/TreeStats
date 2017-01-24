@@ -10,7 +10,7 @@ module.exports = async (passive_tree, db, user_opts) => {
 
     return await new Promise((fulfill) => {
         db.then(function(rows) {
-            data_cursor = rows
+            const data_cursor = rows
                 .find(opts.filter)
                 .sort({xp: -1})
                 .limit(opts.limit)
