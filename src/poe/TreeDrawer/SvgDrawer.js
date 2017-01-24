@@ -1,5 +1,4 @@
 const PassiveTreeDrawer = require('../PassiveTreeDrawer');
-const d3 = require('d3');
 
 module.exports = class SvgDrawer extends PassiveTreeDrawer {
     /**
@@ -13,88 +12,105 @@ module.exports = class SvgDrawer extends PassiveTreeDrawer {
         this.d3_svg = d3_selection;
     }
 
+    /**
+     * draws the nodes onto the d3 selection
+     *
+     * @param {function} nodes_cb
+     */
     drawNodes(nodes_cb) {
-        const div = d3.select('#tree_node_tooltip');
-
         for (const [node_id, node] of this.nodesDrawn(nodes_cb)) {
-            this.d3_svg.append("circle")
+            this.d3_svg.append('circle')
                 .attr('r', node.size * 1.5)
                 .attr('cx', node.x)
                 .attr('cy', node.y)
-                .attr('class', ['tree_node', ...node.types].join(' '))
+                .attr('class', ['tree_node', ...node.types].join(' '));
 
             // larger circle for easier hover
-            this.d3_svg.append("circle")
-                .attr("r", node.size * 3)
-                .attr("cx", node.x)
-                .attr("cy", node.y)
-                .attr("class", ["tree_node", "hover-helper", ...node.types].join(" "))
-                .attr("id", `node_${node_id}`)
-                .attr('data-node_id', node_id)
+            this.d3_svg.append('circle')
+                .attr('r', node.size * 3)
+                .attr('cx', node.x)
+                .attr('cy', node.y)
+                .attr('class', [
+                    'tree_node', 'hover-helper',
+                    ...node.types,
+                ].join(' '))
+                .attr('id', `node_${node_id}`)
+                .attr('data-node_id', node_id);
         }
     }
 
+    /**
+     * draws the groups onto the d3 selection
+     *
+     * @param {function} groups_cb gets passed the group, return true if drawn
+     */
     drawGroups(groups_cb) {
         // group_id => radii of nodes of that group
         const radii = this.radii;
 
         for (const [group_id, group] of this.groupsDrawn(groups_cb)) {
             if (!radii.has(group_id)) {
-                radii.set(group_id, [0])
+                radii.set(group_id, [0]);
             }
 
-            this.d3_svg.append("circle")
-                .attr("r", Math.max(...radii.get(group_id)))
-                .attr("cx", group.x)
-                .attr("cy", group.y)
-                .attr("class", "tree_group")
-                .attr("id", `node_group_${group_id}`)
-                .append("svg:title")
+            this.d3_svg.append('circle')
+                .attr('r', Math.max(...radii.get(group_id)))
+                .attr('cx', group.x)
+                .attr('cy', group.y)
+                .attr('class', 'tree_group')
+                .attr('id', `node_group_${group_id}`)
+                .append('svg:title')
                 .text(group_id);
 
             for (const r of radii.get(group_id)) {
-                this.d3_svg.append("circle")
-                    .attr("r", r)
-                    .attr("cx", group.x)
-                    .attr("cy", group.y)
-                    .attr("class", "group_orbit")
-                    .attr("data-orbit-of", group_id)
+                this.d3_svg.append('circle')
+                    .attr('r', r)
+                    .attr('cx', group.x)
+                    .attr('cy', group.y)
+                    .attr('class', 'group_orbit')
+                    .attr('data-orbit-of', group_id);
             }
         }
     }
 
+    /**
+     * @param {function} edges_cb gets node, adj passed, return true if drawn
+     */
     drawEdges(edges_cb) {
         for (const [node, adj] of this.edgesDrawn(edges_cb)) {
-            const class_names = ["tree_edge", ...node.types, ...adj.types];
+            const class_names = ['tree_edge', ...node.types, ...adj.types];
 
             // same orbit and same group
             if (node.orbit == adj.orbit && node.group_id == adj.group_id) {
-                this.d3_svg.append("path")
-                    .attr("class", class_names.join(" "))
-                    .attr("d", SvgDrawer.describeArc(node, adj))
-                    .attr("fill", "none");//*/
+                this.d3_svg.append('path')
+                    .attr('class', class_names.join(' '))
+                    .attr('d', SvgDrawer.describeArc(node, adj))
+                    .attr('fill', 'none');
             } else {
-                this.d3_svg.append("line")
-                    .attr("class", class_names.join(" "))
-                    .attr("x1", node.x)
-                    .attr("y1", node.y)
-                    .attr("x2", adj.x)
-                    .attr("y2", adj.y)
+                this.d3_svg.append('line')
+                    .attr('class', class_names.join(' '))
+                    .attr('x1', node.x)
+                    .attr('y1', node.y)
+                    .attr('x2', adj.x)
+                    .attr('y2', adj.y);
             }
         }
     }
 
+    /**
+     * adjust viewbox to the passive tree
+     */
     viewFull() {
-        this.d3_svg.attr("viewBox", this.tree.viewbox.join(" "))
+        this.d3_svg.attr('viewBox', this.tree.viewbox.join(' '));
     }
 
     /**
      * computes a svg path for an arc between 2 nodes
-     * @param start {PoeNode}
-     * @param end {PoeNode}
-     * @returns {string}
+     * @param {PassiveNode} start
+     * @param {PassiveNode} end
+     * @return {string}
      */
-    static describeArc(start, end){
+    static describeArc(start, end) {
         const x = start.group.x;
         const y = start.group.y;
         const r = start.radius;
@@ -103,8 +119,8 @@ module.exports = class SvgDrawer extends PassiveTreeDrawer {
         let start_angle = start.angle;
         let end_angle = end.angle;
 
-        if (start_angle > end_angle){
-            [start_angle, end_angle] = [end_angle, start_angle]
+        if (start_angle > end_angle) {
+            [start_angle, end_angle] = [end_angle, start_angle];
         }
 
         if (end_angle - start_angle > tau) {
@@ -117,10 +133,9 @@ module.exports = class SvgDrawer extends PassiveTreeDrawer {
         }
 
         return [
-            //'M', x, y,
             'M', x + Math.cos(start_angle) * r, y - (Math.sin(start_angle) * r),
-            'A', r, r, 0, 0, sweep, x + Math.cos(end_angle) * r, y - (Math.sin(end_angle) * r),
-            //'L', x, y
+            'A', r, r, 0, 0, sweep,
+            x + Math.cos(end_angle) * r, y - (Math.sin(end_angle) * r),
         ].join(' ');
     }
-}
+};

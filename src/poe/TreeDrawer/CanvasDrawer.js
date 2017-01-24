@@ -1,7 +1,11 @@
-const PassiveTreeDrawer = require("../PassiveTreeDrawer");
+const PassiveTreeDrawer = require('../PassiveTreeDrawer');
 const $ = require('jquery');
 
 module.exports = class CanvasDrawer extends PassiveTreeDrawer {
+    /**
+     * @param {PassiveTree} passive_tree
+     * @param {Object} canvas the element
+     */
     constructor(passive_tree, canvas) {
         super(passive_tree);
 
@@ -10,32 +14,59 @@ module.exports = class CanvasDrawer extends PassiveTreeDrawer {
 
     /**
      *
-     * @returns {CanvasRenderingContext2D|WebGLRenderingContext}
+     * @return {CanvasRenderingContext2D|WebGLRenderingContext}
      */
     get ctx() {
-        return this.canvas.getContext("2d");
+        return this.canvas.getContext('2d');
     }
 
+    /**
+     * the width of the canvas
+     */
     get width() {
         return this.canvas.width;
     }
 
+    /**
+     * the height of the canvas
+     */
     get height() {
         return this.canvas.height;
     }
 
+    /**
+     * scales a x coordinate in respect to the given tree
+     *
+     * @param {number} x
+     * @return {number}
+     */
     xScaled(x) {
-        return this.tree.xScaled(x, this.width)
+        return this.tree.xScaled(x, this.width);
     }
 
+    /**
+     * scales a y coordinate in respect to the given tree
+     *
+     * @param {number} y
+     * @return {number}
+     */
     yScaled(y) {
-        return this.tree.yScaled(y, this.height)
+        return this.tree.yScaled(y, this.height);
     }
 
+    /**
+     * scales a radius in respect to the given tree
+     *
+     * @param {number} r
+     * @return {number}
+     */
     rScaled(r) {
         return r * this.width / this.tree.width;
     }
 
+    /**
+     * @param {function} edges_cb if a given edge should be drawn
+     */
     drawEdges(edges_cb) {
         for (const [node, adj] of this.edgesDrawn(edges_cb)) {
             this.ctx.beginPath();
@@ -53,6 +84,9 @@ module.exports = class CanvasDrawer extends PassiveTreeDrawer {
         }
     }
 
+    /**
+     * @param {function} groups_cb if a given group should be drawn
+     */
     drawGroups(groups_cb) {
         // group_id => radii of nodes of that group
         const radii = this.radii;
@@ -73,7 +107,8 @@ module.exports = class CanvasDrawer extends PassiveTreeDrawer {
 
             for (const r of radii.get(group_id)) {
                 this.ctx.beginPath();
-                // Array(2).fill(2 * Math.PI * this.rScaled(r) / skills_per_orbit[orbit_radii.indexOf(r)])
+                // Array(2).fill(2 * Math.PI * this.rScaled(r)
+                // / skills_per_orbit[orbit_radii.indexOf(r)])
                 this.ctx.setLineDash([1, 5]);
 
                 this.ctx.arc(this.xScaled(group.x), this.yScaled(group.y)
@@ -86,10 +121,13 @@ module.exports = class CanvasDrawer extends PassiveTreeDrawer {
         }
     }
 
+    /**
+     * @param {function} nodes_cb if a given node should be drawn
+     */
     drawNodes(nodes_cb) {
-        for (const [_, node] of this.nodesDrawn(nodes_cb)) {
+        for (const node of this.nodesDrawn(nodes_cb).values()) {
             this.ctx.beginPath();
-            this.ctx.fillStyle = "red";
+            this.ctx.fillStyle = 'red';
 
             this.ctx.arc(this.xScaled(node.x), this.yScaled(node.y),
                          this.rScaled(node.size), 0, 2 * Math.PI);
@@ -113,14 +151,24 @@ module.exports = class CanvasDrawer extends PassiveTreeDrawer {
         this.canvas.height = this.tree.height * scale;
     }
 
+    /**
+     * draws an arc from node to its adjacent
+     * assumes they're on the same orbit
+     *
+     * @param {PassiveNode} node
+     * @param {PassiveNode} adj
+     */
     drawArc(node, adj) {
         const tau = 2 * Math.PI;
 
-        let [start_angle, end_angle] = [node.angle_clockwise, adj.angle_clockwise];
+        let [start_angle, end_angle] = [
+            node.angle_clockwise,
+            adj.angle_clockwise,
+        ];
 
 
-        if (start_angle > end_angle){
-            [start_angle, end_angle] = [end_angle, start_angle]
+        if (start_angle > end_angle) {
+            [start_angle, end_angle] = [end_angle, start_angle];
         }
 
         if (end_angle - start_angle > tau) {
@@ -133,4 +181,4 @@ module.exports = class CanvasDrawer extends PassiveTreeDrawer {
                     , this.rScaled(node.radius), start_angle, end_angle
                     , counter_clockwise);
     }
-}
+};

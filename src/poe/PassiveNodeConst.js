@@ -1,7 +1,8 @@
 /**
  * const relevant to PoeNode
- * 
- * main goal was to PoeNode = require('PoeNode.js'); node = new PoeNode(); types = PoeNode.types
+ *
+ * main goal was to PoeNode = require('PoeNode.js'); node = new PoeNode();
+ * types = PoeNode.types
  * but there is no such thing as static getter
  */
 module.exports = Object.freeze({
@@ -12,24 +13,24 @@ module.exports = Object.freeze({
      * @type {[*]}
      */
     types: [
-        "keystone",
-        "mastery",
-        "notable",
-        "start",
-        "ascendancy",
-        "jewel_socket"
+        'keystone',
+        'mastery',
+        'notable',
+        'start',
+        'ascendancy',
+        'jewel_socket',
     ],
     /**
      * sprite sizes of the types
      * @type {}
      */
     sizes: {
-        "keystone": 53,
-        "mastery": 99,
-        "notable": 38,
-        "start": 40,
-        "ascendancy": 27,
-        "jewel_socket": 40,
-        "normal": 27
-    }
+        'keystone': 53,
+        'mastery': 99,
+        'notable': 38,
+        'start': 40,
+        'ascendancy': 27,
+        'jewel_socket': 40,
+        'normal': 27,
+    },
 });

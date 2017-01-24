@@ -2,55 +2,86 @@ const self = require('./PassiveNodeConst');
 const tau = 2 * Math.PI;
 
 module.exports = class {
+    /**
+     * @constructor
+     * @param {Object} props from the ggg passive skill tree data
+     * @param {Object} groups all groups from the ggg passive skill tree data
+     */
     constructor(props, groups) {
         this.props = props;
         this.group = groups[this.group_id];
     }
 
+    /**
+     * @return {string} name of the node
+     */
     get name() {
-        return this.props.dn
+        return this.props.dn;
     }
 
+    /**
+     * @return {number} orbit index
+     */
     get orbit() {
-        return this.props.o
+        return this.props.o;
     }
 
+    /**
+     * @return {boolean} if the node is a keystone
+     */
     get keystone() {
-        return this.props.ks
+        return this.props.ks;
     }
 
+    /**
+     * @return {boolean} if the node is a mastery
+     */
     get mastery() {
-        return this.props.m
+        return this.props.m;
     }
 
+    /**
+     * @return {boolean} if the node is a notable
+     */
     get notable() {
-        return this.props.not
+        return this.props.not;
     }
 
+    /**
+     * @return {boolean} if the node is a keystone
+     */
     get ascendancy() {
-        return !!this.props.ascendancyName
+        return !!this.props.ascendancyName;
     }
 
+    /**
+     * @return {boolean} if the node is a jewel socket
+     */
     get jewel_socket() {
-        return this.props.isJewelSocket
+        return this.props.isJewelSocket;
     }
 
-    // classes used to have a common start point
+    /**
+     * @return {boolean} if the node is a class start node
+     */
     get start() {
-        return this.props.spc.length > 0
+        return this.props.spc.length > 0;
     }
 
+    /**
+     * @return {number[]} adjacent node ids
+     */
     get adjacent() {
-        return this.props.out
+        return this.props.out;
     }
 
     /**
      * normal node if not any special type
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     get normal() {
-        return !self.types.some(t => this[t])
+        return !self.types.some((t) => this[t]);
     }
 
     /**
@@ -58,30 +89,42 @@ module.exports = class {
      * the data has flags for each of this type
      * it should only return arrays with one element
      *
-     * @returns {Array.<string>}
+     * @return {string[]}
      */
     get types() {
         // getters for the types
-       return [
-           ...self.types,
-           "normal"
-       ].filter(t => this[t])
+        return [
+            ...self.types,
+            'normal',
+        ].filter((t) => this[t]);
     }
 
+    /**
+     * @return {string[]} stats descriptions
+     */
     get stats() {
         return this.props.sd;
     }
 
+    /**
+     * @return {number}
+     */
     get group_id() {
-        return this.props.g
+        return this.props.g;
     }
 
+    /**
+     * @return {number} radius relative to group
+     */
     get radius() {
-        return self.orbit_radii[this.props.o]
+        return self.orbit_radii[this.orbit];
     }
 
+    /**
+     * @return {number} size of the biggest asset
+     */
     get size() {
-        return self.sizes[Object.keys(self.sizes).filter(t => this[t])[0]]
+        return self.sizes[Object.keys(self.sizes).filter((t) => this[t])[0]];
     }
 
     /**
@@ -92,33 +135,45 @@ module.exports = class {
      * angles in math increases counter clockwise starting at 3:00
      * we need to adjust the angle accordingly
      *
-     * @returns {number}
+     * @return {number}
      */
     get angle() {
-        return (tau * (1 - this.props.oidx / self.skills_per_orbit[this.props.o]) + tau / 4) % tau
+        return (tau *
+        (1 - this.props.oidx / self.skills_per_orbit[this.props.o])
+         + tau / 4) % tau;
     }
 
     /**
      * the angle if counted clockwise
      */
     get angle_clockwise() {
-        return (tau * this.props.oidx / self.skills_per_orbit[this.props.o] - tau / 4) % tau
+        return (tau *
+        this.props.oidx / self.skills_per_orbit[this.props.o] - tau / 4) % tau;
     }
 
+    /**
+     * @return {number} cartesian x
+     */
     get x() {
-        return this.group.x + this.radius * Math.cos(this.angle)
+        return this.group.x + this.radius * Math.cos(this.angle);
     }
 
+    /**
+     * @return {number} cartesian y
+     */
     get y() {
-        return this.group.y - this.radius * Math.sin(this.angle)
+        return this.group.y - this.radius * Math.sin(this.angle);
     }
 
+    /**
+     * @return {string}
+     */
     get inspect() {
         return Object.entries(Object.assign({
             angle: this.angle,
             x: this.x,
             y: this.y,
-            g: Object.entries(this.group).join("\n")
-        }, this.props)).map(e => `${e[0]}: ${e[1]}`).join("\n")
+            g: Object.entries(this.group).join('\n')
+        }, this.props)).map((e) => `${e[0]}: ${e[1]}`).join('\n');
     }
-}
+};

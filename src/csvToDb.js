@@ -3,24 +3,24 @@ const Nedb = require('nedb');
 
 /**
  * creates a nedb from a csv file
- * 
- * @param filename
- * @returns {Promise}
+ *
+ * @param {string} filename
+ * @return {Promise}
  */
-module.exports = async function (filename) {
-    return await new Promise(fulfill => {
-        //const body = await fetch(filename);
+module.exports = async function(filename) {
+    return await new Promise((fulfill) => {
+        // const body = await fetch(filename);
 
         fetch(filename)
-            .then(response => {
+            .then((response) => {
                 console.log('csv loaded');
-                return response.text()
+                return response.text();
             })
-            .then(body => {
+            .then((body) => {
                 csvParse(body, {
                     auto_parse: true,
                     columns: true,
-                    delimiter: ','
+                    delimiter: ',',
                 }, (err, rows) => {
                     if (err) throw err;
                     console.log('csv parsed');
@@ -31,7 +31,6 @@ module.exports = async function (filename) {
 
                     fulfill(db);
                 });
-            })
-        
+            });
     });
 };

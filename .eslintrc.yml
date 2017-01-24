@@ -1,2 +1,12 @@
 parserOptions:
   ecmaVersion: 8
+
+extends: "google"
+rules:
+  camelcase: 0
+  indent: 
+    - 2
+    - 4
+  max-len:
+    - 2
+    - ignoreTemplateLiterals: true

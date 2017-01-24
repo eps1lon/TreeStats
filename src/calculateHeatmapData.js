@@ -5,31 +5,32 @@ module.exports = async (passive_tree, db, user_opts) => {
         filter: {},
         sum_blacklist_fn: () => true,
         limit: Number.POSITIVE_INFINITY,
-        offset: 0
+        offset: 0,
     }, user_opts);
 
-    console.log(opts.filter)
-
     return await new Promise((fulfill) => {
-        db.then(function (rows) {
+        db.then(function(rows) {
             data_cursor = rows
                 .find(opts.filter)
                 .sort({xp: -1})
                 .limit(opts.limit)
                 .skip(opts.offset);
 
-            data_cursor.exec(function (e, rows) {
+            data_cursor.exec(function(e, rows) {
                 const aggregate = new NodeAggregation(rows);
                 const summarized = aggregate.sum(opts.sum_blacklist_fn);
 
-                // candidate for max value but differences are not recognizeable anymore
-                //const passives_taken = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
+                // candidate for max value but differences
+                // are not recognizeable anymore
+                // const passives_taken
+                // = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
 
                 // calculate the max
                 const max = Math.max(...summarized.values()); // most taken
 
-                // relative to trees which doesnt actually change the image, just doesnt look as dramatic
-                //const max = rows.length;
+                // relative to trees which doesnt actually change the image,
+                // just doesnt look as dramatic
+                // const max = rows.length;
 
                 // create the data for the heatmaps.js api
                 const data = [...summarized].map((entry) => {
@@ -40,15 +41,15 @@ module.exports = async (passive_tree, db, user_opts) => {
                     return {
                         x: node.x,
                         y: node.y,
-                        value: sum
-                    }
+                        value: sum,
+                    };
                 });
 
                 // update the heatmap data
                 fulfill({
                     max: max,
                     data: data,
-                    tally: rows.length
+                    tally: rows.length,
                 });
             });
         });

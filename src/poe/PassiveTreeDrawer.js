@@ -1,6 +1,6 @@
-const DRAW_EDGE = Symbol("key for drawEdge cb");
-const DRAW_NODE = Symbol("key for drawNode cb");
-const DRAW_GROUP = Symbol("key for drawGroup cb");
+const DRAW_EDGE = Symbol('key for drawEdge cb');
+const DRAW_NODE = Symbol('key for drawNode cb');
+const DRAW_GROUP = Symbol('key for drawGroup cb');
 
 /**
  * thats an abstract class
@@ -8,17 +8,24 @@ const DRAW_GROUP = Symbol("key for drawGroup cb");
  * so signal no impl
  */
 module.exports = class PassiveTreeDrawer {
+    /**
+     * @param {PassiveTree} poe_tree
+     */
     constructor(poe_tree) {
         this.tree = poe_tree;
 
         this.conf = {
             [DRAW_NODE]: PassiveTreeDrawer.drawAll,
             [DRAW_EDGE]: PassiveTreeDrawer.drawAll,
-            [DRAW_GROUP]: PassiveTreeDrawer.drawAll
+            [DRAW_GROUP]: PassiveTreeDrawer.drawAll,
         };
     }
 
-    *nodesDrawn(nodes_cb) {
+    /**
+     * @param {function} nodes_cb gets node passed, return true if drawn
+     *
+     */
+    * nodesDrawn(nodes_cb) {
         if (nodes_cb) {
             this.conf[DRAW_NODE] = nodes_cb;
         }
@@ -30,11 +37,18 @@ module.exports = class PassiveTreeDrawer {
         }
     }
 
+    /**
+     * abstract
+     */
     drawNodes() {
-        throw "PassiveTreeDrawer.drawNodes not implemented";
+        throw new Error('PassiveTreeDrawer.drawNodes not implemented');
     }
 
-    *groupsDrawn(groups_cb) {
+    /**
+     * @param {function} groups_cb gets group passed, return true if drawn
+     *
+     */
+    * groupsDrawn(groups_cb) {
         if (groups_cb) {
             this.conf[DRAW_GROUP] = groups_cb;
         }
@@ -46,11 +60,18 @@ module.exports = class PassiveTreeDrawer {
         }
     }
 
+    /**
+     * abstract
+     */
     drawGroups() {
-        throw "PassiveTreeDrawer.drawGroups not implemented";
+        throw new Error('PassiveTreeDrawer.drawGroups not implemented');
     }
 
-    *edgesDrawn(edges_cb) {
+    /**
+     * @param {function} edges_cb gets node, adj passed, return true if drawn
+     *
+     */
+    * edgesDrawn(edges_cb) {
         if (edges_cb) {
             this.conf[DRAW_EDGE] = edges_cb;
         }
@@ -62,14 +83,24 @@ module.exports = class PassiveTreeDrawer {
         }
     }
 
+    /**
+     * abstract
+     */
     drawEdges() {
-        throw "PassiveTreeDrawer.drawGroups not implemented";
+        throw new Error('PassiveTreeDrawer.drawGroups not implemented');
     }
 
+    /**
+     * abstract
+     */
     viewFull() {
-        throw "PassiveTreeDrawer.viewFull not implemented";
+        throw new Error('PassiveTreeDrawer.viewFull not implemented');
     }
 
+    /**
+     * draws everything relevant to the passive tree
+     * @param {Object} user_conf
+     */
     draw(user_conf = {}) {
         this.conf = Object.assign(this.conf, user_conf);
 
@@ -81,24 +112,35 @@ module.exports = class PassiveTreeDrawer {
         this.drawEdges(this.conf[DRAW_EDGE]);
     }
 
+    /**
+     * abstract
+     */
     clear() {
-        throw "PassiveTreeDrawer.clear not implemented";
+        throw new Error('PassiveTreeDrawer.clear not implemented');
     }
 
+    /**
+     * refreshes the drawn tree
+     */
     refresh() {
         this.clear();
         this.draw();
     }
 
+    /**
+     * calculates the max radius for each group
+     *
+     * @return {Map} group_id => max radius
+     */
     get radii() {
         // group_id => radii of nodes of that group
         const radii = new Map();
 
-        for (const [_, node] of this.nodesDrawn()) {
+        for (const [, node] of this.nodesDrawn()) {
             if (radii.has(node.group_id)) {
-                radii.get(node.group_id).add(node.radius)
+                radii.get(node.group_id).add(node.radius);
             } else {
-                radii.set(node.group_id, new Set([node.radius]))
+                radii.set(node.group_id, new Set([node.radius]));
             }
         }
 
@@ -109,9 +151,9 @@ module.exports = class PassiveTreeDrawer {
      * default cb to check if something should be drawn
      * which defaults to true
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     static drawAll() {
         return true;
     }
-}
+};

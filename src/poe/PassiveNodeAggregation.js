@@ -1,55 +1,63 @@
 const PassiveTreeUrl = require('./PassiveTreeUrl');
 
-const NODES_KEY = "nodes";
+const NODES_KEY = 'nodes';
 
 module.exports = class NodeAggregation {
+    /**
+     * @constructor
+     * @param {Object[]} rows list of objects with a nodes key
+     */
     constructor(rows) {
-        this.rows = rows
+        this.rows = rows;
     }
 
     /**
      * increments the value for the given key or creates it
      *
-     * @param map
-     * @param key
+     * @param {Map} map
+     * @param {any} key
      */
     static incMapKey(map, key) {
         if (map.has(key)) {
-            map.set(key, map.get(key) + 1)
+            map.set(key, map.get(key) + 1);
         } else {
-            map.set(key, 1)
+            map.set(key, 1);
         }
     }
 
+    /**
+     * @return {string} the key which is access to get the list of nodes
+     */
     static get nodes_key() {
-        return NODES_KEY
+        return NODES_KEY;
     }
 
     /**
      * filters each row by the given fn
      *
-     * @param fn
-     * @returns {NodeAggregation}
+     * @param {function} fn rows.filter wrapper
+     * @return {NodeAggregation}
      */
     filter(fn) {
-        return new NodeAggregation(this.rows.filter(fn))
+        return new NodeAggregation(this.rows.filter(fn));
     }
 
     /**
      * sums up the occurrence of nodes in its rows
      *
-     * @returns {Map}
+     * @param {function} blacklist_fn
+     * @return {Map}
      */
     sum(blacklist_fn) {
         if (!blacklist_fn) {
             // blacklist none per default
-            blacklist_fn = () => false
+            blacklist_fn = () => false;
         }
 
         let aggregated = new Map();
 
         for (let row of this.rows) {
-            let nodes = []
+            let nodes = [];
 
             try {
                 nodes = PassiveTreeUrl.decode(row[NODES_KEY]).nodes;
@@ -64,16 +72,16 @@ module.exports = class NodeAggregation {
             }
         }
 
-        return aggregated
+        return aggregated;
     }
 
     /**
      * calculates the gradient between 2 maps
      * if a key is not set in one of the maps 0 is assumed
      *
-     * @param map1
-     * @param map2
-     * @returns {Map}
+     * @param {Map} map1
+     * @param {Map} map2
+     * @return {Map}
      */
     static grad(map1, map2) {
         let gradient = new Map();
@@ -82,9 +90,9 @@ module.exports = class NodeAggregation {
             const val1 = aggregated1.get(key) || 0;
             const val2 = aggregated2.get(key) || 0;
 
-            gradient.set(key, val1 - val2)
+            gradient.set(key, val1 - val2);
         }
 
-        return gradient
+        return gradient;
     }
 };

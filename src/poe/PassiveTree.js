@@ -5,24 +5,27 @@ module.exports = class {
     /**
      * checks if the edge between these nodes is Path of X to X edge
      *
-     * @param source
-     * @param target
-     * @returns {boolean}
+     * @param {PassiveNode} source
+     * @param {PassiveNode} target
+     * @return {boolean}
      */
     static scionPathOfEdge(source, target) {
-        return source.ascendancy != target.ascendancy
+        return source.ascendancy != target.ascendancy;
     }
 
+    /**
+     * @constructor
+     * @param {Object} tree_data
+     */
     constructor(tree_data) {
         this.data = tree_data;
         this.groups = new Map(Object.entries(this.data.groups));
-        //noinspection JSUnresolvedFunction
-        this.nodes = new Map(this.data.nodes.map(function (n) {
+        this.nodes = new Map(this.data.nodes.map(function(n) {
             // [key, value]
-            return [n.id, new PassiveNodeInstance(n, tree_data.groups)]
+            return [n.id, new PassiveNodeInstance(n, tree_data.groups)];
         }));
 
-        this.edges = []
+        this.edges = [];
         for (const node of this.nodes.values()) {
             for (const adj_id of node.adjacent) {
                 this.edges.push([node, this.nodes.get(adj_id)]);
@@ -33,13 +36,14 @@ module.exports = class {
          * although we get min/max coords they don't include the ascendancy
          * so we do its ourselves
          * could do it via nodes but if we use the groups with the orbits
-         * we get a nice padding that could still be not enough if we draw the nodes to big
+         * we get a nice padding that could still be not enough
+         * if we draw the nodes to big
          */
         this.dimensions = [
             Number.POSITIVE_INFINITY, // min_x
             Number.POSITIVE_INFINITY, // min_y
             Number.NEGATIVE_INFINITY, // max_x
-            Number.NEGATIVE_INFINITY  // max_y
+            Number.NEGATIVE_INFINITY,  // max_y
         ];
 
         const max_radius = Math.max(...PassiveNode.orbit_radii);
@@ -48,53 +52,58 @@ module.exports = class {
                 Math.min(group.x - max_radius, this.dimensions[0]),
                 Math.min(group.y - max_radius, this.dimensions[1]),
                 Math.max(group.x + max_radius, this.dimensions[2]),
-                Math.max(group.y + max_radius, this.dimensions[3])
-            ]
-
+                Math.max(group.y + max_radius, this.dimensions[3]),
+            ];
         }
     }
 
     /**
      * svg viewbox
-     * @returns {[*]}
+     * @return {[*]}
      */
     get viewbox() {
         return [
             this.dimensions[0],
             this.dimensions[1],
             this.width,
-            this.height
+            this.height,
         ];
     }
 
+    /**
+     * calculates the width of the tree
+     */
     get width() {
-        return this.dimensions[2] - this.dimensions[0]
-    }
-
-    get height() {
-        return this.dimensions[3] - this.dimensions[1]
+        return this.dimensions[2] - this.dimensions[0];
     }
 
     /**
-     * scales the given x in this tree to the matching x on a new container with a different width
-     * assuming top left is 0,0
+     * calculates the height of the tree
+     */
+    get height() {
+        return this.dimensions[3] - this.dimensions[1];
+    }
+
+    /**
+     * scales the given x in this tree to the matching x on a new container
+     * with a different width assuming top left is 0,0
      *
-     * @param x
-     * @param new_width
-     * @returns {number}
+     * @param {number} x
+     * @param {number} new_width
+     * @return {number}
      */
     xScaled(x, new_width) {
-        return (x - this.dimensions[0]) * new_width / this.width
+        return (x - this.dimensions[0]) * new_width / this.width;
     }
 
     /**
      * see this.xScaled
      *
-     * @param y
-     * @param new_height
-     * @returns {number}
+     * @param {number} y
+     * @param {number} new_height
+     * @return {number}
      */
     yScaled(y, new_height) {
-        return (y - this.dimensions[1]) * new_height / this.height
+        return (y - this.dimensions[1]) * new_height / this.height;
     }
-}
+};

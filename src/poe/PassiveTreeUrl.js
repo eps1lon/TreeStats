@@ -3,8 +3,9 @@ const Buffer = require('Buffer');
 module.exports = {
     /**
      *
-     * @param str the encoded string from an url
-     * @returns {{version: *, starting_class: *, ascendancy: *, fullscreen: number, nodes: Array}}
+     * @param {string} str the encoded string from an url
+     * @return {{version: *, starting_class: *, ascendancy: *,
+     * fullscreen: number, nodes: Array}}
      */
     decode: function(str) {
         // deduced from loadHistoryUrl
@@ -26,14 +27,14 @@ module.exports = {
         // we will adjust our offset before we start looping
         if (version > 0) {
             fullscreen = buf.readInt8(i);
-            i += 1
+            i += 1;
         }
 
         const nodes = [];
 
         // see version comment
         for (i -= (buf.length - i) % 2; i < buf.length; i += 2) {
-            nodes.push(buf.readUInt16BE(i))
+            nodes.push(buf.readUInt16BE(i));
         }
 
         return {
@@ -41,20 +42,20 @@ module.exports = {
             starting_class: starting_class,
             ascendancy: ascendancy,
             fullscreen: fullscreen,
-            nodes: nodes
+            nodes: nodes,
         };
     },
     /**
      * computes string for usage in tree planers
      *
-     * @param version
-     * @param starting_class
-     * @param ascendancy
-     * @param nodes
-     * @param fullscreen
-     * @returns {string}
+     * @param {number} version
+     * @param {number} starting_class
+     * @param {number} ascendancy
+     * @param {number[]} nodes
+     * @param {number} fullscreen
+     * @return {string}
      */
-    encode: function (version, starting_class, ascendancy, nodes, fullscreen = 0) {
+    encode: function(version, starting_class, ascendancy, nodes, fullscreen = 0) {
         const size = nodes.length * 2 + 6 + (version > 0 ? 1 : 0);
         let i = 0;
 
@@ -80,6 +81,6 @@ module.exports = {
             i += 2;
         }
 
-        return buf.toString("base64").replace(/\+/g, '-').replace(/\//g, '_')
-    }
+        return buf.toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
+    },
 };
