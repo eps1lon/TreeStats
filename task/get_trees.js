@@ -4,9 +4,10 @@ const path = require('path');
 const fs = require('fs');
 const log4js = require('log4js');
 const csv = require('csv');
-const POE = require('./const.js');
 
-const treeUrl = require('./TreeUrl');
+const POE = require('../src/poe/data.js');
+
+const TreeUrl = require('../src/poe/PassiveTreeUrl');
 
 const tree_ident = POE.current_tree;
 
@@ -126,7 +127,7 @@ const ctimeOutFile = (filename) => {
  */
 const csvTransform = (data) => {
     const klass = classes.get(data.character.class);
-    const tree_url = treeUrl.encode(
+    const tree_url = TreeUrl.encode(
         POE.trees.get(POE.current_tree).version,
         klass.character_class,
         klass.ascendancy,
