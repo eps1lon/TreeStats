@@ -4,9 +4,9 @@ import {connect} from 'react-redux';
 import browserTransform from '../../d3-transform-browser';
 
 import {select, event} from 'd3-selection';
-import {zoom} from 'd3-zoom';
+import {zoom, zoomIdentity} from 'd3-zoom';
 
-import {zoomed} from '../actions/zoom';
+import {zoomed, resetZoom} from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import DataFilter from './DataFilter.jsx';
@@ -31,21 +31,39 @@ require('../style/tree_conf.css');
  *
  */
 class TreeStatsApp extends React.Component {
+  zoom = null
+
+  /**
+   * set the zoom behavior
+   */
+  componentWillMount() {
+    this.zoom = this.zoomBehavior();
+  }
+
   /**
    * @override
    * call zoomBehavior
    */
   componentDidMount() {
-    select(this.refs.heatmap_wrapper).call(this.zoomBehavior());
+    select(this.refs.heatmap_wrapper).call(this.zoom);
   }
 
   /**
+   * creates a d3 zoom zoomBehavior
+   * this should be called once in the component lifecycle
    * @return {d3-zoom}
    */
   zoomBehavior() {
     const zoomed = () => this.props.zoomed();
     return zoom()
       .on('zoom', zoomed);
+  }
+
+  /**
+   * resets the zoom
+   */
+  resetZoom() {
+    this.zoom.transform(select(this.refs.heatmap_wrapper), zoomIdentity);
   }
 
   /**
@@ -71,6 +89,7 @@ class TreeStatsApp extends React.Component {
           </div>
 
           <BusyIndicator busy={busy} />
+          <a href="#" onClick={() => this.resetZoom()}>reset zoom</a>
 
           <div className="heatmap-wrapper" ref="heatmap_wrapper">
             <div className="zoomable" style={{transform}}>
