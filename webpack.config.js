@@ -5,7 +5,7 @@ module.exports = {
     devtool: 'source-map',
     output: {
         path: __dirname + '/dist',
-        filename: 'react-bundle.js',
+        filename: 'bundle.js',
     },
     module: {
         loaders: [
