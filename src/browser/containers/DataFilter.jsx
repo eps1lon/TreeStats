@@ -3,10 +3,11 @@ import {connect} from 'react-redux';
 import {Control, Form} from 'react-redux-form';
 
 const POE = require('../../poe/data');
-import BusyIndicator from '../components/BusyIndicator.jsx';
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import {SELECT_ANY} from '../actions/rows';
+
+require('../style/data_filter.css');
 
 /**
  * TODO extract leagues, classes to props
@@ -16,7 +17,6 @@ class DataFilter extends React.Component {
      * @return {JSX}
      */
     render() {
-        const {busy} = this.props;
         const name_key = 'name';
         const any_entry = new Map([[SELECT_ANY, {[name_key]: 'all'}]]);
 
@@ -59,19 +59,9 @@ class DataFilter extends React.Component {
                         type="number"
                         model="data_filter.offset" />
                 </LabeledInput>
-
-                <button>Submit!</button>
-
-                <BusyIndicator busy={busy} />
             </Form>
         );
     }
 };
 
-const mapStateToProps = (state) => {
-    return {
-        busy: state.rows.fetching,
-    };
-};
-
-export default connect(mapStateToProps)(DataFilter);
+export default connect()(DataFilter);

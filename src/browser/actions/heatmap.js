@@ -59,8 +59,6 @@ export function calculateHeatmap(state) {
         return datum;
     });
 
-    console.log(data);
-
     return {
         type: CALCULATE_HEATMAP_DATA,
         payload: {

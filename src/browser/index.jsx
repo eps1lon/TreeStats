@@ -6,9 +6,6 @@ import store from './store.js';
 import TreeStatsApp from './containers/TreeStatsApp.jsx';
 import {csvToDb} from './actions/db.js';
 
-require('./style/tree.css');
-require('./style/tree_heatmap.css');
-
 /**
  *
  */

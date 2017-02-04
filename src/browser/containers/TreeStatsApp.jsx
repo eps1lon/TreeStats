@@ -8,6 +8,7 @@ import {zoom} from 'd3-zoom';
 
 import {zoomed} from '../actions/zoom';
 
+import BusyIndicator from '../components/BusyIndicator.jsx';
 import DataFilter from './DataFilter.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
 import TreeHeatmap from './TreeHeatmap.jsx';
@@ -15,6 +16,10 @@ import PassiveTree from './PassiveTree.jsx';
 import PassiveTreeConf from './PassiveTreeConf.jsx';
 
 import HeatmapLegend from '../components/HeatmapLegend.jsx';
+
+require('../style/tree.css');
+require('../style/tree_heatmap.css');
+require('../style/form.css');
 
 /**
  *
@@ -41,7 +46,7 @@ class TreeStatsApp extends React.Component {
      * @return {JSX}
      */
     render() {
-        const {tally, legend, zoom} = this.props;
+        const {busy, tally, legend, zoom} = this.props;
         const transform = browserTransform(zoom);
 
         return (
@@ -51,6 +56,9 @@ class TreeStatsApp extends React.Component {
                 <PassiveTreeConf />
                 <h2>{tally} trees evaluated</h2>
                 <HeatmapLegend data={legend} />
+
+                <BusyIndicator busy={busy} />
+
                 <div className="heatmap-wrapper" ref="heatmap_wrapper">
                     <div className="zoomable" style={{transform}}>
                         <TreeHeatmap />
@@ -64,6 +72,7 @@ class TreeStatsApp extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
+        busy: state.rows.fetching,
         legend: state.heatmap.legend,
         tally: state.rows.rows.length,
         zoom: state.zoom,

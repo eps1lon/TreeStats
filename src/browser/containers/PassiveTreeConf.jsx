@@ -4,6 +4,8 @@ import {Control, Form} from 'react-redux-form';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 
+require('../style/data_filter.css');
+
 /**
  *
  */
@@ -27,8 +29,6 @@ class PassiveTreeConf extends React.Component {
                     <label>Ascendancy?</label>
                     <Control.checkbox model="passive_tree_conf.ascendancy" />
                 </LabeledInput>
-
-                <button>Submit!</button>
             </Form>
         );
     }

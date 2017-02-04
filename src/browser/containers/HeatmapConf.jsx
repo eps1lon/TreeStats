@@ -4,6 +4,8 @@ import {Control, Form} from 'react-redux-form';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 
+require('../style/data_filter.css');
+
 /**
  *
  */
@@ -43,8 +45,6 @@ class HeatmapConf extends React.Component {
                         type="number"
                         model="heatmap_conf.max_opacity" />
                 </LabeledInput>
-
-                <button>Submit!</button>
             </Form>
         );
     }
