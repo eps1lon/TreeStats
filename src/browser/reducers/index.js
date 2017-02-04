@@ -6,12 +6,14 @@ import passive_tree from './passive_tree.js';
 import db from './db.js';
 import rows from './rows.js';
 import heatmap from './heatmap.js';
+import zoom from './zoom.js';
 
 const treeStatsApp = combineReducers({
     db,
     rows,
     heatmap,
     passive_tree,
+    zoom,
     ...createForms(forms),
 });
 

@@ -1,8 +1,12 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
+import browserTransform from '../../d3-transform-browser';
+
 import {select, event} from 'd3-selection';
-import {zoom, zoomIdentity} from 'd3-zoom';
+import {zoom} from 'd3-zoom';
+
+import {zoomed} from '../actions/zoom';
 
 import DataFilter from './DataFilter.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
@@ -12,35 +16,33 @@ import PassiveTreeConf from './PassiveTreeConf.jsx';
 
 import HeatmapLegend from '../components/HeatmapLegend.jsx';
 
-import browserTransform from '../../d3-transform-browser';
-
 /**
  *
  */
 class TreeStatsApp extends React.Component {
-    state = {
-        zoom: zoomIdentity,
-    }
-
+    /**
+     * @override
+     * call zoomBehavior
+     */
     componentDidMount() {
         select(this.refs.heatmap_wrapper).call(this.zoomBehavior());
     }
 
+    /**
+     * @return {d3-zoom}
+     */
     zoomBehavior() {
+        const zoomed = () => this.props.zoomed();
         return zoom()
-            .on('zoom', () => {
-                this.setState({
-                    zoom: event.transform,
-                });
-            });
+            .on('zoom', zoomed);
     }
 
     /**
      * @return {JSX}
      */
     render() {
-        const {tally, legend} = this.props;
-        const zoom = browserTransform(this.state.zoom);
+        const {tally, legend, zoom} = this.props;
+        const transform = browserTransform(zoom);
 
         return (
             <div className="react-fragment">
@@ -50,7 +52,7 @@ class TreeStatsApp extends React.Component {
                 <h2>{tally} trees evaluated</h2>
                 <HeatmapLegend data={legend} />
                 <div className="heatmap-wrapper" ref="heatmap_wrapper">
-                    <div className="zoomable" style={{transform: zoom}}>
+                    <div className="zoomable" style={{transform}}>
                         <TreeHeatmap />
                         <PassiveTree />
                     </div>
@@ -64,9 +66,17 @@ const mapStateToProps = (state) => {
     return {
         legend: state.heatmap.legend,
         tally: state.rows.rows.length,
+        zoom: state.zoom,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        zoomed: () => dispatch(zoomed(event.transform)),
     };
 };
 
 export default connect(
     mapStateToProps,
+    mapDispatchToProps,
 )(TreeStatsApp);

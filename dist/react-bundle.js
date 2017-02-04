@@ -28095,9 +28095,15 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(21);
 
+var _d3TransformBrowser = __webpack_require__(677);
+
+var _d3TransformBrowser2 = _interopRequireDefault(_d3TransformBrowser);
+
 var _d3Selection = __webpack_require__(380);
 
 var _d3Zoom = __webpack_require__(672);
+
+var _zoom = __webpack_require__(681);
 
 var _DataFilter = __webpack_require__(291);
 
@@ -28123,10 +28129,6 @@ var _HeatmapLegend = __webpack_require__(281);
 
 var _HeatmapLegend2 = _interopRequireDefault(_HeatmapLegend);
 
-var _d3TransformBrowser = __webpack_require__(677);
-
-var _d3TransformBrowser2 = _interopRequireDefault(_d3TransformBrowser);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -28136,36 +28138,34 @@ var TreeStatsApp = function (_React$Component) {
     (0, _inherits3.default)(TreeStatsApp, _React$Component);
 
     function TreeStatsApp() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
         (0, _classCallCheck3.default)(this, TreeStatsApp);
-
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = TreeStatsApp.__proto__ || (0, _getPrototypeOf2.default)(TreeStatsApp)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            zoom: _d3Zoom.zoomIdentity
-        }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
+        return (0, _possibleConstructorReturn3.default)(this, (TreeStatsApp.__proto__ || (0, _getPrototypeOf2.default)(TreeStatsApp)).apply(this, arguments));
     }
 
     (0, _createClass3.default)(TreeStatsApp, [{
         key: 'componentDidMount',
+
+        /**
+         * @override
+         * call zoomBehavior
+         */
         value: function componentDidMount() {
             (0, _d3Selection.select)(this.refs.heatmap_wrapper).call(this.zoomBehavior());
         }
+
+        /**
+         * @return {d3-zoom}
+         */
+
     }, {
         key: 'zoomBehavior',
         value: function zoomBehavior() {
             var _this2 = this;
 
-            return (0, _d3Zoom.zoom)().on('zoom', function () {
-                _this2.setState({
-                    zoom: _d3Selection.event.transform
-                });
-            });
+            var zoomed = function zoomed() {
+                return _this2.props.zoomed();
+            };
+            return (0, _d3Zoom.zoom)().on('zoom', zoomed);
         }
 
         /**
@@ -28177,9 +28177,10 @@ var TreeStatsApp = function (_React$Component) {
         value: function render() {
             var _props = this.props,
                 tally = _props.tally,
-                legend = _props.legend;
+                legend = _props.legend,
+                zoom = _props.zoom;
 
-            var zoom = (0, _d3TransformBrowser2.default)(this.state.zoom);
+            var transform = (0, _d3TransformBrowser2.default)(zoom);
 
             return _react2.default.createElement(
                 'div',
@@ -28199,7 +28200,7 @@ var TreeStatsApp = function (_React$Component) {
                     { className: 'heatmap-wrapper', ref: 'heatmap_wrapper' },
                     _react2.default.createElement(
                         'div',
-                        { className: 'zoomable', style: { transform: zoom } },
+                        { className: 'zoomable', style: { transform: transform } },
                         _react2.default.createElement(_TreeHeatmap2.default, null),
                         _react2.default.createElement(_PassiveTree2.default, null)
                     )
@@ -28215,11 +28216,20 @@ var TreeStatsApp = function (_React$Component) {
 var mapStateToProps = function mapStateToProps(state) {
     return {
         legend: state.heatmap.legend,
-        tally: state.rows.rows.length
+        tally: state.rows.rows.length,
+        zoom: state.zoom
     };
 };
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(TreeStatsApp);
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        zoomed: function zoomed() {
+            return dispatch((0, _zoom.zoomed)(_d3Selection.event.transform));
+        }
+    };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(TreeStatsApp);
 
 /***/ }),
 /* 275 */
@@ -30916,13 +30926,18 @@ var _heatmap = __webpack_require__(679);
 
 var _heatmap2 = _interopRequireDefault(_heatmap);
 
+var _zoom = __webpack_require__(680);
+
+var _zoom2 = _interopRequireDefault(_zoom);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var treeStatsApp = (0, _redux.combineReducers)((0, _extends3.default)({
     db: _db2.default,
     rows: _rows2.default,
     heatmap: _heatmap2.default,
-    passive_tree: _passive_tree2.default
+    passive_tree: _passive_tree2.default,
+    zoom: _zoom2.default
 }, (0, _reactReduxForm.createForms)(_forms2.default)));
 
 exports.default = treeStatsApp;
@@ -62628,7 +62643,7 @@ Object.defineProperty(exports, "__esModule", {
  * @return {string} the div style attr for transform
  */
 function browserTransform(transform) {
-  var translation = 'translate(' + (transform.x / transform.k | 0) + 'px, ' + (transform.y / transform.k | 0) + 'px)';
+  var translation = 'translate(' + (transform.x / transform.k | 0) + 'px' + (', ' + (transform.y / transform.k | 0) + 'px)');
   var scale = 'scale(' + transform.k + ')';
 
   return [translation, scale].join(' ');
@@ -62746,6 +62761,13 @@ function calculateHeatmap(state) {
     };
 };
 
+/**
+ * action creator for extrema change
+ *
+ * @param {Object} data see
+ * https://www.patrick-wied.at/static/heatmapjs/docs.html#h337-create #onExtremaChange
+ * @return {Object}
+ */
 function extremaChange(data) {
     return {
         type: EXTREMA_CHANGE,
@@ -62802,6 +62824,60 @@ var heatmap = function heatmap() {
 };
 
 exports.default = heatmap;
+
+/***/ }),
+/* 680 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _d3Zoom = __webpack_require__(672);
+
+var _zoom = __webpack_require__(681);
+
+var zoom = function zoom() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _d3Zoom.zoomIdentity;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _zoom.ZOOMED:
+            return action.payload.transform;
+        default:
+            return state;
+    }
+};
+
+exports.default = zoom;
+
+/***/ }),
+/* 681 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.zoomed = zoomed;
+var ZOOMED = exports.ZOOMED = 'ZOOMED';
+
+/**
+ * action creator if the user zoomed
+ * @param {d3-transform} transform
+ * @return {Object} action
+ */
+function zoomed(transform) {
+    return {
+        type: ZOOMED,
+        payload: { transform: transform }
+    };
+};
 
 /***/ })
 /******/ ]);

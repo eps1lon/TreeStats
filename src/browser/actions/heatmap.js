@@ -69,6 +69,13 @@ export function calculateHeatmap(state) {
     };
 };
 
+/**
+ * action creator for extrema change
+ *
+ * @param {Object} data see
+ * https://www.patrick-wied.at/static/heatmapjs/docs.html#h337-create #onExtremaChange
+ * @return {Object}
+ */
 export function extremaChange(data) {
     return {
         type: EXTREMA_CHANGE,
