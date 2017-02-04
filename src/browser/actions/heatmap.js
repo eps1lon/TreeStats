@@ -3,6 +3,7 @@ import PassiveTreeconf from '../../poe/PassiveTreeConf';
 import JavaHashSink from '../../hash_sinks/JavaHashSink';
 
 export const CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
+export const EXTREMA_CHANGE = 'EXTREMA_CHANGE';
 
 /**
  * calculates the heatmap from the current state
@@ -64,6 +65,15 @@ export function calculateHeatmap(state) {
         type: CALCULATE_HEATMAP_DATA,
         payload: {
             heatmap_data: {data, max, hash: hash_sink.hash},
+        },
+    };
+};
+
+export function extremaChange(data) {
+    return {
+        type: EXTREMA_CHANGE,
+        payload: {
+            legend: data,
         },
     };
 };

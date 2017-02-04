@@ -1,4 +1,4 @@
-import {calculateHeatmap} from '../actions/heatmap_data';
+import {calculateHeatmap} from '../actions/heatmap';
 import {initial_tree_conf} from '../reducers/forms';
 
 import objectEquals from '../../objectsEqual';

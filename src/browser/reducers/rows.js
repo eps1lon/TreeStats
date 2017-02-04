@@ -1,5 +1,5 @@
 import {SELECT_ROWS, UPDATE_ROWS} from '../actions/rows';
-import {CALCULATE_HEATMAP_DATA} from '../actions/heatmap_data';
+import {CALCULATE_HEATMAP_DATA} from '../actions/heatmap';
 
 const initial = {
     rows: [],

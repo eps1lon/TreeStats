@@ -12805,114 +12805,7 @@ module.exports = __webpack_require__(462);
 
 
 /***/ }),
-/* 113 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.CALCULATE_HEATMAP_DATA = undefined;
-
-var _values = __webpack_require__(312);
-
-var _values2 = _interopRequireDefault(_values);
-
-var _slicedToArray2 = __webpack_require__(66);
-
-var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
-
-var _toConsumableArray2 = __webpack_require__(22);
-
-var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
-
-exports.calculateHeatmap = calculateHeatmap;
-
-var _PassiveTreeConf = __webpack_require__(55);
-
-var _PassiveTreeConf2 = _interopRequireDefault(_PassiveTreeConf);
-
-var _JavaHashSink = __webpack_require__(303);
-
-var _JavaHashSink2 = _interopRequireDefault(_JavaHashSink);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var NodeAggregation = __webpack_require__(304);
-var CALCULATE_HEATMAP_DATA = exports.CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
-
-/**
- * calculates the heatmap from the current state
- * @param {Object} state redux state
- * @return {Object}
- */
-function calculateHeatmap(state) {
-    // rows for actual aggregation
-    // passive tree for position info
-    // tree conf to check if an aggregated value is visible
-    var rows = state.rows,
-        passive_tree_conf = state.passive_tree_conf,
-        passive_tree = state.passive_tree;
-
-
-    var conf = new _PassiveTreeConf2.default(passive_tree, passive_tree_conf);
-
-    var node_filter = function node_filter(node_id) {
-        var node = passive_tree.nodes.get(node_id);
-        // blacklist if not visible
-        return !conf.isVisibleNode(node);
-    };
-
-    var aggregate = new NodeAggregation(rows.rows);
-    var summarized = aggregate.sum(node_filter);
-
-    // candidate for max value but differences
-    // are not recognizeable anymore
-    // const passives_taken
-    // = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
-
-    // calculate the max
-    var max = Math.max.apply(Math, (0, _toConsumableArray3.default)(summarized.values())); // most taken
-
-    // relative to trees which doesnt actually change the image,
-    // just doesnt look as dramatic
-    // const max = rows.length;
-
-    // hash of the generated values
-    var hash_sink = new _JavaHashSink2.default();
-
-    // create the data for the heatmaps.js api
-    var data = [].concat((0, _toConsumableArray3.default)(summarized)).map(function (entry) {
-        var _entry = (0, _slicedToArray3.default)(entry, 2),
-            node_id = _entry[0],
-            sum = _entry[1];
-
-        var node = passive_tree.nodes.get(+node_id);
-
-        var datum = {
-            x: node.x,
-            y: node.y,
-            value: sum
-        };
-
-        hash_sink.put.apply(hash_sink, (0, _toConsumableArray3.default)((0, _values2.default)(datum)));
-
-        return datum;
-    });
-
-    console.log(data);
-
-    return {
-        type: CALCULATE_HEATMAP_DATA,
-        payload: {
-            heatmap_data: { data: data, max: max, hash: hash_sink.hash }
-        }
-    };
-};
-
-/***/ }),
+/* 113 */,
 /* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -28226,6 +28119,10 @@ var _PassiveTreeConf = __webpack_require__(294);
 
 var _PassiveTreeConf2 = _interopRequireDefault(_PassiveTreeConf);
 
+var _HeatmapLegend = __webpack_require__(281);
+
+var _HeatmapLegend2 = _interopRequireDefault(_HeatmapLegend);
+
 var _d3TransformBrowser = __webpack_require__(677);
 
 var _d3TransformBrowser2 = _interopRequireDefault(_d3TransformBrowser);
@@ -28278,7 +28175,9 @@ var TreeStatsApp = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var tally = this.props.tally;
+            var _props = this.props,
+                tally = _props.tally,
+                legend = _props.legend;
 
             var zoom = (0, _d3TransformBrowser2.default)(this.state.zoom);
 
@@ -28294,6 +28193,7 @@ var TreeStatsApp = function (_React$Component) {
                     tally,
                     ' trees evaluated'
                 ),
+                _react2.default.createElement(_HeatmapLegend2.default, { data: legend }),
                 _react2.default.createElement(
                     'div',
                     { className: 'heatmap-wrapper', ref: 'heatmap_wrapper' },
@@ -28314,6 +28214,7 @@ var TreeStatsApp = function (_React$Component) {
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
+        legend: state.heatmap.legend,
         tally: state.rows.rows.length
     };
 };
@@ -28364,7 +28265,7 @@ if (true) {
             return action.type.startsWith('rrf/');
         }
     });
-    //middlewares.push(logger);
+    middlewares.push(logger);
 }
 
 var middleware = _redux.applyMiddleware.apply(undefined, middlewares);
@@ -28526,7 +28427,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.heatmapDataActor = heatmapDataActor;
 
-var _heatmap_data = __webpack_require__(113);
+var _heatmap = __webpack_require__(678);
 
 var _forms = __webpack_require__(115);
 
@@ -28570,7 +28471,7 @@ function heatmapDataActor(state, dispatch) {
     if (some_dirty) {
         console.log('heatmap should update');
         old_tree_conf = passive_tree_conf;
-        dispatch((0, _heatmap_data.calculateHeatmap)(state));
+        dispatch((0, _heatmap.calculateHeatmap)(state));
     }
 };
 
@@ -28741,10 +28642,6 @@ var _objectsEqual = __webpack_require__(85);
 
 var _objectsEqual2 = _interopRequireDefault(_objectsEqual);
 
-var _HeatmapLegend = __webpack_require__(281);
-
-var _HeatmapLegend2 = _interopRequireDefault(_HeatmapLegend);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -28754,23 +28651,8 @@ var ReactHeatmap = function (_React$Component) {
     (0, _inherits3.default)(ReactHeatmap, _React$Component);
 
     function ReactHeatmap() {
-        var _ref;
-
-        var _temp, _this, _ret;
-
         (0, _classCallCheck3.default)(this, ReactHeatmap);
-
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
-
-        return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = ReactHeatmap.__proto__ || (0, _getPrototypeOf2.default)(ReactHeatmap)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            legend_data: {
-                min: 0,
-                max: 0,
-                gradient: {}
-            }
-        }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
+        return (0, _possibleConstructorReturn3.default)(this, (ReactHeatmap.__proto__ || (0, _getPrototypeOf2.default)(ReactHeatmap)).apply(this, arguments));
     }
 
     (0, _createClass3.default)(ReactHeatmap, [{
@@ -28786,24 +28668,10 @@ var ReactHeatmap = function (_React$Component) {
                 data = _props.data;
 
             this.heatmap = _heatmap2.default.create((0, _extends3.default)({}, conf, {
-                container: _reactDom2.default.findDOMNode(this),
-                onExtremaChange: this.onExtremaChange.bind(this)
+                container: _reactDom2.default.findDOMNode(this)
             }));
 
             this.setData(data);
-        }
-
-        /**
-         * callback for heatmap instance
-         * @param {Object} legend_data
-         */
-
-    }, {
-        key: 'onExtremaChange',
-        value: function onExtremaChange(legend_data) {
-            this.setState((0, _extends3.default)({}, this.state, {
-                legend_data: legend_data
-            }));
         }
 
         /**
@@ -28902,16 +28770,9 @@ var ReactHeatmap = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var legend_data = this.state.legend_data;
-
-
-            return _react2.default.createElement(
-                'div',
-                {
-                    className: 'heatmap',
-                    style: { width: '100%', height: '100%' } },
-                _react2.default.createElement(_HeatmapLegend2.default, { data: legend_data })
-            );
+            return _react2.default.createElement('div', {
+                className: 'heatmap',
+                style: { width: '100%', height: '100%' } });
         }
     }]);
     return ReactHeatmap;
@@ -30842,6 +30703,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends2 = __webpack_require__(86);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _getPrototypeOf = __webpack_require__(8);
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
@@ -30867,6 +30732,8 @@ var _react = __webpack_require__(2);
 var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(21);
+
+var _heatmap = __webpack_require__(678);
 
 var _Heatmap = __webpack_require__(280);
 
@@ -30912,12 +30779,30 @@ var mapStateToProps = function mapStateToProps(state) {
             maxOpacity: state.heatmap_conf.max_opacity / 100,
             radius: +state.heatmap_conf.radius
         },
-        data: state.heatmap_data,
+        data: state.heatmap,
         viewbox: state.passive_tree.viewbox
     };
 };
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(TreeHeatmap);
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        onExtremaChange: function onExtremaChange(data) {
+            dispatch((0, _heatmap.extremaChange)(data));
+        }
+    };
+};
+
+var mergeProps = function mergeProps(state_props, dispatch_props, own_props) {
+    return (0, _extends3.default)({}, own_props, state_props, {
+        conf: (0, _extends3.default)({}, state_props.conf, {
+            // merge the extremachange into to conf
+            // so that heatmap.js can easily work with it
+            onExtremaChange: dispatch_props.onExtremaChange
+        })
+    });
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps, mergeProps)(TreeHeatmap);
 
 /***/ }),
 /* 296 */
@@ -30992,39 +30877,7 @@ var db = function db() {
 exports.default = db;
 
 /***/ }),
-/* 297 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _heatmap_data = __webpack_require__(113);
-
-var initial = {
-    data: [],
-    max: 0,
-    hash: null
-};
-
-var heatmap_data = function heatmap_data() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initial;
-    var action = arguments[1];
-
-    switch (action.type) {
-        case _heatmap_data.CALCULATE_HEATMAP_DATA:
-            return action.payload.heatmap_data;
-        default:
-            return state;
-    }
-};
-
-exports.default = heatmap_data;
-
-/***/ }),
+/* 297 */,
 /* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -31059,16 +30912,16 @@ var _rows = __webpack_require__(300);
 
 var _rows2 = _interopRequireDefault(_rows);
 
-var _heatmap_data = __webpack_require__(297);
+var _heatmap = __webpack_require__(679);
 
-var _heatmap_data2 = _interopRequireDefault(_heatmap_data);
+var _heatmap2 = _interopRequireDefault(_heatmap);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var treeStatsApp = (0, _redux.combineReducers)((0, _extends3.default)({
     db: _db2.default,
     rows: _rows2.default,
-    heatmap_data: _heatmap_data2.default,
+    heatmap: _heatmap2.default,
     passive_tree: _passive_tree2.default
 }, (0, _reactReduxForm.createForms)(_forms2.default)));
 
@@ -31112,7 +30965,7 @@ var _extends3 = _interopRequireDefault(_extends2);
 
 var _rows = __webpack_require__(65);
 
-var _heatmap_data = __webpack_require__(113);
+var _heatmap = __webpack_require__(678);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31137,7 +30990,7 @@ var rows = function rows() {
             return (0, _extends3.default)({}, state, {
                 fetching: true
             });
-        case _heatmap_data.CALCULATE_HEATMAP_DATA:
+        case _heatmap.CALCULATE_HEATMAP_DATA:
             return (0, _extends3.default)({}, state, {
                 dirty: false
             });
@@ -62782,6 +62635,173 @@ function browserTransform(transform) {
 };
 
 exports.default = browserTransform;
+
+/***/ }),
+/* 678 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.EXTREMA_CHANGE = exports.CALCULATE_HEATMAP_DATA = undefined;
+
+var _values = __webpack_require__(312);
+
+var _values2 = _interopRequireDefault(_values);
+
+var _slicedToArray2 = __webpack_require__(66);
+
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
+var _toConsumableArray2 = __webpack_require__(22);
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+exports.calculateHeatmap = calculateHeatmap;
+exports.extremaChange = extremaChange;
+
+var _PassiveTreeConf = __webpack_require__(55);
+
+var _PassiveTreeConf2 = _interopRequireDefault(_PassiveTreeConf);
+
+var _JavaHashSink = __webpack_require__(303);
+
+var _JavaHashSink2 = _interopRequireDefault(_JavaHashSink);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NodeAggregation = __webpack_require__(304);
+var CALCULATE_HEATMAP_DATA = exports.CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
+var EXTREMA_CHANGE = exports.EXTREMA_CHANGE = 'EXTREMA_CHANGE';
+
+/**
+ * calculates the heatmap from the current state
+ * @param {Object} state redux state
+ * @return {Object}
+ */
+function calculateHeatmap(state) {
+    // rows for actual aggregation
+    // passive tree for position info
+    // tree conf to check if an aggregated value is visible
+    var rows = state.rows,
+        passive_tree_conf = state.passive_tree_conf,
+        passive_tree = state.passive_tree;
+
+
+    var conf = new _PassiveTreeConf2.default(passive_tree, passive_tree_conf);
+
+    var node_filter = function node_filter(node_id) {
+        var node = passive_tree.nodes.get(node_id);
+        // blacklist if not visible
+        return !conf.isVisibleNode(node);
+    };
+
+    var aggregate = new NodeAggregation(rows.rows);
+    var summarized = aggregate.sum(node_filter);
+
+    // candidate for max value but differences
+    // are not recognizeable anymore
+    // const passives_taken
+    // = Array.from(summarized.values()).reduce((s, v) => s + v, 0);
+
+    // calculate the max
+    var max = Math.max.apply(Math, (0, _toConsumableArray3.default)(summarized.values())); // most taken
+
+    // relative to trees which doesnt actually change the image,
+    // just doesnt look as dramatic
+    // const max = rows.length;
+
+    // hash of the generated values
+    var hash_sink = new _JavaHashSink2.default();
+
+    // create the data for the heatmaps.js api
+    var data = [].concat((0, _toConsumableArray3.default)(summarized)).map(function (entry) {
+        var _entry = (0, _slicedToArray3.default)(entry, 2),
+            node_id = _entry[0],
+            sum = _entry[1];
+
+        var node = passive_tree.nodes.get(+node_id);
+
+        var datum = {
+            x: node.x,
+            y: node.y,
+            value: sum
+        };
+
+        hash_sink.put.apply(hash_sink, (0, _toConsumableArray3.default)((0, _values2.default)(datum)));
+
+        return datum;
+    });
+
+    console.log(data);
+
+    return {
+        type: CALCULATE_HEATMAP_DATA,
+        payload: {
+            heatmap_data: { data: data, max: max, hash: hash_sink.hash }
+        }
+    };
+};
+
+function extremaChange(data) {
+    return {
+        type: EXTREMA_CHANGE,
+        payload: {
+            legend: data
+        }
+    };
+};
+
+/***/ }),
+/* 679 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends2 = __webpack_require__(86);
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _heatmap = __webpack_require__(678);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initial = {
+    data: [],
+    max: 0,
+    hash: null,
+    legend: {
+        min: 0,
+        max: 0,
+        gradient: {}
+    }
+};
+
+var heatmap = function heatmap() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initial;
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _heatmap.CALCULATE_HEATMAP_DATA:
+            return (0, _extends3.default)({}, state, action.payload.heatmap_data);
+        case _heatmap.EXTREMA_CHANGE:
+            return (0, _extends3.default)({}, state, {
+                legend: action.payload.legend
+            });
+        default:
+            return state;
+    }
+};
+
+exports.default = heatmap;
 
 /***/ })
 /******/ ]);

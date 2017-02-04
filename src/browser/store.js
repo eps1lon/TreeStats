@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === `development`) {
         // collapse react-redux-form
         collapsed: (getState, action) => action.type.startsWith('rrf/'),
     });
-    //middlewares.push(logger);
+    middlewares.push(logger);
 }
 
 const middleware = applyMiddleware(...middlewares);

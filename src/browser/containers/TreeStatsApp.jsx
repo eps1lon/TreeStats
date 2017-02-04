@@ -10,6 +10,8 @@ import TreeHeatmap from './TreeHeatmap.jsx';
 import PassiveTree from './PassiveTree.jsx';
 import PassiveTreeConf from './PassiveTreeConf.jsx';
 
+import HeatmapLegend from '../components/HeatmapLegend.jsx';
+
 import browserTransform from '../../d3-transform-browser';
 
 /**
@@ -37,7 +39,7 @@ class TreeStatsApp extends React.Component {
      * @return {JSX}
      */
     render() {
-        const {tally} = this.props;
+        const {tally, legend} = this.props;
         const zoom = browserTransform(this.state.zoom);
 
         return (
@@ -46,6 +48,7 @@ class TreeStatsApp extends React.Component {
                 <HeatmapConf />
                 <PassiveTreeConf />
                 <h2>{tally} trees evaluated</h2>
+                <HeatmapLegend data={legend} />
                 <div className="heatmap-wrapper" ref="heatmap_wrapper">
                     <div className="zoomable" style={{transform: zoom}}>
                         <TreeHeatmap />
@@ -59,6 +62,7 @@ class TreeStatsApp extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
+        legend: state.heatmap.legend,
         tally: state.rows.rows.length,
     };
 };

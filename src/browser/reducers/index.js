@@ -5,12 +5,12 @@ import forms from './forms.js';
 import passive_tree from './passive_tree.js';
 import db from './db.js';
 import rows from './rows.js';
-import heatmap_data from './heatmap_data.js';
+import heatmap from './heatmap.js';
 
 const treeStatsApp = combineReducers({
     db,
     rows,
-    heatmap_data,
+    heatmap,
     passive_tree,
     ...createForms(forms),
 });

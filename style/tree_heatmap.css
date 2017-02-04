@@ -24,6 +24,7 @@ body {
 .heatmap-legend {
     position: relative;
     width: 20%;
+    height: 2em;
 }
 
 .heatmap-min {
