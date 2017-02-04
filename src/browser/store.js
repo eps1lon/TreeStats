@@ -8,7 +8,7 @@ import {heatmapDataActor} from './actors/heatmapData';
 
 const middlewares = [thunkMiddleware];
 
-if (process.env.NODE_ENV === `development`) {
+if (process.env.NODE_ENV !== `production` && false) {
     const logger = createLogger({
         // collapse react-redux-form
         collapsed: (getState, action) => action.type.startsWith('rrf/'),

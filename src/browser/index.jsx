@@ -6,6 +6,9 @@ import store from './store.js';
 import TreeStatsApp from './containers/TreeStatsApp.jsx';
 import {csvToDb} from './actions/db.js';
 
+require('./style/tree.css');
+require('./style/tree_heatmap.css');
+
 /**
  *
  */
@@ -24,4 +27,4 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, document.getElementById('app'));
 
-store.dispatch(csvToDb('./task/get_trees/example_small.csv'));
+store.dispatch(csvToDb('./example_small.csv'));
