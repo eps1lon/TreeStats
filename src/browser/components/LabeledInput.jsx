@@ -35,7 +35,7 @@ class LabeledInput extends React.Component {
         const label = this.label;
         const input = this.input;
 
-        const id = input.props.model;
+        const id = input.props.model.replace(/\./g, '-');
 
         return (
             <span className="react-fragment">

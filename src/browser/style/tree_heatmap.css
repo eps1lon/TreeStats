@@ -21,33 +21,6 @@ body {
     left: 0px;
 }
 
-.heatmap-legend {
-    position: relative;
-    width: 20%;
-    height: 2em;
-}
-
-.heatmap-min {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-
-.heatmap-max {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
-
-.heatmap-legend canvas {
-    position: relative;
-    top: 1em;
-    right: 0px;
-    height: 1em;
-    width: 100%;
-    border: 1px solid black;
-}
-
 /* busy indicator */
 .busy-indicator {
     border: 2px solid #f3f3f3; /* Light grey */
@@ -66,4 +39,49 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+.data-legend {
+    padding: 1em;
+}
+
+.data-legend strong {
+    margin-right: 1em;
+}
+
+.data-legend em {
+    margin-right: 1em;
+}
+
+.data-tally {
+    text-decoration: underline;
+}
+
+.heatmap-legend {
+    display: inline-block;
+    position: relative;
+    width: 20%;
+    height: 2em;
+}
+
+.heatmap-min {
+    position: absolute;
+    top: 1em;
+    left: 0px;
+}
+
+.heatmap-max {
+    position: absolute;
+    top: 1em;
+    right: 0px;
+    margin-right: 0px !important;
+}
+
+.heatmap-legend canvas {
+    position: relative;
+    top: 0em;
+    right: 0px;
+    height: 1em;
+    width: 100%;
+    border: 1px solid black;
 }

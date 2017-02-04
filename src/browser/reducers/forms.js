@@ -17,12 +17,12 @@ export const initial_heatmap_conf = {
 };
 
 export const initial_tree_conf = {
-    group_orbits: true,
+    group_orbits: false,
     start: false,
     scionPathOf: false,
     ascendancy: true,
     mastery: false,
-    node_scale: 1,
+    node_scale: 1.7,
 };
 
 /**

@@ -1,0 +1,17 @@
+input, select {
+  margin-right: 1em;
+}
+
+input {
+  text-align: right;
+}
+
+label {
+  cursor: pointer;
+  margin-right: 3px;
+  font-size: 1.3em;
+}
+
+label:after {
+  content: ':';
+}

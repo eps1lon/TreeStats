@@ -16,11 +16,15 @@ class NavTab extends React.Component {
     const navClick = (event) => this.props.navClick(event, this.props.tab_key);
 
     return (
-      <div className='nav-tab'>
-        <ul className="nav tab" onClick={navClick} role="tablist">
+      <div className="react-nav-tabs">
+        <ul className="nav nav-tabs" onClick={navClick} role="tablist">
           {React.Children.map(children, function(child) {
+            const class_name = child.key == active ? 'active' : '';
+
             return (
-              <li data-toggle={child.key}>{child.key}</li>
+              <li role="presentation" className={class_name}>
+                <a href="#" data-toggle={child.key}>{child.key}</a>
+              </li>
             );
           })}
         </ul>
@@ -41,7 +45,6 @@ class NavTab extends React.Component {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  console.log('ownProps', ownProps);
   return {
     active: state.nav_tabs[ownProps.tab_key],
   };
