@@ -11,6 +11,7 @@ import {zoomed} from '../actions/zoom';
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import DataFilter from './DataFilter.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
+import NavTab from './NavTab.jsx';
 import TreeHeatmap from './TreeHeatmap.jsx';
 import PassiveTree from './PassiveTree.jsx';
 import PassiveTreeConf from './PassiveTreeConf.jsx';
@@ -19,6 +20,7 @@ import HeatmapLegend from '../components/HeatmapLegend.jsx';
 
 require('../style/tree.css');
 require('../style/tree_heatmap.css');
+require('../style/nav_tabs.css');
 require('../style/form.css');
 
 /**
@@ -51,9 +53,13 @@ class TreeStatsApp extends React.Component {
 
         return (
             <div className="react-fragment">
-                <DataFilter />
-                <HeatmapConf />
-                <PassiveTreeConf />
+              <NavTab tab_key="conf">
+                <DataFilter key="data_filter" />
+                <HeatmapConf key="heatmap_conf" />
+                <PassiveTreeConf key="tree_conf" />
+              </NavTab>
+
+
                 <h2>{tally} trees evaluated</h2>
                 <HeatmapLegend data={legend} />
 

@@ -6,9 +6,15 @@ import treeStatsApp from './reducers';
 import {rowsActor} from './actors/rows';
 import {heatmapDataActor} from './actors/heatmapData';
 
+const initial = {
+    nav_tabs: {
+        conf: 'data_filter', // show data filter initially
+    },
+};
+
 const middlewares = [thunkMiddleware];
 
-if (process.env.NODE_ENV !== `production` && false) {
+if (process.env.NODE_ENV !== `production` && true) {
     const logger = createLogger({
         // collapse react-redux-form
         collapsed: (getState, action) => action.type.startsWith('rrf/'),
@@ -20,9 +26,13 @@ const middleware = applyMiddleware(...middlewares);
 
 const store = createStore(
     treeStatsApp,
+    initial,
     middleware,
 );
 
+/*
+ * actor pattern
+ */
 let acting = false;
 const actors = [
     rowsActor,
