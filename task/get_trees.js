@@ -209,7 +209,10 @@ const ladder_urls
                 ladderApi(league, offset * ladder_limit, ladder_limit))
     ));
 
-logger.info(`fetching total of ${ladder_urls.length} ladders over ${leagues.size} leagues`);
+logger.info(
+    `fetching total of ${ladder_urls.length}`
+    + ` ladders over ${leagues.size} leagues`
+);
 
 fs.exists(latest, (exists) => {
     let old_trees = new Map();
@@ -280,7 +283,9 @@ const ladderComplete = (results, old_trees) => {
             progress++;
 
             if (progress % in_steps == 0) {
-                logger.info(`finished ${(100 * progress / passives_urls.length).toFixed(2)}%`);
+                logger.info(
+                    `finished`
+                    + `${(100 * progress / passives_urls.length).toFixed(2)}%`);
             }
 
             callback(err, transformed);
@@ -295,7 +300,9 @@ const ladderComplete = (results, old_trees) => {
 };
 
 const passivesComplete = (results) => {
-    logger.info(`finished passive fetch after ${runtime()}ms (${runtime() / results.length}ms/passive)`);
+    logger.info(
+        `finished passive fetch after ${runtime()}ms`
+        + `(${runtime() / results.length}ms/passive)`);
 
     let trees = [];
 

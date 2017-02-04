@@ -55,7 +55,8 @@ module.exports = {
      * @param {number} fullscreen
      * @return {string}
      */
-    encode: function(version, starting_class, ascendancy, nodes, fullscreen = 0) {
+    encode: function(version, starting_class, ascendancy, nodes,
+    fullscreen = 0) {
         const size = nodes.length * 2 + 6 + (version > 0 ? 1 : 0);
         let i = 0;
 

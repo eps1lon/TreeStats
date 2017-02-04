@@ -2,48 +2,47 @@ body {
     background-color: white;
 }
 
-#heatmap_wrapper {
+.heatmap-wrapper {
+    border: 1px solid black;
     position: relative;
+    overflow: hidden;
 }
 
-#heatmap, .passive_tree {
+.zoomable {
+    height: 100%;
+    width: 100%;
+}
+
+.heatmap, .passive-tree {
     position: absolute !important;
     top: 0px;
     left: 0px;
 }
 
-.passive_tree:not(.draw-target) {
-    display: none;
-}
-
-#heatmap_legend {
+.heatmap-legend {
     position: relative;
     width: 20%;
 }
 
-#heatmap_min {
+.heatmap-min {
     position: absolute;
     top: 0px;
     left: 0px;
 }
 
-#heatmap_max {
+.heatmap-max {
     position: absolute;
     top: 0px;
     right: 0px;
 }
 
-#heatmap_legend img {
+.heatmap-legend canvas {
     position: relative;
     top: 1em;
     right: 0px;
     height: 1em;
     width: 100%;
     border: 1px solid black;
-}
-
-#heatmap_wrapper {
-    height: 800px;
 }
 
 /* busy indicator */
@@ -54,17 +53,14 @@ body {
     width: 1em;
     height: 1em;
     animation: spin 2s linear infinite;
+    display: none;
+}
+
+.busy-indicator.active {
+    display: inline-block;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-input[type="submit"] + .busy-indicator {
-    display: none;
-}
-
-input[type="submit"][disabled="disabled"] + .busy-indicator {
-    display: inline-block;
 }

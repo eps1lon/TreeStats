@@ -4,6 +4,7 @@
   "dependencies": {
     "Buffer": "0.0.0",
     "async": "^2.1.4",
+    "babel-preset-react": "^6.22.0",
     "csv": "^1.1.0",
     "d3": "^4.4.2",
     "jquery": "^3.1.1",
@@ -15,18 +16,30 @@
   "devDependencies": {
     "assert": "^1.4.1",
     "babel-core": "^6.22.1",
+    "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.10",
+    "babel-plugin-transform-class-properties": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.22.0",
     "babel-plugin-transform-runtime": "^6.22.0",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-es2017": "^6.22.0",
     "eslint": "^3.14.0",
     "eslint-config-google": "^0.7.1",
+    "eslint-plugin-react": "^6.9.0",
     "mocha": "^3.2.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-redux": "^5.0.2",
+    "react-redux-form": "^1.5.3",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.7.4",
+    "redux-thunk": "^2.2.0",
     "webpack": "^2.2.0"
   },
   "scripts": {
     "test": "mocha --recursive",
     "build": "webpack -p",
-    "devel": "webpack --colors --watch"
+    "devel": "webpack --colors --watch",
+    "lint": "eslint ."
   }
 }

@@ -20,6 +20,13 @@ module.exports = class {
     }
 
     /**
+     * @return {string} unique id of the node
+     */
+    get id() {
+        return this.props.id;
+    }
+
+    /**
      * @return {number} orbit index
      */
     get orbit() {
@@ -114,6 +121,7 @@ module.exports = class {
     }
 
     /**
+     * @scalable
      * @return {number} radius relative to group
      */
     get radius() {
@@ -121,6 +129,7 @@ module.exports = class {
     }
 
     /**
+     * @scalable
      * @return {number} size of the biggest asset
      */
     get size() {
@@ -152,6 +161,7 @@ module.exports = class {
     }
 
     /**
+     * @scalable
      * @return {number} cartesian x
      */
     get x() {
@@ -159,6 +169,7 @@ module.exports = class {
     }
 
     /**
+     * @scalable
      * @return {number} cartesian y
      */
     get y() {
@@ -173,7 +184,7 @@ module.exports = class {
             angle: this.angle,
             x: this.x,
             y: this.y,
-            g: Object.entries(this.group).join('\n')
+            g: Object.entries(this.group).join('\n'),
         }, this.props)).map((e) => `${e[0]}: ${e[1]}`).join('\n');
     }
 };

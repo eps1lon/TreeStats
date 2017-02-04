@@ -1,11 +1,6 @@
 svg {
-    border: 1px solid black;
-}
-
-.tree_group {
-    fill: black;
-    fill-opacity: .5;
-    display: none;
+    width: 100%;
+    height: 100%;
 }
 
 .group_orbit {
@@ -24,6 +19,7 @@ svg {
 }
 
 .tree_edge {
+    fill: none; /* for arcs */
     stroke: black;
     stroke-width: 10;
 }

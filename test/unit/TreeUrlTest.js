@@ -1,3 +1,5 @@
+/* eslint max-len: off, comma-spacing: off, comma-dangle: off */
+
 const assert = require('assert');
 const TreeUrl = require('../../lib/TreeUrl.js');
 
@@ -29,28 +31,28 @@ const fixtures = [
     ]
 ];
 
-describe('TreeUrl', function () {
-    describe('#decode()', function () {
-        it('should decode every fixture correctly', function () {
+describe('TreeUrl', function() {
+    describe('#decode()', function() {
+        it('should decode every fixture correctly', function() {
             assert.deepEqual(
-                fixtures.map(m => TreeUrl.decode(m[1]))
-                , fixtures.map(m => m[0])
+                fixtures.map((m) => TreeUrl.decode(m[1]))
+                , fixtures.map((m) => m[0])
             );
-        })
+        });
     });
 
-    describe('#encode()', function () {
-        it('should encode every fixture correctly', function () {
+    describe('#encode()', function() {
+        it('should encode every fixture correctly', function() {
             assert.deepEqual(
-                fixtures.map(m => 
+                fixtures.map((m) =>
                     TreeUrl.encode(m[0].version
                                     , m[0].starting_class
                                     , m[0].ascendancy
                                     , m[0].nodes
                                     , m[0].fullscreen)
                 )
-                , fixtures.map(m => m[1])
+                , fixtures.map((m) => m[1])
             );
-        })
-    })
+        });
+    });
 });

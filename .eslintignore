@@ -1,0 +1,5 @@
+dist/*
+src/tree
+
+/* external libs */
+docs/demos/lib/ext

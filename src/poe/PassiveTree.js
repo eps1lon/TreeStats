@@ -16,9 +16,12 @@ module.exports = class {
     /**
      * @constructor
      * @param {Object} tree_data
+     * @param {any} id a unique id
      */
-    constructor(tree_data) {
+    constructor(tree_data, id) {
         this.data = tree_data;
+        this.id = id;
+
         this.groups = new Map(Object.entries(this.data.groups));
         this.nodes = new Map(this.data.nodes.map(function(n) {
             // [key, value]
@@ -105,5 +108,13 @@ module.exports = class {
      */
     yScaled(y, new_height) {
         return (y - this.dimensions[1]) * new_height / this.height;
+    }
+
+    /**
+     * @param {PassiveTree} other
+     * @return {boolean}
+     */
+    equals(other) {
+        return this.id === other.id;
     }
 };
