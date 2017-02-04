@@ -1,7 +1,6 @@
 const NodeAggregation = require('../../poe/PassiveNodeAggregation');
 import PassiveTreeconf from '../../poe/PassiveTreeConf';
 import JavaHashSink from '../../hash_sinks/JavaHashSink';
-import viewboxToTransform from '../../viewboxToTransform';
 
 export const CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
 
@@ -14,9 +13,7 @@ export function calculateHeatmap(state) {
     // rows for actual aggregation
     // passive tree for position info
     // tree conf to check if an aggregated value is visible
-    const {rows, passive_tree_conf, passive_tree, app} = state;
-    const transform
-        = viewboxToTransform(passive_tree.viewbox, app.width, app.height);
+    const {rows, passive_tree_conf, passive_tree} = state;
 
     const conf = new PassiveTreeconf(passive_tree, passive_tree_conf);
 
@@ -51,8 +48,8 @@ export function calculateHeatmap(state) {
         const node = passive_tree.nodes.get(+node_id);
 
         const datum = {
-            x: transform.applyX(node.x)|0,
-            y: transform.applyY(node.y)|0,
+            x: node.x,
+            y: node.y,
             value: sum,
         };
 

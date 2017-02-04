@@ -5,6 +5,8 @@ body {
 .heatmap-wrapper {
     border: 1px solid black;
     position: relative;
+    width: 1900px;
+    height: 1550px;
     overflow: hidden;
 }
 

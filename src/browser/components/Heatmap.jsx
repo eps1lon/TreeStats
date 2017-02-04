@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import Heatmap from 'heatmap.js';
 
 import objectsEqual from '../../objectsEqual';
-import browserTransform from '../../d3-transform-browser';
 import HeatmapLegend from './HeatmapLegend.jsx';
 
 /**
@@ -55,11 +54,10 @@ class ReactHeatmap extends React.Component {
      * @param {Object} new_props
      */
     componentWillReceiveProps(new_props) {
-        const {conf, data, zoom} = new_props;
+        const {conf, data} = new_props;
 
         this.setConf(conf);
         this.setData(data);
-        this.setZoom(zoom);
     }
 
     /**
@@ -78,21 +76,28 @@ class ReactHeatmap extends React.Component {
      */
     setData(data) {
         if (this.shouldDataUpdate(data)) {
-            this.heatmap.setData(data);
+            const {viewbox} = this.props;
+            const scaled_data = this.scaleData(data.data, viewbox);
+
+            this.heatmap.setData({
+                max: data.max,
+                data: scaled_data,
+            });
         }
     }
 
-    setZoom(zoom) {
-        if (this.shouldZoomUpdate(zoom)) {
-            const canvas = ReactDOM.findDOMNode(this).querySelector('.heatmap-canvas');
-            canvas.style.transform = browserTransform(zoom);
-        }
-    }
+    scaleData(data, viewbox) {
+        const bbox = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        const {width, height} = bbox;
 
-    shouldZoomUpdate(new_zoom) {
-        return true;
+        return data.map((datum) => {
+            return {
+                ...datum,
+                x: (datum.x - viewbox[0]) * width / viewbox[2] | 0,
+                y: (datum.y - viewbox[1]) * height / viewbox[3] | 0,
+            };
+        });
     }
-
 
     /**
      * @param {Object} new_conf

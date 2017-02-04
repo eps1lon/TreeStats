@@ -11,10 +11,10 @@ class TreeHeatmap extends React.Component {
      * @return {JSX}
      */
     render() {
-        const {conf, data, zoom} = this.props;
+        const {conf, data, viewbox} = this.props;
 
         return (
-            <Heatmap conf={conf} data={data} zoom={zoom} />
+            <Heatmap conf={conf} data={data} viewbox={viewbox} />
         );
     }
 }
@@ -28,7 +28,7 @@ const mapStateToProps = (state) => {
             radius: +state.heatmap_conf.radius,
         },
         data: state.heatmap_data,
-        zoom: state.app.zoom,
+        viewbox: state.passive_tree.viewbox,
     };
 };
 
