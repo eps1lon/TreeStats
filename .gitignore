@@ -3,6 +3,7 @@
 
 /* node */
 node_modules
+npm-debug.log
 
 /* task server tmp */
 task/get_trees/*_*_get_trees.csv
