@@ -6,6 +6,7 @@ import forms from './forms.js';
 import passive_tree from './passive_tree.js';
 import db from './db.js';
 import nav_tabs from './nav_tabs.js';
+import poe from './poe.js';
 import rows from './rows.js';
 import heatmap from './heatmap.js';
 import tooltip from './tooltip.js';
@@ -18,6 +19,7 @@ const treeStatsApp = combineReducers({
     heatmap,
     nav_tabs,
     passive_tree,
+    poe,
     tooltip,
     zoom,
     ...createForms(forms),

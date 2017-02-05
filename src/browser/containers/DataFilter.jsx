@@ -2,7 +2,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {Control, Form} from 'react-redux-form';
 
-const POE = require('../../poe/data');
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import {SELECT_ANY} from '../actions/rows';
@@ -10,18 +9,14 @@ import {SELECT_ANY} from '../actions/rows';
 require('../style/data_filter.css');
 
 /**
- * TODO extract leagues, classes to props
+ *
  */
 class DataFilter extends React.Component {
   /**
    * @return {JSX}
    */
   render() {
-    const name_key = 'name';
-    const any_entry = new Map([[SELECT_ANY, {[name_key]: 'all'}]]);
-
-    const leagues = new Map([...any_entry, ...POE.leagues]);
-    const classes = new Map([...any_entry, ...POE.classes]);
+    const {classes, leagues} = this.props;
 
     // disabling inputs/fieldset is a bad idea
     // because you will loose focus
@@ -68,4 +63,42 @@ class DataFilter extends React.Component {
   }
 };
 
-export default connect()(DataFilter);
+/**
+ * only display active leagues
+ * @param {Map} leagues
+ * @return {Map}
+ */
+const visibleLeagues = (leagues) => {
+  return new Map([...leagues.entries()].filter((entry) => entry[1].active));
+};
+
+/**
+ * boilerplate, display all classes
+ * @param {Map} classes
+ * @return {Map}
+ */
+const visibleClasses = (classes) => {
+  return classes;
+};
+
+/**
+ * @param {Map} map for {OptionsMap}
+ * @param {string} name_key key for options content
+ * @return {Map} a map for {OptionsMap}
+ */
+const addAnyEntry = (map, name_key = 'name') => {
+  if (map.has(SELECT_ANY)) console.warn('map already as anyEntry');
+
+  return new Map([[SELECT_ANY, {[name_key]: 'all'}], ...map]);
+};
+
+const mapStateToProps = (state) => {
+  return {
+    classes: addAnyEntry(visibleClasses(state.poe.classes)),
+    leagues: addAnyEntry(visibleLeagues(state.poe.leagues)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+)(DataFilter);
