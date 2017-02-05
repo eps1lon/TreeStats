@@ -1,7 +1,7 @@
 /* eslint max-len: off, comma-spacing: off, comma-dangle: off */
 
 const assert = require('assert');
-const TreeUrl = require('../../lib/TreeUrl.js');
+const TreeUrl = require('../../src/poe/PassiveTreeUrl.js');
 
 // working [tree, url] mappings
 const fixtures = [

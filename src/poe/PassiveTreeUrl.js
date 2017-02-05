@@ -1,4 +1,4 @@
-const Buffer = require('Buffer');
+const Buffer = require('buffer/').Buffer;
 
 module.exports = {
     /**
