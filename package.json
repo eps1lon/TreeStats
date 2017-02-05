@@ -56,6 +56,6 @@
     "build:clean": "del \"dist/!(.git*|Procfile)**\"",
     "build:copy": "copyfiles -u 1 public/* public/**/* dist",
     "prebuild": "npm run build:clean && npm run build:copy",
-    "build": "webpack -p"
+    "build": "NODE_ENV=\"production\" webpack -p --progress --colors"
   }
 }
