@@ -1,3 +1,4 @@
+/* eslint new-cap: off */
 const Buffer = require('buffer/').Buffer;
 
 module.exports = {
