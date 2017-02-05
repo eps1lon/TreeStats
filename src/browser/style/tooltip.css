@@ -1,0 +1,25 @@
+.tooltip {
+  background-color: black;
+  color: white;
+  padding: .5em 0 0 .5em;
+  position: absolute;
+  width: 400px;
+}
+
+.tooltip.contains_information {
+  opacity: 100 !important;
+}
+
+.passive-node .name {
+  display: block;
+  font-size: 1.5em;
+}
+
+.passive-node ul.stats {
+  list-style: none;
+  padding-left: .2em;
+}
+
+.passive-node .stat {
+  
+}

@@ -1,8 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {select} from 'd3-selection';
-
 import PassiveTreeConf from '../../poe/PassiveTreeConf';
 
 import Nodes from '../components/PassiveTree/Nodes.jsx';

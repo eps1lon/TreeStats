@@ -33,7 +33,6 @@ class NavTab extends React.Component {
           {React.Children.map(children, function(child) {
             const class_names = ['tab-pane'];
 
-            console.log(active, child.key);
             if (child.key == active) class_names.push('active');
 
             return <div className={class_names.join(' ')}>{child}</div>;

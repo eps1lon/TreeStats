@@ -20,9 +20,10 @@ class Node extends React.Component {
         const class_name = [...types, 'tree_node'].join(' ');
 
         return (
-            <circle
+            <circle is
+                poe-node_id={node.id}
                 cx={x} cy={y} r={size*conf.node_scale}
-                className={class_name} />
+                class={class_name} />
         );
     }
 };

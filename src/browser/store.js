@@ -14,7 +14,7 @@ const initial = {
 
 const middlewares = [thunkMiddleware];
 
-if (process.env.NODE_ENV !== `production` && true) {
+if (process.env.NODE_ENV !== `production` && false) {
     const logger = createLogger({
         // collapse react-redux-form
         collapsed: (getState, action) => action.type.startsWith('rrf/'),

@@ -6,12 +6,14 @@ import browserTransform from '../../d3-transform-browser';
 import {select, event} from 'd3-selection';
 import {zoom, zoomIdentity} from 'd3-zoom';
 
-import {zoomed, resetZoom} from '../actions/zoom';
+import {showTooltip} from '../actions/tooltip';
+import {zoomed} from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import DataFilter from './DataFilter.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
 import NavTab from './NavTab.jsx';
+import Tooltip from './Tooltip.jsx';
 import TreeHeatmap from './TreeHeatmap.jsx';
 import PassiveTree from './PassiveTree.jsx';
 import PassiveTreeConf from './PassiveTreeConf.jsx';
@@ -19,13 +21,16 @@ import PassiveTreeConf from './PassiveTreeConf.jsx';
 import HeatmapLegend from '../components/HeatmapLegend.jsx';
 
 require('bootstrap/dist/css/bootstrap.css');
+require('../style/app.css');
 require('../style/tree.css');
 require('../style/tree_heatmap.css');
 require('../style/nav_tabs.css');
 require('../style/form.css');
 require('../style/data_filter.css');
 require('../style/heatmap_conf.css');
+require('../style/tooltip.css');
 require('../style/tree_conf.css');
+require('../style/tooltip.css');
 
 /**
  *
@@ -71,6 +76,7 @@ class TreeStatsApp extends React.Component {
    */
   render() {
     const {busy, tally, legend, zoom} = this.props;
+    const tooltip = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
     const transform = browserTransform(zoom);
 
     return (
@@ -91,12 +97,19 @@ class TreeStatsApp extends React.Component {
           <BusyIndicator busy={busy} />
           <a href="#" onClick={() => this.resetZoom()}>reset zoom</a>
 
-          <div className="heatmap-wrapper" ref="heatmap_wrapper">
+          <div
+            className="heatmap-wrapper"
+            onMouseLeave={tooltip}
+            onMouseMove={tooltip}
+            ref="heatmap_wrapper">
+
             <div className="zoomable" style={{transform}}>
               <TreeHeatmap />
               <PassiveTree />
             </div>
           </div>
+
+          <Tooltip />
       </div>
     );
   };
@@ -113,6 +126,18 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    tooltip: (event, parent) => {
+      event.persist();
+
+      const {top, left} = parent.getBoundingClientRect();
+      const x = event.clientX - left;
+      const y = event.clientY - top;
+
+      const id_attr = event.target.attributes.getNamedItem('poe-node_id');
+      const node_id = id_attr ? +id_attr.value : undefined;
+
+      dispatch(showTooltip(x, y, node_id, event));
+    },
     zoomed: () => dispatch(zoomed(event.transform)),
   };
 };
