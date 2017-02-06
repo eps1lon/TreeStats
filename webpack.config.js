@@ -19,22 +19,9 @@ const config = {
   module: {
     loaders: [
       {
-        // keep this here rather than putting it into .babelrc
-        // because its part of the build
         test: /\.(js|jsx)$/,
         exclude: /(node_modules|src\/tree)/,
         loader: 'babel-loader',
-        query: {
-          // for some reason its not 'recursive' in a sense
-          // that it also includes previous presets
-          // 2017 only will keep the class syntax
-          presets: ['react', 'es2015', 'es2017'],
-          plugins: [
-            'transform-runtime',
-            'transform-object-rest-spread',
-            'transform-class-properties',
-          ],
-        },
       },
       {
         test: /\.css$/,
