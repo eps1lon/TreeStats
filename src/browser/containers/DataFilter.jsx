@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {Control, Form} from 'react-redux-form';
+import {Control, Form} from 'react-redux-form/immutable';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
@@ -94,8 +94,8 @@ const addAnyEntry = (map, name_key = 'name') => {
 
 const mapStateToProps = (state) => {
   return {
-    classes: addAnyEntry(visibleClasses(state.poe.classes)),
-    leagues: addAnyEntry(visibleLeagues(state.poe.leagues)),
+    classes: addAnyEntry(visibleClasses(state.get('poe').get('classes'))),
+    leagues: addAnyEntry(visibleLeagues(state.get('poe').get('leagues'))),
   };
 };
 

@@ -45,13 +45,15 @@ function selectRows(db, data_filter) {
  */
 export function updateRows() {
     return (dispatch, getState) => {
-        const {db, data_filter} = getState();
+        const state = getState();
+        const db = state.get('db');
+        const data_filter = state.get('data_filter');
 
         dispatch({
             type: SELECT_ROWS,
         });
 
-        return selectRows(db.db, data_filter).then((rows) => {
+        return selectRows(db.get('db'), data_filter.toJS()).then((rows) => {
             dispatch({
                 type: UPDATE_ROWS,
                 payload: {rows},

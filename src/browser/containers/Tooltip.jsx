@@ -39,33 +39,36 @@ class Tooltip extends React.Component {
 /**
  * gets that value for a node on the heatmap under a transformation
  * @param {PassiveNode} node
- * @param {heatmap} heatmap_instance
+ * @param {string} canvas_selector
  * @param {Transform} transform
- * @return {number|undefined}
+ * @return {number}
  */
-const getValueFor = (node, heatmap_instance, transform) => {
-  if (!heatmap_instance || !node) {
+const getValueFor = (node, canvas_selector, transform) => {
+  if (!canvas_selector || !node) {
     return undefined;
   }
+
+  console.warn('getValueFor to be implemented');
 
   const x = transform.applyX(node.x);
   const y = transform.applyY(node.y);
 
-  return heatmap_instance.getValueAt({x, y});
+  return 0;
 };
 
 const mapStateToProps = (state) => {
-  const {instance} = state.heatmap;
-  const node = state.passive_tree.nodes.get(state.tooltip.node_id);
+  const node_id = state.get('tooltip').get('node_id');
+  const node = state.get('passive_tree').nodes.get(node_id);
   const value = getValueFor(
-    node, instance,
+    node, 'canvas',
     Transform.viewboxToTransform(
-      state.passive_tree.viewbox,
-      state.app.width, state.app.height)
+      state.get('passive_tree').viewbox,
+      state.get('app').get('width'), state.get('app').get('height'),
+    ),
   );
 
   return {
-    event: state.tooltip.event,
+    event: state.get('tooltip').get('event'),
     node,
     value,
   };

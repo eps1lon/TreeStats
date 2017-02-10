@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import browserTransform from '../../d3-transform-browser';
+import {immutableToTransform} from '../../d3-transform-immutable';
 
 import {select, event} from 'd3-selection';
 import {zoom, zoomIdentity} from 'd3-zoom';
@@ -11,6 +12,7 @@ import {zoomed} from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import DataFilter from './DataFilter.jsx';
+import DataSources from './DataSources.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
 import NavTab from './NavTab.jsx';
 import Tooltip from './Tooltip.jsx';
@@ -82,6 +84,7 @@ class TreeStatsApp extends React.Component {
     return (
       <div className="react-fragment">
         <NavTab tab_key="conf">
+          <DataSources key="data" />
           <DataFilter key="data_filter" />
           <HeatmapConf key="heatmap_conf" />
           <PassiveTreeConf key="tree_conf" />
@@ -117,10 +120,10 @@ class TreeStatsApp extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    busy: state.rows.fetching,
-    legend: state.heatmap.legend,
-    tally: state.rows.rows.length,
-    zoom: state.zoom,
+    busy: state.get('rows').get('fetching'),
+    legend: state.get('heatmap').get('legend').toJS(),
+    tally: state.get('rows').get('rows').length,
+    zoom: immutableToTransform(state.get('zoom')),
   };
 };
 
@@ -136,7 +139,7 @@ const mapDispatchToProps = (dispatch) => {
       const id_attr = event.target.attributes.getNamedItem('poe-node_id');
       const node_id = id_attr ? +id_attr.value : undefined;
 
-      dispatch(showTooltip(x, y, node_id, event));
+      //dispatch(showTooltip(x, y, node_id, event));
     },
     zoomed: () => dispatch(zoomed(event.transform)),
   };

@@ -4,20 +4,21 @@ import JavaHashSink from '../../hash_sinks/JavaHashSink';
 
 export const CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
 export const EXTREMA_CHANGE = 'EXTREMA_CHANGE';
-export const SET_INSTANCE = 'SET_INSTANCE';
 
 /**
  * calculates the heatmap from the current state
- * @param {Object} state redux state
+ * @param {Map} state redux state
  * @return {Object}
  */
 export function calculateHeatmap(state) {
   // rows for actual aggregation
   // passive tree for position info
   // tree conf to check if an aggregated value is visible
-  const {rows, passive_tree_conf, passive_tree} = state;
+  const rows = state.get('rows');
+  const passive_tree_conf = state.get('passive_tree_conf');
+  const passive_tree = state.get('passive_tree');
 
-  const conf = new PassiveTreeconf(passive_tree, passive_tree_conf);
+  const conf = new PassiveTreeconf(passive_tree_conf.toJS());
 
   const node_filter = (node_id) => {
     const node = passive_tree.nodes.get(node_id);
@@ -25,7 +26,7 @@ export function calculateHeatmap(state) {
     return !conf.isVisibleNode(node);
   };
 
-  const aggregate = new NodeAggregation(rows.rows);
+  const aggregate = new NodeAggregation(rows.get('rows').toJS());
   const summarized = aggregate.sum(node_filter);
 
   // candidate for max value but differences
@@ -62,9 +63,7 @@ export function calculateHeatmap(state) {
 
   return {
     type: CALCULATE_HEATMAP_DATA,
-    payload: {
-      heatmap_data: {data, max, hash: hash_sink.hash},
-    },
+    payload: {data, max, hash: hash_sink.hash},
   };
 };
 
@@ -80,21 +79,6 @@ export function extremaChange(data) {
     type: EXTREMA_CHANGE,
     payload: {
       legend: data,
-    },
-  };
-};
-
-/**
- * shares the current heatmap instance
- * useful for heatmapInstance#getValueAt
- * @param {heatmapInstance} heatmap_instance the instance returned from #create
- * @return {Object} redux action
- */
-export function setInstance(heatmap_instance) {
-  return {
-    type: SET_INSTANCE,
-    payload: {
-      instance: heatmap_instance,
     },
   };
 };

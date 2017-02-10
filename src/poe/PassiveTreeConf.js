@@ -6,14 +6,9 @@ const PoeTree = require('./PassiveTree');
  */
 class PassiveTreeConf {
     /**
-     * @param {PassiveTree} passive_tree
      * @param {Object} conf_props
      */
-    constructor(passive_tree, conf_props) {
-        /**
-         * @type {PassiveTree}
-         */
-        this.tree = passive_tree;
+    constructor(conf_props) {
         /**
          * @type {Object}
          */

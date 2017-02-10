@@ -19,13 +19,11 @@ class ReactHeatmap extends React.Component {
 	 * init the heatmap because the create method needs an existing container
 	 */
 	componentDidMount() {
-		const {conf, data, onInstanceCreation} = this.props;
+		const {conf, data} = this.props;
 		this.heatmap = Heatmap.create({
 			...conf,
 			container: ReactDOM.findDOMNode(this),
 		});
-
-		onInstanceCreation(this.heatmap);
 
 		this.setData(data);
 	}

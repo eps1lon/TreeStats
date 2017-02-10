@@ -45,7 +45,7 @@ class NavTab extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    active: state.nav_tabs[ownProps.tab_key],
+    active: state.get('nav_tabs').get(ownProps.tab_key),
   };
 };
 

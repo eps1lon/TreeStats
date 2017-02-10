@@ -1,5 +1,5 @@
 import React from 'react';
-import {Control} from 'react-redux-form';
+import {Control} from 'react-redux-form/immutable';
 
 /**
  * creates a {Control.select} from the given map

@@ -1,9 +1,10 @@
+import {Map} from 'immutable';
 const POE = require('../../poe/data');
 
-const initial = {
-  classes: POE.classes,
-  leagues: POE.leagues,
-};
+const initial = Map({
+  classes: Map(POE.classes),
+  leagues: Map(POE.leagues),
+});
 
 const poe = (state = initial, action) => {
   return state;

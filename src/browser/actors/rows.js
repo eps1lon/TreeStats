@@ -12,10 +12,11 @@ let old_data_filter = initial_data_filter;
  * @param {function} dispatch
  */
 export function rowsActor(state, dispatch) {
-    const {db, data_filter} = state;
+    const db = state.get('db');
+    const data_filter = state.get('data_filter');
 
     const some_dirty = [
-        db.dirty,
+        db.get('dirty'),
         !objectEquals(
             old_data_filter,
             data_filter,

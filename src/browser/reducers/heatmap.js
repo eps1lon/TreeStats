@@ -1,38 +1,31 @@
+import Immutable, {List, Map} from 'immutable';
+
 import {
   CALCULATE_HEATMAP_DATA,
   EXTREMA_CHANGE,
-  SET_INSTANCE,
 } from '../actions/heatmap';
 
-const initial = {
-  data: [],
+const initial = Map({
+  data: List(),
   max: 0,
   hash: null,
   instance: null,
-  legend: {
+  legend: Map({
     min: 0,
     max: 0,
-    gradient: {},
-  },
-};
+    gradient: Map(),
+  }),
+});
 
 const heatmap = function(state = initial, action) {
   switch (action.type) {
   case CALCULATE_HEATMAP_DATA:
-    return {
-      ...state,
-      ...action.payload.heatmap_data,
-    };
+    return state
+      .set('max', action.payload.max)
+      .set('data', List(action.payload.data))
+      .set('hash', action.payload.hash);
   case EXTREMA_CHANGE:
-    return {
-      ...state,
-      legend: action.payload.legend,
-    };
-  case SET_INSTANCE:
-    return {
-      ...state,
-      instance: action.payload.instance,
-    };
+    return state.set('legend', Immutable.fromJS(action.payload.legend));
   default:
     return state;
   }

@@ -7,10 +7,10 @@ export const RESET_ZOOM = 'RESET_ZOOM';
  * @return {Object} action
  */
 export function zoomed(transform) {
-    return {
-        type: ZOOMED,
-        payload: {transform},
-    };
+  return {
+    type: ZOOMED,
+    payload: {transform},
+  };
 };
 
 /**
@@ -18,7 +18,7 @@ export function zoomed(transform) {
  * @return {Object} action
  */
 export function resetZoom() {
-    return {
-        type: RESET_ZOOM,
-    };
+  return {
+    type: RESET_ZOOM,
+  };
 };
