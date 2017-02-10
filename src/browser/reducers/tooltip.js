@@ -5,7 +5,7 @@ const initial = Map({
   x: 0,
   y: 0,
   node_id: undefined,
-  event: null,
+  event: Map(),
 });
 
 const tooltip = (state = initial, action) => {

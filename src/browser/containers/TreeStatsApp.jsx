@@ -139,7 +139,7 @@ const mapDispatchToProps = (dispatch) => {
       const id_attr = event.target.attributes.getNamedItem('poe-node_id');
       const node_id = id_attr ? +id_attr.value : undefined;
 
-      //dispatch(showTooltip(x, y, node_id, event));
+      dispatch(showTooltip(x, y, node_id, event));
     },
     zoomed: () => dispatch(zoomed(event.transform)),
   };

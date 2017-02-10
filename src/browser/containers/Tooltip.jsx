@@ -22,8 +22,6 @@ class Tooltip extends React.Component {
     const left = (event ? event.clientX + window.scrollX : 0) + offset_left;
     const style = {top, left};
 
-    console.log();
-
     const class_names = ['tooltip'];
     if (contains_information) class_names.push('contains_information');
 
@@ -68,7 +66,7 @@ const mapStateToProps = (state) => {
   );
 
   return {
-    event: state.get('tooltip').get('event'),
+    event: state.get('tooltip').get('event').toJS(),
     node,
     value,
   };
