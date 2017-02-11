@@ -1,5 +1,5 @@
-import {Map} from 'immutable';
-import {createStore, applyMiddleware} from 'redux';
+import { Map } from 'immutable';
+import { createStore, applyMiddleware } from 'redux';
 import createLogger from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
@@ -8,29 +8,29 @@ import {rowsActor} from './actors/rows';
 import {heatmapDataActor} from './actors/heatmapData';
 
 const initial = Map({
-    nav_tabs: Map({
-        conf: 'data', // show data source initially
-    }),
+  nav_tabs: Map({
+    conf: 'data_filter', // show data source initially
+  }),
 });
 
 const middlewares = [thunkMiddleware];
 
 if (process.env.NODE_ENV !== `production` && true) {
-    const logger = createLogger({
-        // collapse all
-        collapsed: true,
-        // TOOLTIPs fire on mousemove
-        predicate: (getState, action) => !/TOOLTIP/.test(action.type),
-    });
-    middlewares.push(logger);
+  const logger = createLogger({
+    // collapse all
+    collapsed: true,
+    // TOOLTIPs fire on mousemove
+    predicate: (getState, action) => !/TOOLTIP|ZOOMED/.test(action.type),
+  });
+  middlewares.push(logger);
 }
 
 const middleware = applyMiddleware(...middlewares);
 
 const store = createStore(
-    treeStatsApp,
-    initial,
-    middleware,
+  treeStatsApp,
+  initial,
+  middleware,
 );
 
 /*
@@ -38,20 +38,20 @@ const store = createStore(
  */
 let acting = false;
 const actors = [
-    rowsActor,
-    heatmapDataActor,
+  rowsActor,
+  heatmapDataActor,
 ];
 
 store.subscribe(function() {
-    if (!acting) {
-        acting = true;
+  if (!acting) {
+    acting = true;
 
-        for (const actor of actors) {
-            actor(store.getState(), store.dispatch);
-        }
-
-        acting = false;
+    for (const actor of actors) {
+      actor(store.getState(), store.dispatch);
     }
+
+    acting = false;
+  }
 });
 
 export default store;
