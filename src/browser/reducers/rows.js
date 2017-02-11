@@ -11,10 +11,11 @@ const initial = Map({
 const rows = (state = initial, action) => {
   switch (action.type) {
   case UPDATE_ROWS:
-    return state
-      .set('rows', List(action.payload.rows))
-      .set('dirty', true)
-      .set('fetching', false);
+    return state.withMutations((state) => {
+      state.set('rows', List(action.payload.rows));
+      state.set('dirty', true);
+      state.set('fetching', false);
+    });
   case SELECT_ROWS:
     return state.set('fetching', true);
   case CALCULATE_HEATMAP_DATA:

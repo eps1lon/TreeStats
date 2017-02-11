@@ -20,10 +20,11 @@ const initial = Map({
 const heatmap = function(state = initial, action) {
   switch (action.type) {
   case CALCULATE_HEATMAP_DATA:
-    return state
-      .set('max', action.payload.max)
-      .set('data', List(action.payload.data))
-      .set('hash', action.payload.hash);
+    return state.withMutations((state) => {
+      state.set('max', action.payload.max);
+      state.set('data', List(action.payload.data));
+      state.set('hash', action.payload.hash);
+    });
   case EXTREMA_CHANGE:
     return state.set('legend', Immutable.fromJS(action.payload.legend));
   default:

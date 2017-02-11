@@ -13,13 +13,15 @@ const initial = Map({
 const data = (state = initial, action) => {
   switch (action.type) {
   case FETCH_SOURCES_FROM_JSON:
-    return state
-      .set('active', undefined)
-      .set('sources', Map());
+    return state.withMutations((state) => {
+      state.set('active', undefined);
+      state.set('sources', Map());
+    });  
   case SET_SOURCES:
-    return state
-      .set('active', undefined)
-      .set('sources', Map(action.payload.sources));
+    return state.withMutations((state) => {
+      state.set('active', undefined);
+      state.set('sources', Map(action.payload.sources));
+    })
   case SET_ACTIVE:
     return state.set('active', action.payload.active);
   default:

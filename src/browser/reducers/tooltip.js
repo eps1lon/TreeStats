@@ -12,11 +12,12 @@ const tooltip = (state = initial, action) => {
   switch (action.type) {
   case SHOW_TOOLTIP:
     const {x, y, node_id, event} = action.payload;
-    return state
-      .set('x', x)
-      .set('y', y)
-      .set('node_id', node_id)
-      .set('event', Map(event));
+    return state.withMutations((state) => {
+      state.set('x', x);
+      state.set('y', y);
+      state.set('node_id', node_id);
+      state.set('event', Map(event));
+    });
   default:
     return state;
   }
