@@ -30,8 +30,8 @@ class PassiveTree extends React.Component {
 
     return (
       <svg className="passive-tree" viewBox={tree.viewbox.join(' ')}>
-        <Nodes nodes={tree.nodes} conf={conf} />
         <Edges edges={tree.edges} conf={conf} />
+        <Nodes nodes={tree.nodes} conf={conf} />
         <Groups nodes={tree.nodes} groups={tree.groups} conf={conf} />
       </svg>
     );
