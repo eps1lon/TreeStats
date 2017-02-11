@@ -1,7 +1,7 @@
 import {Map} from 'immutable';
 const Nedb = require('nedb');
 
-import {CSV_TO_DB, INSERT_ROWS, PARSE_CSV, SET_DB} from '../actions/db';
+import {INSERT_ROWS, SET_DB} from '../actions/db';
 import {SELECT_ROWS} from '../actions/rows';
 
 const initial = Map({
@@ -24,13 +24,6 @@ const db = (state = initial, action) => {
       state.set('db', action.payload.db);
       state.set('dirty', true);
       state.set('inserting', false);
-    });
-  case CSV_TO_DB:
-    return state.set('fetching', true);
-  case PARSE_CSV:
-    return state.withMutations((state) => {
-      state.set('fetching', false);
-      state.set('parsing', true);
     });
   case INSERT_ROWS:
     return state.withMutations((state) => {
