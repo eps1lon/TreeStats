@@ -1,7 +1,7 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {activate} from '../actions/nav_tabs';
+import { activate } from '../actions/nav_tabs';
 
 /**
  * creates a bootstrap-like navtab
@@ -11,7 +11,7 @@ class NavTab extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {children, active} = this.props;
+    const { children, active } = this.props;
 
     const navClick = (event) => this.props.navClick(event, this.props.tab_key);
 

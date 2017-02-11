@@ -6,26 +6,26 @@ import PassiveNode from '../../../poe/PassiveNode';
  *
  */
 class Node extends React.Component {
-    static propTypes = {
-        conf: React.PropTypes.instanceOf(PassiveTreeConf).isRequired,
-        node: React.PropTypes.instanceOf(PassiveNode).isRequired,
-    }
+  static propTypes = {
+    conf: React.PropTypes.instanceOf(PassiveTreeConf).isRequired,
+    node: React.PropTypes.instanceOf(PassiveNode).isRequired,
+  }
 
-    /**
-     * @return {JSX}
-     */
-    render() {
-        const {node, conf} = this.props;
-        const {x, y, size, types} = node;
-        const class_name = [...types, 'tree_node'].join(' ');
+  /**
+   * @return {JSX}
+   */
+  render() {
+    const { node, conf } = this.props;
+    const { x, y, size, types } = node;
+    const class_name = [...types, 'tree_node'].join(' ');
 
-        return (
-            <circle is
-                poe-node_id={node.id}
-                cx={x} cy={y} r={size*conf.node_scale}
-                class={class_name} />
-        );
-    }
+    return (
+      <circle is
+        poe-node_id={node.id}
+        cx={x} cy={y} r={size * conf.node_scale}
+        class={class_name} />
+    );
+  }
 };
 
 export default Node;

@@ -1,14 +1,14 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import browserTransform from '../../d3-transform-browser';
-import {immutableToTransform} from '../../d3-transform-immutable';
+import { immutableToTransform } from '../../d3-transform-immutable';
 
-import {select, event} from 'd3-selection';
-import {zoom, zoomIdentity} from 'd3-zoom';
+import { select, event } from 'd3-selection';
+import { zoom, zoomIdentity } from 'd3-zoom';
 
-import {showTooltip} from '../actions/tooltip';
-import {zoomed} from '../actions/zoom';
+import { showTooltip } from '../actions/tooltip';
+import { zoomed } from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import DataFilter from './DataFilter.jsx';
@@ -77,8 +77,9 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {busy, tally, legend, zoom} = this.props;
-    const tooltip = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
+    const { busy, tally, legend, zoom } = this.props;
+    const tooltip
+      = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
     const transform = browserTransform(zoom);
 
     return (
@@ -89,30 +90,30 @@ class TreeStatsApp extends React.Component {
           <HeatmapConf key="heatmap_conf" />
           <PassiveTreeConf key="tree_conf" />
         </NavTab>
-          <div className="data-legend">
-            <strong>trees evaluated</strong>
-            <em className="data-tally">{tally}</em>
+        <div className="data-legend">
+          <strong>trees evaluated</strong>
+          <em className="data-tally">{tally}</em>
 
-            <strong>heatmap legend</strong>
-            <HeatmapLegend data={legend} />
+          <strong>heatmap legend</strong>
+          <HeatmapLegend data={legend} />
+        </div>
+
+        <BusyIndicator busy={busy} />
+        <a href="#" onClick={() => this.resetZoom()}>reset zoom</a>
+
+        <div
+          className="heatmap-wrapper"
+          onMouseLeave={tooltip}
+          onMouseMove={tooltip}
+          ref="heatmap_wrapper">
+
+          <div className="zoomable" style={{ transform }}>
+            <TreeHeatmap />
+            <PassiveTree />
           </div>
+        </div>
 
-          <BusyIndicator busy={busy} />
-          <a href="#" onClick={() => this.resetZoom()}>reset zoom</a>
-
-          <div
-            className="heatmap-wrapper"
-            onMouseLeave={tooltip}
-            onMouseMove={tooltip}
-            ref="heatmap_wrapper">
-
-            <div className="zoomable" style={{transform}}>
-              <TreeHeatmap />
-              <PassiveTree />
-            </div>
-          </div>
-
-          <Tooltip />
+        <Tooltip />
       </div>
     );
   };
@@ -132,7 +133,7 @@ const mapDispatchToProps = (dispatch) => {
     tooltip: (event, parent) => {
       event.persist();
 
-      const {top, left} = parent.getBoundingClientRect();
+      const { top, left } = parent.getBoundingClientRect();
       const x = event.clientX - left;
       const y = event.clientY - top;
 

@@ -11,7 +11,7 @@ export const SELECT_ROWS = 'SELECT_ROWS';
  * @return {Promise} the {Object[]} rows
  */
 function selectRows(db, data_filter) {
-    const {last_active, league, klass} = data_filter;
+    const { last_active, league, klass } = data_filter;
 
     const filter = {
         last_active: {
@@ -29,7 +29,7 @@ function selectRows(db, data_filter) {
 
     return new Promise((fulfill) => {
         db.find(filter)
-            .sort({xp: -1})
+            .sort({ xp: -1 })
             .limit(+data_filter.limit)
             .skip(+data_filter.offset)
             .exec((e, rows) => {
@@ -56,7 +56,7 @@ export function updateRows() {
         return selectRows(db.get('db'), data_filter.toJS()).then((rows) => {
             dispatch({
                 type: UPDATE_ROWS,
-                payload: {rows},
+                payload: { rows },
             });
         });
     };

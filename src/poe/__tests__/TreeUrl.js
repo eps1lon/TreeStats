@@ -1,5 +1,5 @@
 /* eslint max-len: off, comma-spacing: off, comma-dangle: off */
-import {assert} from 'chai';
+import { assert } from 'chai';
 
 const TreeUrl = require('../PassiveTreeUrl.js');
 

@@ -1,5 +1,5 @@
-import {Map} from 'immutable';
-import {zoomIdentity} from 'd3-zoom';
+import { Map } from 'immutable';
+import { zoomIdentity } from 'd3-zoom';
 
 /**
  * @param {d3Transform} transform

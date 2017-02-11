@@ -19,7 +19,7 @@ class ReactHeatmap extends React.Component {
 	 * init the heatmap because the create method needs an existing container
 	 */
 	componentDidMount() {
-		const {conf, data} = this.props;
+		const { conf, data } = this.props;
 		this.heatmap = Heatmap.create({
 			...conf,
 			container: ReactDOM.findDOMNode(this),
@@ -34,7 +34,7 @@ class ReactHeatmap extends React.Component {
 	 * @param {Object} new_props
 	 */
 	componentWillReceiveProps(new_props) {
-		const {conf, data} = new_props;
+		const { conf, data } = new_props;
 
 		this.setConf(conf);
 		this.setData(data);
@@ -57,8 +57,8 @@ class ReactHeatmap extends React.Component {
 	setData(data) {
 		if (this.shouldDataUpdate(data)) {
 			const bbox = ReactDOM.findDOMNode(this).getBoundingClientRect();
-			const {width, height} = bbox;
-			const {viewbox} = this.props;
+			const { width, height } = bbox;
+			const { viewbox } = this.props;
 			const scaled_data
 				= this.transformData(
 					data.data,
@@ -113,7 +113,7 @@ class ReactHeatmap extends React.Component {
 		return (
 			<div
 				className="heatmap"
-				style={{width: '100%', height: '100%'}}>
+				style={{ width: '100%', height: '100%' }}>
 			</div>
 		);
 	}

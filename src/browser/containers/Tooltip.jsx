@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import Transform from '../../Transform';
 
@@ -15,12 +15,12 @@ class Tooltip extends React.Component {
    */
   render() {
     const [offset_left, offset_top] = [20, 0];
-    const {event, node, value} = this.props;
+    const { event, node, value } = this.props;
     const contains_information = value || node;
 
     const top = (event ? event.clientY + window.scrollY : 0) + offset_top;
     const left = (event ? event.clientX + window.scrollX : 0) + offset_left;
-    const style = {top, left};
+    const style = { top, left };
 
     const class_names = ['tooltip'];
     if (contains_information) class_names.push('contains_information');

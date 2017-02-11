@@ -3,8 +3,8 @@ export const SET_SOURCES = 'SET_SOURCES';
 
 export const SET_ACTIVE = 'SET_ACTIVE';
 
-import {insertRows} from './db';
-import {jsonFactory} from '../../data_sources/factory';
+import { insertRows } from './db';
+import { jsonFactory } from '../../data_sources/factory';
 
 /**
  * thunk to generate sources from json file
@@ -14,7 +14,7 @@ import {jsonFactory} from '../../data_sources/factory';
  */
 export function fetchSourcesFromJson(filename) {
   return (dispatch) => {
-    dispatch({type: FETCH_SOURCES_FROM_JSON});
+    dispatch({ type: FETCH_SOURCES_FROM_JSON });
 
     return jsonFactory(filename)
       .then((sources) => dispatch(setSourcesArray(sources)));
@@ -31,7 +31,7 @@ export function setSources(sources) {
   return (dispatch) => {
     dispatch({
       type: SET_SOURCES,
-      payload: {sources},
+      payload: { sources },
     });
 
     dispatch(setActive(sources.keys().next().value));
@@ -57,7 +57,7 @@ export function setActive(active) {
   return (dispatch, getState) => {
     dispatch({
       type: SET_ACTIVE,
-      payload: {active},
+      payload: { active },
     });
 
     const state = getState();

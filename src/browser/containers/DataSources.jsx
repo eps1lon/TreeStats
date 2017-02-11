@@ -1,6 +1,6 @@
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import {setActive} from '../actions/data';
+import { setActive } from '../actions/data';
 
 import DataSources from '../components/DataSources.jsx';
 

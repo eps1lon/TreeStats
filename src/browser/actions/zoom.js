@@ -9,7 +9,7 @@ export const RESET_ZOOM = 'RESET_ZOOM';
 export function zoomed(transform) {
   return {
     type: ZOOMED,
-    payload: {transform},
+    payload: { transform },
   };
 };
 

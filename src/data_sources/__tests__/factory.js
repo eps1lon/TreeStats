@@ -1,14 +1,14 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 import fetchMock from 'fetch-mock';
 import fs from 'fs';
 import path from 'path';
 
 import CsvDataSource from '../CsvDataSource';
-import dataSource, {guessType, jsonFactory, CSV_SOURCE} from '../factory';
+import dataSource, { guessType, jsonFactory, CSV_SOURCE } from '../factory';
 
 const fixtures = {
   sources: './fixtures/sources.json',
-  csv_source: {type: CSV_SOURCE, filename: 'dummy.csv'},
+  csv_source: { type: CSV_SOURCE, filename: 'dummy.csv' },
 };
 
 // mock fetch to fixture requests
@@ -28,11 +28,11 @@ const DUMMY_TYPE = 'DUMMY_TYPE';
 describe('factory', function() {
   describe('guessType', function() {
     it('should check type first', function() {
-      assert.equal(guessType({type: CSV_SOURCE}), CSV_SOURCE);
+      assert.equal(guessType({ type: CSV_SOURCE }), CSV_SOURCE);
     });
 
     it('should check extension', function() {
-      assert.equal(guessType({filename: './test.csv'}), CSV_SOURCE);
+      assert.equal(guessType({ filename: './test.csv' }), CSV_SOURCE);
     });
 
     it('should prefer type extension', function() {

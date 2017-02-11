@@ -1,4 +1,4 @@
-import Immutable, {List, Map} from 'immutable';
+import Immutable, { List, Map } from 'immutable';
 
 import {
   CALCULATE_HEATMAP_DATA,
@@ -17,18 +17,18 @@ const initial = Map({
   }),
 });
 
-const heatmap = function(state = initial, action) {
+const heatmap = (state = initial, action) => {
   switch (action.type) {
-  case CALCULATE_HEATMAP_DATA:
-    return state.withMutations((state) => {
-      state.set('max', action.payload.max);
-      state.set('data', List(action.payload.data));
-      state.set('hash', action.payload.hash);
-    });
-  case EXTREMA_CHANGE:
-    return state.set('legend', Immutable.fromJS(action.payload.legend));
-  default:
-    return state;
+    case CALCULATE_HEATMAP_DATA:
+      return state.withMutations((state) => {
+        state.set('max', action.payload.max);
+        state.set('data', List(action.payload.data));
+        state.set('hash', action.payload.hash);
+      });
+    case EXTREMA_CHANGE:
+      return state.set('legend', Immutable.fromJS(action.payload.legend));
+    default:
+      return state;
   }
 };
 

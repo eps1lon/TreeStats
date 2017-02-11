@@ -1,5 +1,5 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import PassiveTreeConf from '../../poe/PassiveTreeConf';
 
@@ -19,14 +19,14 @@ class PassiveTree extends React.Component {
   shouldComponentUpdate(new_props) {
     const old_props = this.props;
     return !old_props.tree.equals(new_props.tree)
-        || !old_props.conf.equals(new_props.conf);
+      || !old_props.conf.equals(new_props.conf);
   }
 
   /**
    * @return {JSX}
    */
   render() {
-    const {conf, tree} = this.props;
+    const { conf, tree } = this.props;
 
     return (
       <svg className="passive-tree" viewBox={tree.viewbox.join(' ')}>

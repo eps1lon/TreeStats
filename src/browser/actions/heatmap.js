@@ -63,7 +63,7 @@ export function calculateHeatmap(state) {
 
   return {
     type: CALCULATE_HEATMAP_DATA,
-    payload: {data, max, hash: hash_sink.hash},
+    payload: { data, max, hash: hash_sink.hash },
   };
 };
 

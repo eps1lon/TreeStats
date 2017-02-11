@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 
 import store from './store.js';
 import TreeStatsApp from './containers/TreeStatsApp.jsx';
-import {fetchSourcesFromJson} from './actions/data.js';
+import { fetchSourcesFromJson } from './actions/data.js';
 
 /**
  *
@@ -16,7 +16,7 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-          <TreeStatsApp />
+        <TreeStatsApp />
       </Provider>
     );
   }

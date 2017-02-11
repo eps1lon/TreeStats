@@ -1,10 +1,10 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {Control, Form} from 'react-redux-form/immutable';
+import { connect } from 'react-redux';
+import { Control, Form } from 'react-redux-form/immutable';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
-import {SELECT_ANY} from '../actions/rows';
+import { SELECT_ANY } from '../actions/rows';
 
 require('../style/data_filter.css');
 
@@ -16,7 +16,7 @@ class DataFilter extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {classes, leagues} = this.props;
+    const { classes, leagues } = this.props;
 
     // disabling inputs/fieldset is a bad idea
     // because you will loose focus
@@ -89,7 +89,7 @@ const visibleClasses = (classes) => {
 const addAnyEntry = (map, name_key = 'name') => {
   if (map.has(SELECT_ANY)) console.warn('map already as anyEntry');
 
-  return new Map([[SELECT_ANY, {[name_key]: 'all'}], ...map]);
+  return new Map([[SELECT_ANY, { [name_key]: 'all' }], ...map]);
 };
 
 const mapStateToProps = (state) => {

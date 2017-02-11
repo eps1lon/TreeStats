@@ -1,5 +1,5 @@
-import {combineReducers} from 'redux-immutable';
-import {createForms} from 'react-redux-form/immutable';
+import { combineReducers } from 'redux-immutable';
+import { createForms } from 'react-redux-form/immutable';
 
 import app from './app.js';
 import forms from './forms.js';
@@ -14,17 +14,17 @@ import tooltip from './tooltip.js';
 import zoom from './zoom.js';
 
 const treeStatsApp = combineReducers({
-    app,
-    db, // redux (dev tools and state-invariant have problems with Nedb it seems
-    rows,
-    heatmap,
-    nav_tabs,
-    passive_tree,
-    poe,
-    tooltip,
-    zoom,
-    data,
-    ...createForms(forms),
+  app,
+  db, // redux (dev tools and state-invariant have problems with Nedb it seems
+  rows,
+  heatmap,
+  nav_tabs,
+  passive_tree,
+  poe,
+  tooltip,
+  zoom,
+  data,
+  ...createForms(forms),
 });
 
 export default treeStatsApp;

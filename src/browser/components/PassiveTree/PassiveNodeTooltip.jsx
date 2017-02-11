@@ -16,7 +16,7 @@ class PassiveNodeTooltip extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {node} = this.props;
+    const { node } = this.props;
 
     return (
       <div className="passive-node">

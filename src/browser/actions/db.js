@@ -28,7 +28,7 @@ export function insertRows(rows) {
     }).then((db) => {
       return dispatch({
         type: SET_DB,
-        payload: {db},
+        payload: { db },
       });
     });
   };

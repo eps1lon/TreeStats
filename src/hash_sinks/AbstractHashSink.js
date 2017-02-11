@@ -5,55 +5,55 @@
  * @abstract
  */
 class AbstractHashSink {
-    /**
-     *
-     */
-    constructor() {
-        // resets also inits
-        this.hash = null;
+  /**
+   *
+   */
+  constructor() {
+    // resets also inits
+    this.hash = null;
 
-        this.reset();
+    this.reset();
+  }
+
+  /**
+   * @param {any} element tries to parse the element to int
+   * @return {number}
+   */
+  parseInt(element) {
+    if (typeof element === 'string') {
+      return element.charAt(0);
     }
 
-    /**
-     * @param {any} element tries to parse the element to int
-     * @return {number}
-     */
-    parseInt(element) {
-        if (typeof element === 'string') {
-            return element.charAt(0);
-        }
-
-        const n = parseInt(element, 10);
-        if (!isNaN(n)) {
-            return n;
-        }
-
-        throw new Error(`${element} not convertable to int`);
+    const n = parseInt(element, 10);
+    if (!isNaN(n)) {
+      return n;
     }
 
-    /**
-     * @param {number} n the number to add to the hash
-     */
-    add(n) {
-        throw new Error('implement HashSink.add');
-    }
+    throw new Error(`${element} not convertable to int`);
+  }
 
-    /**
-     * @param {any[]} element let class decide how to convert to int
-     */
-    put(...elements) {
-        for (const element of elements) {
-            this.add(this.parseInt(element));
-        }
-    }
+  /**
+   * @param {number} n the number to add to the hash
+   */
+  add(n) {
+    throw new Error('implement HashSink.add');
+  }
 
-    /**
-     * empties the hash
-     */
-    reset() {
-        this.hash = 0;
+  /**
+   * @param {any[]} element let class decide how to convert to int
+   */
+  put(...elements) {
+    for (const element of elements) {
+      this.add(this.parseInt(element));
     }
+  }
+
+  /**
+   * empties the hash
+   */
+  reset() {
+    this.hash = 0;
+  }
 };
 
 export default AbstractHashSink;

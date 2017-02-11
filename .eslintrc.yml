@@ -10,9 +10,13 @@ extends: "google"
 plugins:
   - "react"
 rules:
+  object-curly-spacing:
+    - 2
+    - "always"
   camelcase: 0
   max-len:
     - 2
     - ignoreTemplateLiterals: true
     - ignoreUrls: true
+  new-cap: 0 # immutable.js
   react/jsx-uses-vars: 1

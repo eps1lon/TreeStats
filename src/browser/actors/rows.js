@@ -1,5 +1,5 @@
-import {updateRows} from '../actions/rows';
-import {initial_data_filter} from '../reducers/forms';
+import { updateRows } from '../actions/rows';
+import { initial_data_filter } from '../reducers/forms';
 
 import objectEquals from '../../objectsEqual';
 

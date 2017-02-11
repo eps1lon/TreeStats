@@ -12,6 +12,6 @@ export const SHOW_TOOLTIP = 'SHOW_TOOLTIP';
 export function showTooltip(x, y, node_id, event) {
   return {
     type: SHOW_TOOLTIP,
-    payload: {x, y, node_id, event: Immutable.fromJS(event)},
+    payload: { x, y, node_id, event: Immutable.fromJS(event) },
   };
 };

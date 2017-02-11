@@ -4,8 +4,8 @@ import createLogger from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 import treeStatsApp from './reducers';
-import {rowsActor} from './actors/rows';
-import {heatmapDataActor} from './actors/heatmapData';
+import { rowsActor } from './actors/rows';
+import { heatmapDataActor } from './actors/heatmapData';
 
 const initial = Map({
   nav_tabs: Map({

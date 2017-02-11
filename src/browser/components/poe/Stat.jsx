@@ -12,7 +12,7 @@ class Stat extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {desc} = this.props;
+    const { desc } = this.props;
     return <li><em className="poe stat">{desc}</em></li>;
   }
 };

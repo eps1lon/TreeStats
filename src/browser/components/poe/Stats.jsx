@@ -14,7 +14,7 @@ class Stats extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {stats} = this.props;
+    const { stats } = this.props;
 
     return (
       <ul className="poe stats">

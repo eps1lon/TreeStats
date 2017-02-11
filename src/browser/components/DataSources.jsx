@@ -1,5 +1,5 @@
 import React from 'react';
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 
 import CsvDataSource from '../../data_sources/CsvDataSource';
 
@@ -30,7 +30,7 @@ class DataSources extends React.Component {
    * @return {JSX}
    */
   render() {
-    const {onChange, sources} = this.props;
+    const { onChange, sources } = this.props;
     return (
       <select className='data-sources' onChange={onChange}>
         {sources.entrySeq().map((entry) => {

@@ -1,4 +1,4 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 import fetchMock from 'fetch-mock';
 import fs from 'fs';
 import path from 'path';

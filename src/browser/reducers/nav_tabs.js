@@ -1,5 +1,5 @@
-import {Map} from 'immutable';
-import {ACTIVATE} from '../actions/nav_tabs';
+import { Map } from 'immutable';
+import { ACTIVATE } from '../actions/nav_tabs';
 
 const initial = Map();
 
@@ -10,9 +10,9 @@ const initial = Map();
  */
 export default function nav_tabs(state = initial, action) {
   switch (action.type) {
-  case ACTIVATE:
-    return state.set(action.payload.tab_key, action.payload.key);
-  default:
-    return state;
+    case ACTIVATE:
+      return state.set(action.payload.tab_key, action.payload.key);
+    default:
+      return state;
   }
 }

@@ -10,6 +10,6 @@ export const ACTIVATE = 'ACTIVATE';
 export function activate(tab_key, key) {
   return {
     type: ACTIVATE,
-    payload: {tab_key, key},
+    payload: { tab_key, key },
   };
 };

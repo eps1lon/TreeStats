@@ -5,68 +5,68 @@ const PoeTree = require('./PassiveTree');
  * the given tree are visible under a conf Object
  */
 class PassiveTreeConf {
+  /**
+   * @param {Object} conf_props
+   */
+  constructor(conf_props) {
     /**
-     * @param {Object} conf_props
+     * @type {Object}
      */
-    constructor(conf_props) {
-        /**
-         * @type {Object}
-         */
-        this.props = conf_props;
-    }
+    this.props = conf_props;
+  }
 
-    /**
-     * @return {number}
-     */
-    get node_scale() {
-        return +this.props.node_scale;
-    }
+  /**
+   * @return {number}
+   */
+  get node_scale() {
+    return +this.props.node_scale;
+  }
 
-    /**
-     * @param {PassiveNode} node
-     * @return {boolean}
-     */
-    isVisibleNode(node) {
-        const conf = this.props;
+  /**
+   * @param {PassiveNode} node
+   * @return {boolean}
+   */
+  isVisibleNode(node) {
+    const conf = this.props;
 
-        return (conf.mastery || !node.mastery)
-            && (conf.start || !node.start)
-            && (conf.ascendancy || !node.ascendancy);
-    }
+    return (conf.mastery || !node.mastery)
+      && (conf.start || !node.start)
+      && (conf.ascendancy || !node.ascendancy);
+  }
 
-    /**
-     * @param {PassiveNode} source
-     * @param {PassiveNode} target
-     * @return {boolean}
-     */
-    isVisibleEdge(source, target) {
-        const conf = this.props;
+  /**
+   * @param {PassiveNode} source
+   * @param {PassiveNode} target
+   * @return {boolean}
+   */
+  isVisibleEdge(source, target) {
+    const conf = this.props;
 
-        // no start node connection
-        return (conf.start || !source.start && !target.start)
-            // no scion path of x edges
-            && (conf.scionPathOf || !PoeTree.scionPathOfEdge(source, target))
-            // no ascendancy edges
-            && (conf.ascendancy || !source.ascendancy);
-    };
+    // no start node connection
+    return (conf.start || !source.start && !target.start)
+      // no scion path of x edges
+      && (conf.scionPathOf || !PoeTree.scionPathOfEdge(source, target))
+      // no ascendancy edges
+      && (conf.ascendancy || !source.ascendancy);
+  };
 
-    /**
-     * @param {Object} group
-     * @return {boolean}
-     */
-    isVisibleGroup(group) {
-        const conf = this.props;
+  /**
+   * @param {Object} group
+   * @return {boolean}
+   */
+  isVisibleGroup(group) {
+    const conf = this.props;
 
-        return (conf.group_orbits);
-    };
+    return (conf.group_orbits);
+  };
 
-    /**
-     * @param {PassiveTreeConf} other
-     * @return {boolean}
-     */
-    equals(other) {
-        return JSON.stringify(this.props) === JSON.stringify(other.props);
-    }
+  /**
+   * @param {PassiveTreeConf} other
+   * @return {boolean}
+   */
+  equals(other) {
+    return JSON.stringify(this.props) === JSON.stringify(other.props);
+  }
 }
 
 export default PassiveTreeConf;
