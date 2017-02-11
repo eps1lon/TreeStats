@@ -1,14 +1,31 @@
 import React from 'react';
-import DataSource from '../components/DataSource.jsx';
+import {Map} from 'immutable';
+
+import CsvDataSource from '../../data_sources/CsvDataSource';
 
 /**
  * a container for data sources
  */
 class DataSources extends React.Component {
   static propTypes = {
+    active: React.PropTypes.string,
     sources: React.PropTypes.instanceOf(Map).isRequired,
-    onChange: React.PropTypes.func.isRequired,
+    onChange: React.PropTypes.func,
   }
+
+  /**
+   * factory method to create a meaningful option value
+   * @param {AbstractDataSource} source
+   * @return {string}
+   */
+  optionValue(source) {
+    if (source instanceof CsvDataSource) {
+      return source.filename;
+    }
+
+    return source.toString();
+  }
+
   /**
    * @return {JSX}
    */
@@ -16,9 +33,13 @@ class DataSources extends React.Component {
     const {onChange, sources} = this.props;
     return (
       <select className='data-sources' onChange={onChange}>
-        {[...sources.entries()].map((entry) => {
+        {sources.entrySeq().map((entry) => {
           const [key, source] = entry;
-          return <DataSource key={key} source={source} />;
+          return (
+            <option key={key} value={key}>
+              {this.optionValue(source)}
+            </option>
+          );
         })}
       </select>
     );

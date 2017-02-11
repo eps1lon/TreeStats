@@ -1,5 +1,9 @@
-import {Map, List} from 'immutable';
-import {FETCH_SOURCES_FROM_JSON, SET_SOURCES} from '../actions/data';
+import {Map} from 'immutable';
+import {
+  FETCH_SOURCES_FROM_JSON,
+  SET_SOURCES,
+  SET_ACTIVE,
+} from '../actions/data';
 
 const initial = Map({
   active: undefined,
@@ -16,6 +20,8 @@ const data = (state = initial, action) => {
     return state
       .set('active', undefined)
       .set('sources', Map(action.payload.sources));
+  case SET_ACTIVE:
+    return state.set('active', action.payload.active);
   default:
     return state;
   }

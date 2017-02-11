@@ -21,8 +21,6 @@ class HeatmapLegend extends React.Component {
         const gradient_conf = this.props.data.gradient;
         const ctx = this.refs.canvas.getContext('2d');
 
-        console.log(this.props, gradient_conf);
-
         const gradient = ctx.createLinearGradient(0, 0, 100, 1);
         for (const [offset, color] of Object.entries(gradient_conf)) {
             gradient.addColorStop(offset, color);

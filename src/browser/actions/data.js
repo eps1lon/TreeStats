@@ -1,6 +1,9 @@
 export const FETCH_SOURCES_FROM_JSON = 'SOURCES_FROM_JSON';
 export const SET_SOURCES = 'SET_SOURCES';
 
+export const SET_ACTIVE = 'SET_ACTIVE';
+
+import {insertRows} from './db';
 import {jsonFactory} from '../../data_sources/factory';
 
 /**
@@ -25,9 +28,13 @@ export function fetchSourcesFromJson(filename) {
  * @return {Object} action
  */
 export function setSources(sources) {
-  return {
-    type: SET_SOURCES,
-    payload: {sources},
+  return (dispatch) => {
+    dispatch({
+      type: SET_SOURCES,
+      payload: {sources},
+    });
+
+    dispatch(setActive(sources.keys().next().value));
   };
 }
 
@@ -37,5 +44,25 @@ export function setSources(sources) {
  * @return {Object} action
  */
 function setSourcesArray(sources) {
-  return setSources(sources.map((source, i) => [i, source]));
+  return setSources(new Map(sources.map((source, i) => [i + '', source])));
 };
+
+/**
+ * sets the active data source and triggers the insert of the rows
+ * of the source
+ * @param {string} active key in data.sources map
+ * @return {thunk}
+ */
+export function setActive(active) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: SET_ACTIVE,
+      payload: {active},
+    });
+
+    const state = getState();
+    const source = state.get('data').get('sources').get(active);
+
+    dispatch(insertRows(source.rows));
+  };
+}

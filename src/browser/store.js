@@ -9,7 +9,7 @@ import {heatmapDataActor} from './actors/heatmapData';
 
 const initial = Map({
     nav_tabs: Map({
-        conf: 'data_filter', // show data filter initially
+        conf: 'data', // show data source initially
     }),
 });
 
