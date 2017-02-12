@@ -1,6 +1,6 @@
 import { zoomIdentity } from 'd3-zoom';
 
-import { transformToImmutable } from '../../d3-transform-immutable';
+import { transformToImmutable } from '../../d3_util';
 import { ZOOMED, RESET_ZOOM } from '../actions/zoom';
 
 const initial = transformToImmutable(zoomIdentity);

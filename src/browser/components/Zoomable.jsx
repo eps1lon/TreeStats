@@ -3,8 +3,7 @@ import React from 'react';
 import { event, select } from 'd3-selection';
 import { zoom } from 'd3-zoom';
 
-import { transformEqual } from '../../d3_util';
-import browserTransform from '../../d3-transform-browser';
+import { browserTransform, transformEqual } from '../../d3_util';
 
 /**
  * creates a zoomable div

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { immutableToTransform } from '../../d3-transform-immutable';
+import { immutableToTransform } from '../../d3_util';
 
 
 import { showTooltip } from '../actions/tooltip';
