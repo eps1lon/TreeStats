@@ -5,7 +5,7 @@ import { immutableToTransform } from '../../d3-transform-immutable';
 
 
 import { showTooltip } from '../actions/tooltip';
-import { zoomed, resetZoom } from '../actions/zoom';
+import { resetZoom, zoomed } from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import Zoomable from '../components/Zoomable.jsx';
@@ -107,7 +107,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(showTooltip(x, y, node_id, event));
     },
     zoomed: (transform) => dispatch(zoomed(transform)),
-    resetZoom: () => dispatch(resetZoom()),
+    resetZoom: () => dispatch(resetZoom),
   };
 };
 

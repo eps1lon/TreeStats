@@ -3,17 +3,12 @@ import React from 'react';
 import { event, select } from 'd3-selection';
 import { zoom } from 'd3-zoom';
 
-import { transformEqual } from '../../d3_util';
 import browserTransform from '../../d3-transform-browser';
 
 /**
  * creates a zoomable div
- * TODO on('zoomed') behavior when changing the onZoom prop
  */
-class Zoomable extends React.Component {
-  /**
-   * @type {d3.zoom} zoom d3 zoom behavior
-   */
+class Zoomable extends React.PureComponent {
   zoom = null
 
   /**
@@ -34,20 +29,12 @@ class Zoomable extends React.Component {
   /**
    * creates a d3 zoom zoomBehavior
    * this should be called once in the component lifecycle
-   * @return {d3.zoom}
+   * @return {d3-zoom}
    */
   zoomBehavior() {
     const zoomed = () => this.props.onZoom(event.transform);
     return zoom()
       .on('zoom', zoomed);
-  }
-
-  /**
-   * @param {Object} new_props
-   * @return {boolean} true if applied trafos via zoom are equal
-   */
-  shouldComponentUpdate(new_props) {
-    return !transformEqual(this.props.zoom, new_props.zoom);
   }
 
   /**

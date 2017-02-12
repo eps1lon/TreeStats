@@ -15,7 +15,7 @@ const preload = Map({
 
 const middlewares = [thunkMiddleware];
 
-const verbose_actions = ['TOOLTIP'];
+const verbose_actions = ['TOOLTIP', 'ZOOMED'];
 
 if (process.env.NODE_ENV !== `production` && true) {
   const logger = createLogger({
