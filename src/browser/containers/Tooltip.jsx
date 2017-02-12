@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Transform from '../../Transform';
-
 import PassiveNodeTooltip
   from '../components/PassiveTree/PassiveNodeTooltip.jsx';
 
@@ -35,35 +33,32 @@ class Tooltip extends React.Component {
 };
 
 /**
- * gets that value for a node on the heatmap under a transformation
+ * selector for data
+ * we coould think about some caching strategy here
+ * but the data list is an aggregation of nodes in our passive tree
+ * and in its size roughly constant
  * @param {PassiveNode} node
- * @param {string} canvas_selector
- * @param {Transform} transform
+ * @param {List} data
  * @return {number}
  */
-const getValueFor = (node, canvas_selector, transform) => {
-  if (!canvas_selector || !node) {
+const getValueFor = (node, data) => {
+  if (!node) {
     return undefined;
   }
 
-  console.warn('getValueFor to be implemented');
+  for (const datum of data) {
+    if (datum.x == node.x && datum.y == node.y) {
+      return datum.value;
+    }
+  }
 
-  const x = transform.applyX(node.x);
-  const y = transform.applyY(node.y);
-
-  return 0;
+  return undefined;
 };
 
 const mapStateToProps = (state) => {
   const node_id = state.get('tooltip').get('node_id');
   const node = state.get('passive_tree').nodes.get(node_id);
-  const value = getValueFor(
-    node, 'canvas',
-    Transform.viewboxToTransform(
-      state.get('passive_tree').viewbox,
-      state.get('app').get('width'), state.get('app').get('height'),
-    ),
-  );
+  const value = getValueFor(node, state.get('heatmap').get('data'));
 
   return {
     event: state.get('tooltip').get('event').toJS(),
