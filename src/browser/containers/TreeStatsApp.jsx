@@ -1,16 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import browserTransform from '../../d3-transform-browser';
 import { immutableToTransform } from '../../d3-transform-immutable';
 
-import { select, event } from 'd3-selection';
-import { zoom, zoomIdentity } from 'd3-zoom';
 
 import { showTooltip } from '../actions/tooltip';
 import { zoomed } from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
+import Zoomable from '../components/Zoomable.jsx';
+
 import DataFilter from './DataFilter.jsx';
 import DataSources from './DataSources.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
@@ -38,49 +37,13 @@ require('../style/tooltip.css');
  *
  */
 class TreeStatsApp extends React.Component {
-  zoom = null
-
-  /**
-   * set the zoom behavior
-   */
-  componentWillMount() {
-    this.zoom = this.zoomBehavior();
-  }
-
-  /**
-   * @override
-   * call zoomBehavior
-   */
-  componentDidMount() {
-    select(this.refs.heatmap_wrapper).call(this.zoom);
-  }
-
-  /**
-   * creates a d3 zoom zoomBehavior
-   * this should be called once in the component lifecycle
-   * @return {d3-zoom}
-   */
-  zoomBehavior() {
-    const zoomed = () => this.props.zoomed();
-    return zoom()
-      .on('zoom', zoomed);
-  }
-
-  /**
-   * resets the zoom
-   */
-  resetZoom() {
-    this.zoom.transform(select(this.refs.heatmap_wrapper), zoomIdentity);
-  }
-
   /**
    * @return {JSX}
    */
   render() {
-    const { busy, tally, legend, zoom } = this.props;
+    const { busy, tally, legend, zoom, zoomed } = this.props;
     const tooltip
       = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
-    const transform = browserTransform(zoom);
 
     return (
       <div className="react-fragment">
@@ -99,7 +62,6 @@ class TreeStatsApp extends React.Component {
         </div>
 
         <BusyIndicator busy={busy} />
-        <a href="#" onClick={() => this.resetZoom()}>reset zoom</a>
 
         <div
           className="heatmap-wrapper"
@@ -107,10 +69,10 @@ class TreeStatsApp extends React.Component {
           onMouseMove={tooltip}
           ref="heatmap_wrapper">
 
-          <div className="zoomable" style={{ transform }}>
+          <Zoomable zoom={zoom} onZoom={zoomed}>
             <TreeHeatmap />
             <PassiveTree />
-          </div>
+          </Zoomable>
         </div>
 
         <Tooltip />
@@ -142,7 +104,7 @@ const mapDispatchToProps = (dispatch) => {
 
       dispatch(showTooltip(x, y, node_id, event));
     },
-    zoomed: () => dispatch(zoomed(event.transform)),
+    zoomed: (transform) => dispatch(zoomed(transform)),
   };
 };
 
