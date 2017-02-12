@@ -85,10 +85,10 @@ class TreeStatsApp extends React.Component {
     return (
       <div className="react-fragment">
         <NavTab tab_key="conf">
-          <DataSources key="data" />
-          <DataFilter key="data_filter" />
-          <HeatmapConf key="heatmap_conf" />
-          <PassiveTreeConf key="tree_conf" />
+          <DataSources key="data" tabLabel="source" />
+          <DataFilter key="data_filter" tabLabel="filter" />
+          <HeatmapConf key="heatmap_conf" tabLabel="heatmap" />
+          <PassiveTreeConf key="tree_conf" tabLabel="tree" />
         </NavTab>
         <div className="data-legend">
           <strong>trees evaluated</strong>

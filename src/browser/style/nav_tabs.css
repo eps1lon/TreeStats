@@ -4,6 +4,11 @@
   padding-bottom: 0px;
 }
 
+.nav-tabs li a {
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
 .tab-pane:not(.active) {
   display: none;
 }

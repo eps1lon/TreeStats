@@ -20,10 +20,11 @@ class NavTab extends React.Component {
         <ul className="nav nav-tabs" onClick={navClick} role="tablist">
           {React.Children.map(children, function(child) {
             const class_name = child.key == active ? 'active' : '';
+            const label = child.props.tabLabel|| child.key;
 
             return (
               <li role="presentation" className={class_name}>
-                <a href="#" data-toggle={child.key}>{child.key}</a>
+                <a data-toggle={child.key}>{label}</a>
               </li>
             );
           })}
