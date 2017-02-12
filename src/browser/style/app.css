@@ -1,4 +1,7 @@
 html, body {
   width: 100%;
   overflow-x: hidden;
+  background-color: #e7e7e7;
+  color: #6d6d6d;
+  font-family: 'Helvetica Neue', Helvetica, Arial, serif;
 }

@@ -12,6 +12,6 @@ label {
   font-size: 1.3em;
 }
 
-label:after {
+label:not(.for-checkbox):after {
   content: ':';
 }

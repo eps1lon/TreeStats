@@ -26,7 +26,7 @@ class PassiveTreeConf extends React.Component {
         </LabeledInput>
 
         <LabeledInput>
-          <label>Ascendancy?</label>
+          <label className="for-checkbox">Ascendancy?</label>
           <Control.checkbox model="passive_tree_conf.ascendancy" />
         </LabeledInput>
       </Form>
