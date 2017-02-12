@@ -39,7 +39,7 @@ class LabeledInput extends React.Component {
 
     return (
       <span className="react-fragment">
-        <label htmlFor={id}>{label.props.children}</label>
+        {React.cloneElement(label, { htmlFor: id })}
         {React.cloneElement(input, { id })}
       </span>
     );
