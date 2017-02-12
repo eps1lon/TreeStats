@@ -1,12 +1,14 @@
 .tooltip {
   background-color: black;
   color: white;
+  display: none;
   padding: .5em 0 0 .5em;
   position: absolute;
   width: 400px;
 }
 
 .tooltip.contains_information {
+  display: block;
   opacity: 100 !important;
 }
 
