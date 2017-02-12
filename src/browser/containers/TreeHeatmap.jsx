@@ -1,26 +1,7 @@
-import React from 'react';
 import { connect } from 'react-redux';
 
 import { extremaChange } from '../actions/heatmap';
 import Heatmap from '../components/Heatmap.jsx';
-
-/**
- *
- */
-class TreeHeatmap extends React.Component {
-  /**
-   * @return {JSX}
-   */
-  render() {
-    const { conf, data, onInstanceCreation, viewbox } = this.props;
-
-    return (
-      <Heatmap
-        conf={conf} data={data} viewbox={viewbox}
-        onInstanceCreation={onInstanceCreation} />
-    );
-  }
-}
 
 const mapStateToProps = (state) => {
   const { viewbox } = state.get('passive_tree');
@@ -33,7 +14,12 @@ const mapStateToProps = (state) => {
       maxOpacity: heatmap_conf.get('max_opacity') / 100,
       radius: +heatmap_conf.get('radius'),
     },
-    data: state.get('heatmap').toJS(),
+    // heatmap.js schema
+    data: {
+      data: state.getIn(['heatmap', 'data']),
+      hash: state.getIn(['heatmap', 'hash']),
+      max: state.getIn(['heatmap', 'max']),
+    },
     viewbox,
   };
 };
@@ -64,4 +50,4 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(TreeHeatmap);
+)(Heatmap);

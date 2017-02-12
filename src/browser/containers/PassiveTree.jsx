@@ -40,6 +40,7 @@ class PassiveTree extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    // TODO add class instanciation to reducer
     conf: new PassiveTreeConf(state.get('passive_tree_conf').toJS()),
     tree: state.get('passive_tree'),
   };

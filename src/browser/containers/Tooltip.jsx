@@ -16,8 +16,8 @@ class Tooltip extends React.Component {
     const { event, node, value } = this.props;
     const contains_information = value || node;
 
-    const top = (event ? event.clientY + window.scrollY : 0) + offset_top;
-    const left = (event ? event.clientX + window.scrollX : 0) + offset_left;
+    const top = (event.get('clientY') || 0) + window.scrollY + offset_top;
+    const left = (event.get('clientX') || 0) + window.scrollX + offset_left;
     const style = { top, left };
 
     const class_names = ['tooltip'];
@@ -56,12 +56,12 @@ const getValueFor = (node, data) => {
 };
 
 const mapStateToProps = (state) => {
-  const node_id = state.get('tooltip').get('node_id');
+  const node_id = state.getIn(['tooltip', 'node_id']);
   const node = state.get('passive_tree').nodes.get(node_id);
-  const value = getValueFor(node, state.get('heatmap').get('data'));
+  const value = getValueFor(node, state.getIn(['heatmap', 'data']));
 
   return {
-    event: state.get('tooltip').get('event').toJS(),
+    event: state.getIn(['tooltip', 'event']),
     node,
     value,
   };

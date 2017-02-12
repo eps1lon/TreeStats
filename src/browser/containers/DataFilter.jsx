@@ -94,8 +94,8 @@ const addAnyEntry = (map, name_key = 'name') => {
 
 const mapStateToProps = (state) => {
   return {
-    classes: addAnyEntry(visibleClasses(state.get('poe').get('classes'))),
-    leagues: addAnyEntry(visibleLeagues(state.get('poe').get('leagues'))),
+    classes: addAnyEntry(visibleClasses(state.getIn(['poe', 'classes']))),
+    leagues: addAnyEntry(visibleLeagues(state.getIn(['poe', 'leagues']))),
   };
 };
 

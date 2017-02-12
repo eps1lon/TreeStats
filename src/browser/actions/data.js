@@ -61,7 +61,7 @@ export function setActive(active) {
     });
 
     const state = getState();
-    const source = state.get('data').get('sources').get(active);
+    const source = state.getIn(['data', 'sources', active]);
 
     dispatch(insertRows(source.rows));
   };

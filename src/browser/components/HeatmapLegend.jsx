@@ -1,28 +1,24 @@
 import React from 'react';
 
-import objectsEqual from '../../objectsEqual';
+import { Map, is as objectsEqual } from 'immutable';
 
 /**
  * a legend for react-heatmap
  */
 class HeatmapLegend extends React.Component {
   static propTypes = {
-    data: React.PropTypes.shape({
-      min: React.PropTypes.number.isRequired,
-      max: React.PropTypes.number.isRequired,
-      gradient: React.PropTypes.object.isRequired,
-    }).isRequired,
+    data: React.PropTypes.instanceOf(Map).isRequired,
   };
 
   /**
    * renders the legendGradient
    */
   renderLegendGradient() {
-    const gradient_conf = this.props.data.gradient;
+    const gradient_conf = this.props.data.get('gradient');
     const ctx = this.refs.canvas.getContext('2d');
 
     const gradient = ctx.createLinearGradient(0, 0, 100, 1);
-    for (const [offset, color] of Object.entries(gradient_conf)) {
+    for (const [offset, color] of gradient_conf.entries()) {
       gradient.addColorStop(offset, color);
     }
     ctx.fillStyle = gradient;
@@ -60,8 +56,8 @@ class HeatmapLegend extends React.Component {
    */
   shouldLegendGradientUpdate(other_props) {
     return !objectsEqual(
-      this.props.data.gradient,
-      other_props.data.gradient
+      this.props.data.get('gradient'),
+      other_props.data.get('gradient'),
     );
   }
 
@@ -69,7 +65,9 @@ class HeatmapLegend extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { min, max } = this.props.data;
+    const min = this.props.data.get('min');
+    const max = this.props.data.get('max');
+
     return (
       <div className="heatmap-legend">
         <em className="heatmap-min">{min}</em>

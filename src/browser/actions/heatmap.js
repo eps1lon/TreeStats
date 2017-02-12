@@ -26,7 +26,7 @@ export function calculateHeatmap(state) {
     return !conf.isVisibleNode(node);
   };
 
-  const aggregate = new NodeAggregation(rows.get('rows').toJS());
+  const aggregate = new NodeAggregation(rows.get('rows'));
   const summarized = aggregate.sum(node_filter);
 
   // candidate for max value but differences

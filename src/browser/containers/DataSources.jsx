@@ -6,8 +6,8 @@ import DataSources from '../components/DataSources.jsx';
 
 const mapStateToProps = (state) => {
   return {
-    sources: state.get('data').get('sources'),
-    active: state.get('data').get('active'),
+    sources: state.getIn(['data', 'sources']),
+    active: state.getIn(['data', 'active']),
   };
 };
 

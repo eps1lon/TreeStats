@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Heatmap from 'heatmap.js';
+import { is as objectsEqual } from 'immutable';
 
-import objectsEqual from '../../objectsEqual';
 import Transform from '../../Transform';
 
 /**
@@ -67,14 +67,14 @@ class ReactHeatmap extends React.Component {
 
 			this.heatmap.setData({
 				max: data.max,
-				data: scaled_data,
+				data: scaled_data.toArray(),
 			});
 		}
 	}
 
 	/**
 	 * applies a given coordination transformation to the data
-	 * @param {Object[]} data
+	 * @param {List} data
 	 * @param {Transform} transform
 	 * @return {Object[]}
 	 */

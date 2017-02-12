@@ -121,9 +121,9 @@ class TreeStatsApp extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    busy: state.get('rows').get('fetching'),
-    legend: state.get('heatmap').get('legend').toJS(),
-    tally: state.get('rows').get('rows').length,
+    busy: state.getIn(['rows', 'fetching']),
+    legend: state.getIn(['heatmap', 'legend']),
+    tally: state.getIn(['rows', 'rows']).size,
     zoom: immutableToTransform(state.get('zoom')),
   };
 };
