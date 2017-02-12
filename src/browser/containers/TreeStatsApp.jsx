@@ -5,7 +5,7 @@ import { immutableToTransform } from '../../d3-transform-immutable';
 
 
 import { showTooltip } from '../actions/tooltip';
-import { zoomed } from '../actions/zoom';
+import { zoomed, resetZoom } from '../actions/zoom';
 
 import BusyIndicator from '../components/BusyIndicator.jsx';
 import Zoomable from '../components/Zoomable.jsx';
@@ -41,7 +41,7 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { busy, tally, legend, zoom, zoomed } = this.props;
+    const { busy, tally, legend, zoom, zoomed, resetZoom } = this.props;
     const tooltip
       = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
 
@@ -62,6 +62,8 @@ class TreeStatsApp extends React.Component {
         </div>
 
         <BusyIndicator busy={busy} />
+
+        <button onClick={resetZoom}>resetZoom</button>
 
         <div
           className="heatmap-wrapper"
@@ -105,6 +107,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(showTooltip(x, y, node_id, event));
     },
     zoomed: (transform) => dispatch(zoomed(transform)),
+    resetZoom: () => dispatch(resetZoom()),
   };
 };
 

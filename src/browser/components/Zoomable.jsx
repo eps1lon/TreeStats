@@ -1,14 +1,19 @@
 import React from 'react';
 
 import { event, select } from 'd3-selection';
-import { zoom, zoomIdentity } from 'd3-zoom';
+import { zoom } from 'd3-zoom';
 
+import { transformEqual } from '../../d3_util';
 import browserTransform from '../../d3-transform-browser';
 
 /**
  * creates a zoomable div
+ * TODO on('zoomed') behavior when changing the onZoom prop
  */
-class Zoomable extends React.PureComponent {
+class Zoomable extends React.Component {
+  /**
+   * @type {d3.zoom} zoom d3 zoom behavior
+   */
   zoom = null
 
   /**
@@ -29,7 +34,7 @@ class Zoomable extends React.PureComponent {
   /**
    * creates a d3 zoom zoomBehavior
    * this should be called once in the component lifecycle
-   * @return {d3-zoom}
+   * @return {d3.zoom}
    */
   zoomBehavior() {
     const zoomed = () => this.props.onZoom(event.transform);
@@ -38,25 +43,25 @@ class Zoomable extends React.PureComponent {
   }
 
   /**
-   * resets the zoom
+   * @param {Object} new_props
+   * @return {boolean} true if applied trafos via zoom are equal
    */
-  resetZoom() {
-    this.zoom.transform(select(this.refs.heatmap_wrapper), zoomIdentity);
+  shouldComponentUpdate(new_props) {
+    return !transformEqual(this.props.zoom, new_props.zoom);
   }
 
   /**
    * @return {JSX}
    */
   render() {
-    const { transform } = this.props;
-    const cssTransform = browserTransform(transform);
+    const { zoom } = this.props;
+    const transform = browserTransform(zoom);
 
     // we need to double wrap this up or else
     // we get nasty flicker on panning
     return (
       <div ref="zoomWrapper">
-        <div className="zoomable" style={{ transform: cssTransform }}>
-          <a href="#" onClick={() => this.resetZoom()}>reset zoom</a>
+        <div className="zoomable" style={{ transform }}>
           {this.props.children}
         </div>
       </div>
