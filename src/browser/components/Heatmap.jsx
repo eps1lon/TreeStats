@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Heatmap from 'heatmap.js';
-import { is as objectsEqual } from 'immutable';
+import objectsEqual from '../../objectsEqual';
 
 import Transform from '../../Transform';
 
