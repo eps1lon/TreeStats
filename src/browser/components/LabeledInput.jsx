@@ -1,5 +1,9 @@
 import React from 'react';
 
+const uid = () => ['uid', Math.random().toString()].join('-');
+const domId = (s) => s && s.replace ? s.replace(/\./g, '.') : uid();
+
+
 /**
  * takes the model from the input and maps it to the domID and for attr
  * of the label
@@ -34,8 +38,10 @@ class LabeledInput extends React.Component {
   render() {
     const label = this.label;
     const input = this.input;
+    // default to react-redux-form model
+    const idProp = this.props.idProp || 'model';
 
-    const id = input.props.model.replace(/\./g, '-');
+    const id = domId(input.props[idProp]);
 
     return (
       <span className="react-fragment">
