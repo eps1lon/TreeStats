@@ -3,6 +3,9 @@ import { Control } from 'react-redux-form/immutable';
 
 /**
  * creates a {Control.select} from the given map
+ *
+ * TODO make this a higher order component that passes the options
+ * to a given component
  */
 class OptionsMap extends React.Component {
   static propTypes = {
@@ -15,10 +18,10 @@ class OptionsMap extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { options, name_key, model } = this.props;
+    const { options, name_key, model, id } = this.props;
 
     return (
-      <Control.select model={model}>
+      <Control.select model={model} id={id}>
         {[...options.entries()].map((entry) => {
           const [id, props] = entry;
 
