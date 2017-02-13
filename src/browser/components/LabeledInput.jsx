@@ -1,7 +1,7 @@
 import React from 'react';
 
 const uid = () => ['uid', Math.random().toString()].join('-');
-const domId = (s) => s && s.replace ? s.replace(/\./g, '.') : uid();
+const domId = (s) => s && s.replace ? s.replace(/\./g, '-') : uid();
 
 
 /**
