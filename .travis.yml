@@ -8,5 +8,3 @@ script:
   - npm run build
 after_success:
   - bash ./.travis-deploy.sh
-deploy:
-  skip_cleanup: true

@@ -14,7 +14,7 @@ const config = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[hash].bundle.js',
-    publicPath: '/',
+    publicPath: '',
   },
   module: {
     loaders: [
