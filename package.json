@@ -1,6 +1,12 @@
 {
   "name": "poe-tree-stats",
+  "descripton": "provides aggregated usage stats of the passive tree in Path Of Exile",
   "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/eps1lon/TreeStats.git",
+    "type": "git"
+  },
   "dependencies": {
     "async": "^2.1.4",
     "bootstrap": "^3.3.7",
