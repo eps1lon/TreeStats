@@ -11,6 +11,7 @@ plugins:
   - "react"
 rules:
   object-curly-spacing:
+  # airbnb rule
     - 2
     - "always"
   camelcase: 0
@@ -18,5 +19,9 @@ rules:
     - 2
     - ignoreTemplateLiterals: true
     - ignoreUrls: true
-  new-cap: 0 # immutable.js
+  new-cap: 
+    - 2
+    - capIsNewExceptions: # immutable.js types
+      - "List"
+      - "Map"
   react/jsx-uses-vars: 1
