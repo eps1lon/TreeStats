@@ -22,7 +22,7 @@ class CsvDataSource extends AbstractDataSource {
    * @param {string} filename
    * @return {Promise}
    */
-  static get(filename) {
+  static fetch(filename) {
     return fetch(filename)
             .then((response) => response.text());
   }
@@ -52,7 +52,7 @@ class CsvDataSource extends AbstractDataSource {
    */
   body() {
     if (this._body === null) {
-      this._body = CsvDataSource.get(this.filename);
+      this._body = CsvDataSource.fetch(this.filename);
     }
 
     return this._body;

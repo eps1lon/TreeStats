@@ -26,18 +26,18 @@ fetchMock.get('*', function(url) {
 describe('CsvDataSource', function() {
   describe('.fetch()', function() {
     it('should return a promise', function() {
-      assert.instanceOf(CsvDataSource.get(fixtures.working_url), Promise);
+      assert.instanceOf(CsvDataSource.fetch(fixtures.working_url), Promise);
     });
 
     it('should be done sometimes', async function() {
-      const body = await CsvDataSource.get(fixtures.working_url);
+      const body = await CsvDataSource.fetch(fixtures.working_url);
       assert.ok(body);
     });
   });
 
   describe('.parse()', function() {
     it('should parse a file body', async function() {
-      const body = await CsvDataSource.get(fixtures.working_url);
+      const body = await CsvDataSource.fetch(fixtures.working_url);
 
       const rows = await CsvDataSource.parse(body);
 
