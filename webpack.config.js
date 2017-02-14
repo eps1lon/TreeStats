@@ -40,7 +40,7 @@ const config = {
         loader: 'url-loader?limit=10000&mimetype=application/font-woff',
       },
       {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, 
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
       },
       {
@@ -59,8 +59,8 @@ const config = {
         JSON.stringify(process.env.NODE_ENV || 'development'),
     }),
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.join(__dirname, '/public/index.html'),
+      filename: 'app.html',
+      template: path.join(__dirname, '/public/app.html'),
     }),
   ],
 };
@@ -77,8 +77,7 @@ if (DEBUG) {
   ]);
 } else {
   config.plugins = config.plugins.concat([
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}),
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }),
   ]);
 }
 

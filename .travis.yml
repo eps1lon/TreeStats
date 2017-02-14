@@ -2,3 +2,11 @@ language: node_js
 node_js:
   - "6.9.3"
 cache: yarn
+before_script:
+  - npm run prebuild
+script:
+  - npm run build
+after_success:
+  - bash ./.travis-deploy.sh
+deploy:
+  skip_cleanup: true
