@@ -5,3 +5,23 @@ html, body {
   color: #6d6d6d;
   font-family: 'Helvetica Neue', Helvetica, Arial, serif;
 }
+
+.task-state {
+  display: inline-block;
+  background-color: #6d6d6d;
+  color: #e7e7e7;
+  list-style: none;
+  padding-left: .5em;
+}
+
+.task-state .task {
+  font-style: normal;
+}
+
+.task-state .state.running {
+  color: orange;
+}
+
+.task-state .state.done {
+  color: greenyellow;
+}

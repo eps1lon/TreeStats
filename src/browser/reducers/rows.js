@@ -4,7 +4,7 @@ import { CALCULATE_HEATMAP_DATA } from '../actions/heatmap';
 
 const initial = Map({
   rows: List(),
-  fetching: false,
+  selecting: false,
   dirty: false,
 });
 
@@ -14,10 +14,10 @@ const rows = (state = initial, action) => {
       return state.withMutations((state) => {
         state.set('rows', List(action.payload.rows));
         state.set('dirty', true);
-        state.set('fetching', false);
+        state.set('selecting', false);
       });
     case SELECT_ROWS:
-      return state.set('fetching', true);
+      return state.set('selecting', true);
     case CALCULATE_HEATMAP_DATA:
       return state.set('dirty', false);
     default:

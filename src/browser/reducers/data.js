@@ -8,6 +8,7 @@ import {
 const initial = Map({
   active: undefined,
   sources: Map(),
+  loading: false,
 });
 
 const data = (state = initial, action) => {
@@ -16,11 +17,13 @@ const data = (state = initial, action) => {
       return state.withMutations((state) => {
         state.set('active', undefined);
         state.set('sources', Map());
+        state.set('loading', true);
       });
     case SET_SOURCES:
       return state.withMutations((state) => {
         state.set('active', undefined);
         state.set('sources', Map(action.payload.sources));
+        state.set('loading', false);
       });
     case SET_ACTIVE:
       return state.set('active', action.payload.active);

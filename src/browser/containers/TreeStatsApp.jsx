@@ -7,9 +7,9 @@ import { immutableToTransform } from '../../d3_util';
 import { showTooltip } from '../actions/tooltip';
 import { resetZoom, zoomed } from '../actions/zoom';
 
-import BusyIndicator from '../components/BusyIndicator.jsx';
 import Zoomable from '../components/Zoomable.jsx';
 
+import AppState from './AppState.jsx';
 import DataFilter from './DataFilter.jsx';
 import DataSources from './DataSources.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
@@ -41,7 +41,7 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { busy, tally, legend, zoom, zoomed, resetZoom } = this.props;
+    const { tally, legend, zoom, zoomed, resetZoom } = this.props;
     const tooltip
       = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
 
@@ -53,6 +53,7 @@ class TreeStatsApp extends React.Component {
           <HeatmapConf key="heatmap_conf" tabLabel="heatmap" />
           <PassiveTreeConf key="tree_conf" tabLabel="tree" />
         </NavTab>
+
         <div className="data-legend">
           <strong>trees evaluated</strong>
           <em className="data-tally">{tally}</em>
@@ -61,7 +62,7 @@ class TreeStatsApp extends React.Component {
           <HeatmapLegend data={legend} />
         </div>
 
-        <BusyIndicator busy={busy} />
+        <AppState />
 
         <button onClick={resetZoom}>resetZoom</button>
 
@@ -85,7 +86,6 @@ class TreeStatsApp extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    busy: state.getIn(['rows', 'fetching']),
     legend: state.getIn(['heatmap', 'legend']),
     tally: state.getIn(['rows', 'rows']).size,
     zoom: immutableToTransform(state.get('zoom')),
