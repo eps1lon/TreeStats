@@ -5,6 +5,8 @@
  * @abstract
  */
 class AbstractHashSink {
+  static initial_hash = 0;
+
   /**
    *
    */
@@ -21,7 +23,7 @@ class AbstractHashSink {
    */
   parseInt(element) {
     if (typeof element === 'string') {
-      return element.charAt(0);
+      return element.charCodeAt(0);
     }
 
     const n = parseInt(element, 10);
@@ -52,7 +54,7 @@ class AbstractHashSink {
    * empties the hash
    */
   reset() {
-    this.hash = 0;
+    this.hash = this.constructor.initial_hash;
   }
 };
 
