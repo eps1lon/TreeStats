@@ -6,8 +6,6 @@ import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import { SELECT_ANY } from '../actions/rows';
 
-require('../style/data_filter.css');
-
 /**
  *
  */

@@ -6,6 +6,8 @@ import store from './store.js';
 import TreeStatsApp from './containers/TreeStatsApp.jsx';
 import { fetchSourcesFromJson } from './actions/data.js';
 
+require('./style/app.scss');
+
 /**
  *
  */

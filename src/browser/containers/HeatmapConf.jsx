@@ -4,8 +4,6 @@ import { Control, Form } from 'react-redux-form/immutable';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 
-require('../style/data_filter.css');
-
 /**
  *
  */

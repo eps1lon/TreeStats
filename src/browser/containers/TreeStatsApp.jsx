@@ -21,18 +21,6 @@ import PassiveTreeConf from './PassiveTreeConf.jsx';
 
 import HeatmapLegend from '../components/HeatmapLegend.jsx';
 
-require('bootstrap/dist/css/bootstrap.css');
-require('../style/app.css');
-require('../style/tree.css');
-require('../style/tree_heatmap.css');
-require('../style/nav_tabs.css');
-require('../style/form.css');
-require('../style/data_filter.css');
-require('../style/heatmap_conf.css');
-require('../style/tooltip.css');
-require('../style/tree_conf.css');
-require('../style/tooltip.css');
-
 /**
  *
  */

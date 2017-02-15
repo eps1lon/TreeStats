@@ -24,8 +24,16 @@ const config = {
         loader: 'babel-loader',
       },
       {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader',
+        test: /\.scss$/,
+        use: [{
+          loader: 'style-loader', // creates style nodes from JS strings
+        }, {
+          loader: 'css-loader', // translates CSS into CommonJS
+        }, {
+          loader: 'resolve-url-loader', // resolve relative urls
+        }, {
+          loader: 'sass-loader?sourceMap', // compiles Sass to CSS
+        }],
       },
       {
         test: /\.png$/,
@@ -56,7 +64,7 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV':
-        JSON.stringify(process.env.NODE_ENV || 'development'),
+      JSON.stringify(process.env.NODE_ENV || 'development'),
     }),
     new HtmlWebpackPlugin({
       filename: 'app.html',

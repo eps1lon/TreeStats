@@ -1,3 +1,15 @@
+@import "~bootstrap/dist/css/bootstrap";
+
+@import "tree";
+@import "tree_heatmap";
+@import "nav_tabs";
+@import "form";
+@import "data_filter";
+@import "heatmap_conf";
+@import "tree_conf";
+@import "tooltip";
+
+
 html, body {
   width: 100%;
   overflow-x: hidden;
