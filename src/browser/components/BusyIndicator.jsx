@@ -14,7 +14,10 @@ class BusyIndicator extends React.Component {
   render() {
     const { busy } = this.props;
 
-    return <span className={`busy-indicator ${busy ? 'active' : ''}`} />;
+    if (busy) {
+      return <span className="busy-indicator" />;
+    }
+    return <span className="glyphicon glyphicon-ok-circle" />;
   }
 }
 

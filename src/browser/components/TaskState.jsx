@@ -18,7 +18,7 @@ class TaskState extends React.Component {
   render() {
     const { tasks } = this.props;
     return (
-      <ul className="task-state">
+      <ul className="tasks">
         {tasks.map(([task, running]) => {
           const task_state = running ? 'running' : 'done';
           return (

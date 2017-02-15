@@ -5,6 +5,7 @@
     width: 1900px;
     height: 1550px;
     overflow: hidden;
+    margin-top: .5em;
 }
 
 .zoomable {
@@ -16,26 +17,6 @@
     position: absolute !important;
     top: 0px;
     left: 0px;
-}
-
-/* busy indicator */
-.busy-indicator {
-    border: 2px solid #f3f3f3; /* Light grey */
-    border-top: 2px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 1em;
-    height: 1em;
-    animation: spin 2s linear infinite;
-    display: none;
-}
-
-.busy-indicator.active {
-    display: inline-block;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }
 
 .data-legend {

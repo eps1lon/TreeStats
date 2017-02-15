@@ -18,12 +18,31 @@ html, body {
   font-family: 'Helvetica Neue', Helvetica, Arial, serif;
 }
 
+.data-legend {
+  display: inline;
+}
+
+
+/* busy indicator */
+.busy-indicator {
+    display: inline-block;
+    border: 2px solid #f3f3f3; /* Light grey */
+    border-top: 2px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 2em;
+    height: 2em;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .task-state {
   display: inline-block;
-  background-color: #6d6d6d;
-  color: #e7e7e7;
-  list-style: none;
-  padding-left: .5em;
+  padding: 0 .5em 0 .5em;
+  margin: 0 .5em 0 0;
 }
 
 .task-state .task {
@@ -36,4 +55,18 @@ html, body {
 
 .task-state .state.done {
   color: greenyellow;
+}
+
+.task-state .glyphicon {
+  color: greenyellow;
+  display: inline-block;
+  font-size: 2em;
+  background-color: #6d6d6d;
+}
+
+.tasks {
+  background-color: #6d6d6d;
+  color: #e7e7e7;
+  display: inline-block;
+  list-style: none;
 }
