@@ -95,7 +95,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(showTooltip(x, y, node_id, event));
     },
     zoomed: (transform) => dispatch(zoomed(transform)),
-    resetZoom: () => dispatch(resetZoom),
+    resetZoom: () => dispatch(resetZoom()),
   };
 };
 
