@@ -52,7 +52,6 @@
     "file-loader": "^0.10.0",
     "html-webpack-plugin": "^2.28.0",
     "jest": "^18.1.0",
-    "node-fetch": "^1.6.3",
     "opn-cli": "^3.1.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
