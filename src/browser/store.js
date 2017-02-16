@@ -1,11 +1,13 @@
 import { Map } from 'immutable';
 import { createStore, applyMiddleware, compose } from 'redux';
-import createLogger from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
+import createLogger from 'redux-logger';
+import { createEpicMiddleware } from 'redux-observable';
 
 import treeStatsApp from './reducers';
-import { rowsActor } from './actors/rows';
 import { heatmapDataActor } from './actors/heatmapData';
+import { rowsActor } from './actors/rows';
+import root_epic from './epics';
 
 const preload = Map({
   nav_tabs: Map({
@@ -13,9 +15,13 @@ const preload = Map({
   }),
 });
 
-const middlewares = [thunkMiddleware];
-
 const verbose_actions = ['TOOLTIP', 'ZOOMED'];
+
+const epic_middleware = createEpicMiddleware(root_epic);
+const middlewares = [
+  thunkMiddleware,
+  epic_middleware,
+];
 
 if (process.env.NODE_ENV !== `production` && true) {
   const logger = createLogger({
