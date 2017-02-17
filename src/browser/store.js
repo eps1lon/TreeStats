@@ -5,7 +5,6 @@ import createLogger from 'redux-logger';
 import { createEpicMiddleware } from 'redux-observable';
 
 import treeStatsApp from './reducers';
-import { heatmapDataActor } from './actors/heatmapData';
 import root_epic from './epics';
 
 const preload = Map({
@@ -54,25 +53,5 @@ const store = createStore(
   preload,
   enhancer,
 );
-
-/*
- * actor pattern
- */
-let acting = false;
-const actors = [
-  heatmapDataActor,
-];
-
-store.subscribe(function() {
-  if (!acting) {
-    acting = true;
-
-    for (const actor of actors) {
-      actor(store.getState(), store.dispatch);
-    }
-
-    acting = false;
-  }
-});
 
 export default store;

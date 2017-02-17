@@ -5,28 +5,45 @@ import JavaHashSink from '../../hash_sinks/JavaHashSink';
 export const CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
 export const EXTREMA_CHANGE = 'EXTREMA_CHANGE';
 
+// rrf form models that are relevant to the heatmap calculation
+// in calculateHeatmap()
+export const HEATMAP_RELEVANT_CONF = [
+  'passive_tree_conf.group_orbits',
+  'passive_tree_conf.start',
+  'passive_tree_conf.scionPathOf',
+  'passive_tree_conf.ascendancy',
+  'passive_tree_conf.mastery',
+];
+
 /**
- * calculates the heatmap from the current state
- * @param {Map} state redux state
- * @return {Object}
+ * @param {Immutable.Map} state redux state tree
+ * @return {Object} @see {calculateHeatmap}
  */
-export function calculateHeatmap(state) {
-  // rows for actual aggregation
-  // passive tree for position info
-  // tree conf to check if an aggregated value is visible
-  const rows = state.get('rows');
+export const calculateHeatmapFromState = (state) => {
+  const rows = state.getIn(['rows', 'rows']);
   const passive_tree_conf = state.get('passive_tree_conf');
   const passive_tree = state.get('passive_tree');
 
   const conf = new PassiveTreeconf(passive_tree_conf.toJS());
 
+  return calculateHeatmap(rows, conf, passive_tree);
+};
+
+/**
+ * calculates the heatmap from the sum aggregation of the nodes in rows
+ * @param {Object[]} rows
+ * @param {PassiveTreeConf} conf
+ * @param {PassiveTree} passive_tree
+ * @return {Object} action
+ */
+export function calculateHeatmap(rows, conf, passive_tree) {
   const node_filter = (node_id) => {
     const node = passive_tree.nodes.get(node_id);
     // blacklist if not visible
     return !conf.isVisibleNode(node);
   };
 
-  const aggregate = new NodeAggregation(rows.get('rows'));
+  const aggregate = new NodeAggregation(rows);
   const summarized = aggregate.sum(node_filter);
 
   // candidate for max value but differences
