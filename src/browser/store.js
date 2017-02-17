@@ -6,7 +6,6 @@ import { createEpicMiddleware } from 'redux-observable';
 
 import treeStatsApp from './reducers';
 import { heatmapDataActor } from './actors/heatmapData';
-import { rowsActor } from './actors/rows';
 import root_epic from './epics';
 
 const preload = Map({
@@ -61,7 +60,6 @@ const store = createStore(
  */
 let acting = false;
 const actors = [
-  rowsActor,
   heatmapDataActor,
 ];
 

@@ -2,7 +2,6 @@ import { Map } from 'immutable';
 const Nedb = require('nedb');
 
 import { AWAITING_ROWS, INSERT_ROWS, SET_DB } from '../actions/db';
-import { SELECT_ROWS } from '../actions/rows';
 
 // states of the db
 export const STATE = {
@@ -15,8 +14,6 @@ export const STATE = {
 const initial = Map({
   db: new Nedb(),
   state: STATE.EMPTY,
-  // new db has been written
-  dirty: false,
 });
 
 const db = (state = initial, action) => {
@@ -28,11 +25,8 @@ const db = (state = initial, action) => {
     case SET_DB:
       return state.withMutations((state) => {
         state.set('db', action.payload.db);
-        state.set('dirty', true);
         state.set('state', STATE.READY);
       });
-    case SELECT_ROWS:
-      return state.set('dirty', false);
     default:
       return state;
   };
