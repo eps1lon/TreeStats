@@ -42,10 +42,11 @@ class AppState extends React.Component {
   render() {
     const { busy, task_state } = this.props;
     const { extended } = this.state;
+    const title = 'click for details on running tasks';
     const toggleDetails = () => this.setState({ extended: !extended });
 
     return (
-      <div className="task-state" onClick={toggleDetails}>
+      <div className="task-state" title={title} onClick={toggleDetails}>
         {extended && <TaskState tasks={task_state} />}
         {!extended && <BusyIndicator busy={busy} />}
       </div>

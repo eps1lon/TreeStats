@@ -28,7 +28,7 @@ export const getTaskState = (state) => {
     // calculate heatmap data which in sync calculates data
     // so it doesnt make sense to add another indicator since the
     // main thread will be busy
-    ['select trees', state.getIn(['rows', 'selecting'])],
+    ['crunching numbers', state.getIn(['rows', 'selecting'])],
   );
 };
 

@@ -1,4 +1,5 @@
 @import "~bootstrap/dist/css/bootstrap";
+@import "~reset-css/reset";
 
 @import "tree";
 @import "tree_heatmap";
@@ -18,11 +19,6 @@ html, body {
   font-family: 'Helvetica Neue', Helvetica, Arial, serif;
 }
 
-.data-legend {
-  display: inline;
-}
-
-
 /* busy indicator */
 .busy-indicator {
     display: inline-block;
@@ -40,6 +36,7 @@ html, body {
 }
 
 .task-state {
+  cursor: help;
   display: inline-block;
   padding: 0 .5em 0 .5em;
   margin: 0 .5em 0 0;
@@ -69,4 +66,12 @@ html, body {
   color: #e7e7e7;
   display: inline-block;
   list-style: none;
+}
+
+.toolbar {
+  z-index: 2;
+}
+
+.toolbar button {
+  vertical-align: top;
 }

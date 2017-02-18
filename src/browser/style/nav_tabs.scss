@@ -1,17 +1,29 @@
 .react-nav-tabs {
-  border-bottom: 1px solid black;
+  display: inline-block;
   padding: 1em;
   padding-bottom: 0px;
 }
 
 .tab-content {
-  background-color: white;
-  padding: 4px 0 0 4px;
+  padding: 4px 0 4px 4px;
 }
 
-.nav-tabs li a {
+.nav-tabs > li:not(.active) a:hover {
+  border-color: #6d6d6d;
+}
+
+.nav-tabs > li.active a, .nav-tabs > li.active a:hover, .tab-content {
+  background-color: #6d6d6d;
+  color: #e7e7e7;
+}
+
+.nav-tabs > li a {
   cursor: pointer;
   text-transform: uppercase;
+}
+
+.tab-pane input, .tab-pane select {
+  color: #6d6d6d;
 }
 
 .tab-pane:not(.active) {

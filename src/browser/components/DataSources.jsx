@@ -3,6 +3,8 @@ import { Map } from 'immutable';
 
 import CsvDataSource from '../../data_sources/CsvDataSource';
 
+import LabeledInput from '../components/LabeledInput.jsx';
+
 /**
  * a container for data sources
  */
@@ -32,16 +34,19 @@ class DataSources extends React.Component {
   render() {
     const { onChange, sources } = this.props;
     return (
-      <select className='data-sources' onChange={onChange}>
-        {sources.entrySeq().map((entry) => {
-          const [key, source] = entry;
-          return (
-            <option key={key} value={key}>
-              {this.optionValue(source)}
-            </option>
-          );
-        })}
-      </select>
+      <LabeledInput>
+        <label>Source</label>
+        <select className='data-sources' onChange={onChange}>
+          {sources.entrySeq().map((entry) => {
+            const [key, source] = entry;
+            return (
+              <option key={key} value={key}>
+                {this.optionValue(source)}
+              </option>
+            );
+          })}
+        </select>
+      </LabeledInput>
     );
   }
 };
