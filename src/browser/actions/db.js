@@ -1,8 +1,8 @@
 const Nedb = require('nedb');
 
-export const AWAITING_ROWS = 'AWAITING_ROWS'; // step 1
-export const INSERT_ROWS = 'INSERT_ROWS'; // step 2
-export const SET_DB = 'SET_DB'; // step 3
+export const AWAITING_ROWS = 'DB/AWAITING_ROWS'; // step 1
+export const INSERT_ROWS = 'DB/INSERT'; // step 2
+export const SET_DB = 'DB/SET'; // step 3
 
 /**
  * creates a new db and inserts the rows

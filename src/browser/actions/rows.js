@@ -1,8 +1,8 @@
-export const SELECT_ANY = 'SELECT_ANY';
+export const SELECT_ANY = 'ROWS/SELECT_ANY';
 
 // action types
-export const UPDATE_ROWS = 'UPDATE_ROWS';
-export const SELECT_ROWS = 'SELECT_ROWS';
+export const UPDATE_ROWS = 'ROWS/UPDATE';
+export const SELECT_ROWS = 'ROWS/SELECT';
 
 /**
  * promises exec of a data cursor with the data filter applied

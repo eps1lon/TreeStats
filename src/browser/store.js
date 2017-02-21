@@ -7,13 +7,18 @@ import { createEpicMiddleware } from 'redux-observable';
 import treeStatsApp from './reducers';
 import root_epic from './epics';
 
+import { ZOOMED } from './actions/zoom';
+import { SHOW_TOOLTIP } from './actions/tooltip';
+
 const preload = Map({
   nav_tabs: Map({
     conf: 'data_filter', // show data source initially
   }),
 });
 
-const verbose_actions = ['TOOLTIP', 'ZOOMED'];
+const verbose_actions = [
+  ZOOMED, SHOW_TOOLTIP,
+];
 
 const epic_middleware = createEpicMiddleware(root_epic);
 const middlewares = [
@@ -26,8 +31,7 @@ if (process.env.NODE_ENV !== `production` && true) {
     // collapse all
     collapsed: true,
     // TOOLTIPs fire on mousemove
-    predicate: (getState, action) =>
-      !new RegExp(verbose_actions.join('|')).test(action.type),
+    predicate: (getState, action) => !verbose_actions.includes(action.type),
   });
   middlewares.push(logger);
 }

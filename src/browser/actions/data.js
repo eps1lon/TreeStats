@@ -1,9 +1,8 @@
-export const FETCH_SOURCES_FROM_JSON = 'SOURCES_FROM_JSON';
-export const SET_SOURCES = 'SET_SOURCES';
-
-export const SET_ACTIVE = 'SET_ACTIVE';
-
 import { insertRows } from './db';
+
+export const FETCH_SOURCES_FROM_JSON = 'SOURCES/FROM_JSON';
+export const SET_SOURCES = 'SOURCES/SET';
+export const SET_ACTIVE = 'SOURCES/ACTIVATE';
 
 /**
  * thunk to generate sources from json file

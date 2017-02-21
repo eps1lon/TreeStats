@@ -1,4 +1,4 @@
-export const ACTIVATE = 'ACTIVATE';
+export const ACTIVATE = 'NAV_TABS/ACTIVATE';
 
 /**
  * action creator to activate a specific child in a nav tab

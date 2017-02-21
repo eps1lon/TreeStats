@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-export const SHOW_TOOLTIP = 'SHOW_TOOLTIP';
+export const SHOW_TOOLTIP = 'TOOLTIP/SHOW';
 
 /**
  * creates relevant tt info

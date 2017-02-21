@@ -2,8 +2,8 @@ const NodeAggregation = require('../../poe/PassiveNodeAggregation');
 import PassiveTreeconf from '../../poe/PassiveTreeConf';
 import JavaHashSink from '../../hash_sinks/JavaHashSink';
 
-export const CALCULATE_HEATMAP_DATA = 'CALCULATE_HEATMAP_DATA';
-export const EXTREMA_CHANGE = 'EXTREMA_CHANGE';
+export const CALCULATE_HEATMAP_DATA = 'HEATMAP/CALCULATE_DATA';
+export const EXTREMA_CHANGE = 'HEATMAP/EXTREMA_CHANGE';
 
 // rrf form models that are relevant to the heatmap calculation
 // in calculateHeatmap()

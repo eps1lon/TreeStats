@@ -1,5 +1,5 @@
-export const ZOOMED = 'ZOOMED';
-export const RESET_ZOOM = 'RESET_ZOOM';
+export const ZOOMED = 'ZOOM/ZOOMED';
+export const RESET_ZOOM = 'ZOOM/RESET';
 
 /**
  * action creator if the user zoomed
