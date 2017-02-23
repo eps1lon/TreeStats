@@ -10,6 +10,10 @@ import { formModelChanged } from '../helpers/rrf';
 
 // calculateHeatmap when rows change
 // or any for the calculation relevant conf in a rrf model
+// TODO
+// currently racing with fetchTree. every UPDATE_ROWS before NEW_TREE
+// doesnt have an effect. thinking about something like
+// filter(...).bufferUntilThenDontBufferAnymore(action$.ofType(NEW_TREE)).map...
 export const heatmapCache = (action$, store) => {
   return action$.filter((action) => {
     return action.type === UPDATE_ROWS

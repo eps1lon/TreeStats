@@ -1,9 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+const poe = require('../../poe/data');
+
 import { immutableToTransform } from '../../d3_util';
 
-
+import { fetchSourcesFromJson } from '../actions/data';
+import { fetchTree } from '../actions/passive_tree';
 import { showTooltip } from '../actions/tooltip';
 import { resetZoom, zoomed } from '../actions/zoom';
 
@@ -25,6 +28,13 @@ import HeatmapLegend from '../components/HeatmapLegend.jsx';
  *
  */
 class TreeStatsApp extends React.Component {
+  /**
+   * call app init
+   */
+  componentDidMount() {
+    this.props.init();
+  }
+
   /**
    * @return {JSX}
    */
@@ -83,6 +93,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    init: () => {
+      dispatch(fetchSourcesFromJson('./sources.json'));
+      dispatch(fetchTree(poe.current_tree));
+    },
     tooltip: (event, parent) => {
       event.persist();
 

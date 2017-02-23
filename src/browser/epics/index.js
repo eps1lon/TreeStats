@@ -2,6 +2,7 @@ import { combineEpics } from 'redux-observable';
 
 import { getSourcesIndex, setSourcesIndex } from './data';
 import { heatmapCache } from './heatmap';
+import { fetchTree } from './passive_tree';
 import { cacheRows } from './rows';
 
 const root_epic = combineEpics(
@@ -9,6 +10,7 @@ const root_epic = combineEpics(
   setSourcesIndex,
   cacheRows,
   heatmapCache,
+  fetchTree,
 );
 
 export default root_epic;

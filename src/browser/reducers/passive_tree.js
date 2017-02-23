@@ -1,7 +1,19 @@
-const current_tree = require('../../current_tree.js');
+import PassiveTree from '../../poe/PassiveTree';
 
-const passive_tree = (state = current_tree, action) => {
-  return state;
+import { NEW_TREE } from '../actions/passive_tree';
+
+const initial_state = new PassiveTree({
+  nodes: [],
+  groups: [],
+});
+
+const passive_tree = (state = initial_state, action) => {
+  switch (action.type) {
+    case NEW_TREE:
+      return new PassiveTree(action.payload.data, action.payload.id);
+    default:
+      return state;
+  }
 };
 
 export default passive_tree;
