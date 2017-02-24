@@ -1,6 +1,8 @@
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
 
+import { NEW_TREE } from '../actions/passive_tree';
 import { UPDATE_ROWS } from '../actions/rows';
 import {
   calculateHeatmapFromState,
@@ -15,9 +17,13 @@ import { formModelChanged } from '../helpers/rrf';
 // doesnt have an effect. thinking about something like
 // filter(...).bufferUntilThenDontBufferAnymore(action$.ofType(NEW_TREE)).map...
 export const heatmapCache = (action$, store) => {
-  return action$.filter((action) => {
-    return action.type === UPDATE_ROWS
-      || (formModelChanged(action, 'passive_tree_conf')
-          && HEATMAP_RELEVANT_CONF.includes(action.model));
-  }).map(() => calculateHeatmapFromState(store.getState()));
+  return action$.ofType(NEW_TREE)
+    .mergeMap(
+      () => action$.filter((action) => {
+        return action.type === UPDATE_ROWS
+          || (formModelChanged(action, 'passive_tree_conf')
+              && HEATMAP_RELEVANT_CONF.includes(action.model));
+      }),
+      () => calculateHeatmapFromState(store.getState()),
+    );
 };
