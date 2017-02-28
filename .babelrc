@@ -1,4 +1,7 @@
 {
+  "ignore": [
+    "src/poe/trees/250/*"
+  ],
   "presets": ["react", "es2015", "es2017"],
   "plugins": [
     "transform-runtime",

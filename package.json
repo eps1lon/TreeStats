@@ -75,5 +75,11 @@
     "build:dependencies": "webpack --profile --json > dependencies1.json",
     "prebuild": "npm run build:clean && npm run build:copy",
     "build": "NODE_ENV=\"production\" webpack -p --progress --colors"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "fixtures"
+    ]
   }
 }

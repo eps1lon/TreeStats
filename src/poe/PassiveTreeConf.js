@@ -7,11 +7,14 @@ const PoeTree = require('./PassiveTree');
 class PassiveTreeConf {
   /**
    * @param {Object} conf_props
+   * @param {boolean} conf_props.group_orbits display group_orbits?
+   * @param {boolean} conf_props.start display start nodes?
+   * @param {boolean} conf_props.scionPathOf display ScionPathOfX edge?
+   * @param {boolean} conf_props.ascendancy display ascendancy nodes?
+   * @param {boolean} conf_props.mastery display mastery nodes?
+   * @param {boolean} conf_props.node_scale scale for {PassiveNode#size}
    */
   constructor(conf_props) {
-    /**
-     * @type {Object}
-     */
     this.props = conf_props;
   }
 
@@ -55,9 +58,7 @@ class PassiveTreeConf {
    * @return {boolean}
    */
   isVisibleGroup(group) {
-    const conf = this.props;
-
-    return (conf.group_orbits);
+    return this.props.group_orbits;
   };
 
   /**
