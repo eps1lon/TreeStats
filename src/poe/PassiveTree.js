@@ -42,15 +42,16 @@ module.exports = class PassiveTree {
    * @return {Map}
    */
   static initGroups(tree_data) {
-    return new Map(Object.entries(tree_data.data.groups));
+    return new Map(Object.entries(tree_data.groups));
   }
 
   /**
    * map instead of object for ease of use
    * @param {Object} tree_data ggg tree json
+   * @return {Map}
    */
   static initNodes(tree_data) {
-    new Map(tree_data.data.nodes.map((n) => {
+    return new Map(tree_data.nodes.map((n) => {
       // [key, value]
       return [n.id, new PassiveNodeInstance(n, tree_data.groups)];
     }));
@@ -88,14 +89,14 @@ module.exports = class PassiveTree {
 
     const max_radius = Math.max(...PassiveNode.orbit_radii);
 
-    passive_tree.grouos.values().forEach((group) => {
+    for (const group of passive_tree.groups.values()) {
       dimensions = [
         Math.min(group.x - max_radius, dimensions[0]),
         Math.min(group.y - max_radius, dimensions[1]),
         Math.max(group.x + max_radius, dimensions[2]),
         Math.max(group.y + max_radius, dimensions[3]),
       ];
-    });
+    };
 
     return dimensions;
   }
