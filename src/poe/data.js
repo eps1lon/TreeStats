@@ -4,8 +4,10 @@
  */
 module.exports = {
   leagues: new Map([
-    [1, { name: 'Breach', active: true, permanent: false }],
-    [2, { name: 'Hardcore Breach', active: true, permanent: false }],
+    [1, { name: 'Breach', active: false, permanent: false }],
+    [2, { name: 'Hardcore Breach', active: false, permanent: false }],
+    [3, { name: 'Legacy', active: false, permanent: false }],
+    [4, { name: 'Hardcore Legacy', active: false, permanent: false }],
   ]),
   classes: new Map([
     // name, parent is the parent class for ascendancies ie
@@ -39,6 +41,7 @@ module.exports = {
   ]),
   trees: new Map([
     ['250', { name: '2.5.0 Breach', version: 4 }],
+    ['260', { name: '2.6.0 Legacy', version: 4 }],
   ]),
   current_tree: '250',
 };
