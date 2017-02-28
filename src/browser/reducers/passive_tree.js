@@ -3,8 +3,8 @@ import PassiveTree from '../../poe/PassiveTree';
 import { NEW_TREE } from '../actions/passive_tree';
 
 const initial_state = new PassiveTree({
-  nodes: [],
-  groups: [],
+    nodes: [],
+    groups: [],
 });
 
 const passive_tree = (state = initial_state, action) => {

@@ -94,7 +94,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     init: () => {
-      dispatch(fetchSourcesFromJson('./sources.json'));
+      dispatch(fetchSourcesFromJson(`./sources_${process.env.NODE_ENV}.json`));
       dispatch(fetchTree(poe.current_tree));
     },
     tooltip: (event, parent) => {
