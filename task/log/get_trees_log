@@ -1,0 +1,31 @@
+[2017-02-28 10:25:35.083] [INFO] [default] - started task with --total=200 --limit=200 --async_limit=500 --api_rate_limit=5
+[2017-02-28 10:25:35.090] [INFO] [default] - fetching total of 200 in chunks of 500
+[2017-02-28 10:25:35.091] [INFO] [default] - fetching total of 2 ladders over 2 leagues
+[2017-02-28 10:25:36.027] [INFO] [default] - finished ladder fetch after 962ms
+[2017-02-28 10:25:36.052] [INFO] [default] - fetching 400 passives
+[2017-02-28 10:25:37.710] [INFO] [default] - finished10.00%
+[2017-02-28 10:25:38.288] [INFO] [default] - finished20.00%
+[2017-02-28 10:25:38.897] [INFO] [default] - finished30.00%
+[2017-02-28 10:25:39.491] [INFO] [default] - finished40.00%
+[2017-02-28 10:25:40.099] [INFO] [default] - finished50.00%
+[2017-02-28 10:25:40.654] [INFO] [default] - finished60.00%
+[2017-02-28 10:25:41.233] [INFO] [default] - finished70.00%
+[2017-02-28 10:25:41.821] [INFO] [default] - finished80.00%
+[2017-02-28 10:25:42.387] [INFO] [default] - finished90.00%
+[2017-02-28 10:25:42.978] [INFO] [default] - finished100.00%
+[2017-02-28 10:25:42.979] [INFO] [default] - finished passive fetch after 7913ms(19.785ms/passive)
+[2017-02-28 10:25:43.008] [INFO] [default] - finished task in 7.94s
+[2017-02-28 10:40:40.814] [INFO] [default] - started task with --total=200 --limit=200 --async_limit=500 --api_rate_limit=5
+[2017-02-28 10:40:40.821] [INFO] [default] - fetching total of 200 in chunks of 500
+[2017-02-28 10:40:40.822] [INFO] [default] - fetching total of 0 ladders over 0 leagues
+[2017-02-28 10:40:40.920] [INFO] [default] - finished ladder fetch after 123ms
+[2017-02-28 10:40:40.920] [INFO] [default] - fetching 0 passives
+[2017-02-28 10:40:40.921] [INFO] [default] - finished passive fetch after 124ms(Infinityms/passive)
+[2017-02-28 10:40:40.921] [INFO] [default] - finished task in 0.12s
+[2017-02-28 10:42:20.953] [INFO] [default] - started task with --total=200 --limit=200 --async_limit=500 --api_rate_limit=5
+[2017-02-28 10:42:20.960] [INFO] [default] - fetching total of 200 in chunks of 500
+[2017-02-28 10:42:20.961] [INFO] [default] - fetching total of 0 ladders over 0 leagues
+[2017-02-28 10:42:20.963] [INFO] [default] - finished ladder fetch after 28ms
+[2017-02-28 10:42:20.963] [INFO] [default] - fetching 0 passives
+[2017-02-28 10:42:20.964] [INFO] [default] - finished passive fetch after 29ms(Infinityms/passive)
+[2017-02-28 10:42:20.964] [INFO] [default] - finished task in 0.03s
