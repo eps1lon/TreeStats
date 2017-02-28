@@ -39,6 +39,9 @@ export const calculateHeatmapFromState = (state) => {
 export function calculateHeatmap(rows, conf, passive_tree) {
   const node_filter = (node_id) => {
     const node = passive_tree.nodes.get(node_id);
+    if (node === undefined) {
+      return true;
+    }
     // blacklist if not visible
     return !conf.isVisibleNode(node);
   };
