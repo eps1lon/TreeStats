@@ -39,6 +39,9 @@ export const calculateHeatmapFromState = (state) => {
 export function calculateHeatmap(rows, conf, passive_tree) {
   const node_filter = (node_id) => {
     const node = passive_tree.nodes.get(node_id);
+    // some passives in the standard league are no more found
+    // in todays passive tree
+    // => hide legacy nodes
     if (node === undefined) {
       return true;
     }
