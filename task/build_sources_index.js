@@ -12,7 +12,7 @@ const sources = fs.readdirSync(dir)
   .filter((filename) => {
     return /^.*_get_trees\.csv$/.test(filename);
   })
-  .sort()
+  .sort((a, b) => a < b)
   .map((filename) => {
     return { filename: path.join(public_root, filename) };
   });
