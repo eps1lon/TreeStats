@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { List } from 'immutable';
 
-import BusyIndicator from '../components/BusyIndicator.jsx';
+import NProgress from 'nprogress';
 import TaskState from '../components/TaskState.jsx';
 import { getTaskState, getRunningTasks } from '../reducers/index';
 
@@ -13,7 +13,7 @@ import { getTaskState, getRunningTasks } from '../reducers/index';
  */
 class AppState extends React.Component {
   static propTypes = {
-    busy: React.PropTypes.bool.isRequired,
+    running: React.PropTypes.number.isRequired,
     task_state: React.PropTypes.instanceOf(List).isRequired,
   }
 
@@ -28,19 +28,31 @@ class AppState extends React.Component {
    * @return {boolean} if task_state or busy changes
    */
   shouldComponentUpdate(new_props, new_state) {
-    const { busy, task_state } = this.props;
+    const { running, task_state } = this.props;
     const { extended } = this.state;
 
-    return busy != new_props.busy
+    return running != new_props.running
       || !task_state.equals(new_props.task_state)
       || extended != new_state.extended;
+  }
+
+  /**
+   * update the progress bar
+   * @param {Object} prevProps
+   */
+  componentDidUpdate(prevProps) {
+    if (prevProps.running == 0 && this.props.running > 0) {
+      NProgress.start();
+    } else if (prevProps.running > 0 && this.props.running == 0) {
+      NProgress.done();
+    }
   }
 
   /**
    * @return {JSX}
    */
   render() {
-    const { busy, task_state } = this.props;
+    const { task_state } = this.props;
     const { extended } = this.state;
     const title = 'click for details on running tasks';
     const toggleDetails = () => this.setState({ extended: !extended });
@@ -48,7 +60,6 @@ class AppState extends React.Component {
     return (
       <div className="task-state" title={title} onClick={toggleDetails}>
         {extended && <TaskState tasks={task_state} />}
-        {!extended && <BusyIndicator busy={busy} />}
       </div>
     );
   }
@@ -56,7 +67,7 @@ class AppState extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    busy: getRunningTasks(state).size > 0,
+    running: getRunningTasks(state).size,
     task_state: getTaskState(state),
   };
 };
