@@ -1,15 +1,18 @@
+const Map = require('immutable').Map;
+
 /* eslint max-len: ["error", 120]*/
 /**
  *
  */
 module.exports = {
-  leagues: new Map([
+  leagues: Map([
     [1, { name: 'Breach', active: false, permanent: false }],
     [2, { name: 'Hardcore Breach', active: false, permanent: false }],
     [3, { name: 'Legacy', active: false, permanent: false }],
     [4, { name: 'Hardcore Legacy', active: false, permanent: false }],
+    [5, { name: 'Standard', active: true, permanent: false }],
   ]),
-  classes: new Map([
+  classes: Map([
     // name, parent is the parent class for ascendancies ie
     // character_class, ascendancy is used for url generation
     [1, { name: 'Marauder', parent: null, character_class: 1, ascendancy: 0 }],
@@ -39,7 +42,7 @@ module.exports = {
     [25, { name: 'Champion', parent: 6, character_class: 4, ascendancy: 3 }],
     [26, { name: 'Ascendant', parent: 7, character_class: 7, ascendancy: 1 }],
   ]),
-  trees: new Map([
+  trees: Map([
     ['250', { name: '2.5.0 Breach', version: 4 }],
     ['260', { name: '2.6.0 Legacy', version: 4 }],
   ]),

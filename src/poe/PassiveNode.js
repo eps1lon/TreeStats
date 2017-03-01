@@ -76,6 +76,17 @@ module.exports = class {
   }
 
   /**
+   * @return {string} the starting class
+   */
+  get startingClass() {
+    if (this.start) {
+      // ucfirst
+      return this.name[0].toUpperCase() + this.name.slice(1).toLowerCase();
+    }
+    return undefined;
+  }
+
+  /**
    * @return {number[]} adjacent node ids
    */
   get adjacent() {

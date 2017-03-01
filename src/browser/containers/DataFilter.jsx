@@ -67,7 +67,7 @@ class DataFilter extends React.Component {
  * @return {Map}
  */
 const visibleLeagues = (leagues) => {
-  return new Map([...leagues.entries()].filter((entry) => entry[1].active));
+  return new Map([...leagues.entries()]);
 };
 
 /**
