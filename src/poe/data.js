@@ -43,6 +43,7 @@ module.exports = {
     [26, { name: 'Ascendant', parent: 7, character_class: 7, ascendancy: 1 }],
   ]),
   trees: Map([
+    // dont use underscores in the ident or adjust regexp that rely on format
     ['250', { name: '2.5.0 Breach', version: 4 }],
     ['260', { name: '2.6.0 Legacy', version: 4 }],
   ]),

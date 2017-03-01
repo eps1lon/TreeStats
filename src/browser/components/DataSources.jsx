@@ -1,6 +1,8 @@
 import React from 'react';
 import { Map } from 'immutable';
+import path from 'path';
 
+import POE from '../../poe/data';
 import CsvDataSource from '../../data_sources/CsvDataSource';
 
 import LabeledInput from '../components/LabeledInput.jsx';
@@ -22,7 +24,22 @@ class DataSources extends React.Component {
    */
   optionValue(source) {
     if (source instanceof CsvDataSource) {
-      return source.filename;
+      const filename = path.basename(source.filename);
+      const match = filename.match(/^(\d+)_([^_]+)_get_trees\.csv$/);
+
+      if (match !== null) {
+        const date = new Date(+match[1]);
+        const tree = POE.trees.get(match[2]);
+
+        if (date && tree) {
+          return [
+            date.toLocaleDateString(),
+            tree.name,
+          ].join(' - ');
+        }
+      }
+
+      return filename;
     }
 
     return source.toString();
