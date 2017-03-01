@@ -73,7 +73,7 @@
     "coverage": "npm test -- --coverage",
     "postcoverage": "opn coverage/lcov-report/index.html",
     "build:clean": "del \"dist/!(.git*|Procfile)**\"",
-    "build:copy": "copyfiles -u 1 public/* 'public/**/*' dist",
+    "build:copy": "copyfiles --all -u 1 public/* 'public/**/*' dist",
     "build:dependencies": "webpack --profile --json > dependencies1.json",
     "prebuild": "npm run build:clean && npm run build:copy",
     "build": "NODE_ENV=\"production\" webpack -p --progress --colors"
