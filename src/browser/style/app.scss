@@ -69,7 +69,9 @@ html, body {
 }
 
 .toolbar {
-  z-index: 2;
+  position: absolute;
+  top: 0px;
+  left: 0px;
 }
 
 .toolbar button {

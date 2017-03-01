@@ -66,15 +66,15 @@ class TreeStatsApp extends React.Component {
           onMouseMove={tooltip}
           ref="heatmap_wrapper">
 
-          <div className="toolbar">
-            <AppState />
-            <button onClick={resetZoom}>resetZoom</button>
-          </div>
-
           <Zoomable zoom={zoom} onZoom={zoomed}>
             <TreeHeatmap />
             <PassiveTree />
           </Zoomable>
+
+          <div className="toolbar">
+            <AppState />
+            <button onClick={resetZoom}>resetZoom</button>
+          </div>
         </div>
 
         <Tooltip />
