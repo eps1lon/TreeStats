@@ -8,6 +8,7 @@ import {
   setActive,
   setSourcesArray,
 } from '../actions/data';
+import { defaultSource } from '../reducers/data';
 import dataSource from '../../data_sources/factory';
 
 export const getSourcesIndex = (action$) => {
@@ -16,10 +17,6 @@ export const getSourcesIndex = (action$) => {
       return ajax.getJSON(action.payload)
         .map((sources) => setSourcesArray(sources.map(dataSource)));
     });
-};
-
-const defaultSource = (state) => {
-  return state.getIn(['data', 'sources']).keys().next().value;
 };
 
 export const setSourcesIndex = (action$, store) => {
