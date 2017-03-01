@@ -1,4 +1,2 @@
-tree
-*.css
-*.csv
-*.json
+**/trees/250/**
+**/trees/260/**

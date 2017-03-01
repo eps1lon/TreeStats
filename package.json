@@ -68,7 +68,7 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint \"src/**\"",
+    "lint": "eslint \"src/**/*.js\" \"src/**/*.jsx\"",
     "start": "node server",
     "coverage": "npm test -- --coverage",
     "postcoverage": "opn coverage/lcov-report/index.html",
