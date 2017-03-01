@@ -14,10 +14,10 @@ yarn
 cd ..
 
 # update frontend
-cd public
+cd public/TreeStats
 git pull
 
-cd ..
+cd ../..
 
 # update trees
 node TreeStats/task/build_sources_index.js TreeStats/task/get_trees public/TreeStats/sources_production.json data
