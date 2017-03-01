@@ -67,8 +67,8 @@ const config = {
       JSON.stringify(process.env.NODE_ENV || 'development'),
     }),
     new HtmlWebpackPlugin({
-      filename: 'app.html',
-      template: path.join(__dirname, '/public/app.html'),
+      filename: 'index.html',
+      template: path.join(__dirname, '/public/index.html'),
     }),
   ],
 };
