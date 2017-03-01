@@ -47,5 +47,5 @@ module.exports = {
     ['250', { name: '2.5.0 Breach', version: 4 }],
     ['260', { name: '2.6.0 Legacy', version: 4 }],
   ]),
-  current_tree: '250',
+  current_tree: '260',
 };
