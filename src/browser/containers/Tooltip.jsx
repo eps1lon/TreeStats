@@ -26,7 +26,10 @@ class Tooltip extends React.Component {
     return (
       <div className={class_names.join(' ')} style={style}>
         {node !== undefined && <PassiveNodeTooltip node={node} />}
-        <p><strong>taken:</strong> <em className="aggregated">{value}</em></p>
+        <p>
+          <strong>taken: </strong>
+          <em className="aggregated">{value || 'none taken'}</em>
+        </p>
       </div>
     );
   }
