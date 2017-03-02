@@ -6,6 +6,6 @@
     ],
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "editor.wrappingColumn": -1,
+    "editor.wordWrap": "off",
     "eslint.enable": true
 }
