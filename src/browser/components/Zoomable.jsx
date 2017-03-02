@@ -51,12 +51,16 @@ class Zoomable extends React.Component {
   render() {
     const { zoom } = this.props;
     const transform = browserTransform(zoom);
+    const style = {
+      transform,
+      transformOrigin: `${zoom.x / zoom.k}px ${zoom.y / zoom.k}px`,
+    };
 
     // we need to double wrap this up or else
     // we get nasty flicker on panning
     return (
       <div ref="zoomWrapper">
-        <div className="zoomable" style={{ transform }}>
+        <div className="zoomable" style={style}>
           {this.props.children}
         </div>
       </div>

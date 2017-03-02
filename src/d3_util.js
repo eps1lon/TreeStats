@@ -19,8 +19,8 @@ export function transformEqual(t1, t2) {
  * @return {string} the div style attr for transform
  */
 export function browserTransform(transform) {
-  const translation = `translate(${transform.x / transform.k | 0}px`
-                    + `, ${transform.y / transform.k | 0}px)`;
+  const translation = `translate(${transform.x | 0}px`
+                    + `, ${transform.y | 0}px)`;
   const scale = `scale(${transform.k})`;
 
   return [translation, scale].join(' ');

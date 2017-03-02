@@ -4,7 +4,8 @@ import { ZOOMED } from '../actions/zoom';
 import { SHOW_TOOLTIP } from '../actions/tooltip';
 
 export const verbose_actions = [
-  ZOOMED, SHOW_TOOLTIP,
+  ZOOMED,
+  SHOW_TOOLTIP,
 ];
 
 const logger = createLogger({
