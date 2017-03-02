@@ -15,7 +15,8 @@ cd ..
 
 # update frontend
 cd public/TreeStats
-git pull
+git fetch
+git reset --hard origin/gh-pages
 
 cd ../..
 
