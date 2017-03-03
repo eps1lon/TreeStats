@@ -8,9 +8,11 @@ module.exports = {
   leagues: Map([
     [1, { name: 'Breach', active: false, permanent: false }],
     [2, { name: 'Hardcore Breach', active: false, permanent: false }],
-    [3, { name: 'Legacy', active: false, permanent: false }],
-    [4, { name: 'Hardcore Legacy', active: false, permanent: false }],
-    [5, { name: 'Standard', active: true, permanent: false }],
+    [3, { name: 'Legacy', active: true, permanent: false }],
+    [4, { name: 'Hardcore Legacy', active: true, permanent: false }],
+    [5, { name: 'Standard', active: false, permanent: false }],
+    [6, { name: 'SSF Legacy', active: true, permanent: false }],
+    [7, { name: 'SSF HC Legacy', active: true, permanent: false }],
   ]),
   classes: Map([
     // name, parent is the parent class for ascendancies ie

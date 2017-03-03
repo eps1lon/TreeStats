@@ -1,5 +1,6 @@
 [
   {"filename": "data/example_small.csv"},
   {"filename": "data/example_big.csv"},
-  {"filename": "data/1488300180063_250_get_trees.csv"}
+  {"filename": "data/1488300180063_250_get_trees.csv"},
+  {"filename": "data/1488576970312_260_get_trees.csv"}
 ]
