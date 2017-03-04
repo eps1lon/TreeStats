@@ -288,11 +288,14 @@ const ladderComplete = (results, old_trees) => {
           + `${(100 * progress / passives_urls.length).toFixed(2)}%`);
       }
 
-      callback(err, transformed);
+      if (err) {
+        logger.warn(err);
+      }
+      callback(null, transformed);
     }).on('error', (e) => logger.warn(e));
-  }, (e, results) => {
-    if (e) {
-      logger.info(e);
+  }, (err, results) => {
+    if (err) {
+      logger.warn(err);
     } else {
       passivesComplete(results);
     }
