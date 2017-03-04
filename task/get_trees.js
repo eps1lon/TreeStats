@@ -310,6 +310,7 @@ const passivesComplete = (results) => {
   let trees = [];
 
   for (let result of results) {
+    if (!result) continue;
     const passive_url = result.request.href;
     let passives = undefined;
 
