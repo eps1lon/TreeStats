@@ -279,7 +279,7 @@ const ladderComplete = (results, old_trees) => {
 
   nodeAsync.mapLimit(passives_urls, async_limit, (url, callback) => {
     // just a wrapper that updates the progress
-    return request(url, null, (err, transformed) => {
+    request(url, null, (err, transformed) => {
       progress++;
 
       if (progress % in_steps == 0) {
@@ -289,10 +289,10 @@ const ladderComplete = (results, old_trees) => {
       }
 
       callback(err, transformed);
-    });
+    }).on('error', (e) => logger.warn(e));
   }, (e, results) => {
     if (e) {
-      logger.error(e);
+      logger.info(e);
     } else {
       passivesComplete(results);
     }
@@ -350,7 +350,7 @@ const oldTreesComplete = (old_trees) => {
   // ggg has a rate ladder_limit so fuck me right
   nodeAsync.mapLimit(ladder_urls, api_rate_limit, request, (e, results) => {
     if (e) {
-      logger.error(e);
+      logger.warn(e);
     } else {
       ladderComplete(results, old_trees);
     }
