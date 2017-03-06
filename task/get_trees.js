@@ -126,7 +126,12 @@ const ctimeOutFile = (filename) => {
  * nodes: (*|Array|nodes|ny|Map), challenges: *}}
  */
 const csvTransform = (data) => {
+  if (data.character === undefined || data.account === undefined) {
+    return {};
+  }
+
   const klass = classes.get(data.character.class);
+
   const tree_url = TreeUrl.encode(
     POE.trees.get(POE.current_tree).version,
     klass.character_class,
