@@ -68,6 +68,25 @@ class PassiveTreeConf {
   equals(other) {
     return JSON.stringify(this.props) === JSON.stringify(other.props);
   }
+
+  /**
+   * creates a serializeable js type
+   * @return {Object}
+   */
+  toSerializeable() {
+    return {
+      props: this.props,
+    };
+  }
+
+  /**
+   * factory from #toSerializeable
+   * @param {Object} serializeable
+   * @return {PassiveTreeConf}
+   */
+  static fromSerializeable(serializeable) {
+    return new PassiveTreeConf(serializeable.props);
+  }
 }
 
 export default PassiveTreeConf;

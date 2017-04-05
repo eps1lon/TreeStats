@@ -158,4 +158,24 @@ module.exports = class PassiveTree {
   equals(other) {
     return this.id === other.id;
   }
+
+  /**
+   * creates a serializeable js type
+   * @return {Object}
+   */
+  toSerializeable() {
+    return {
+      id: this.id,
+      data: this.data,
+    };
+  }
+
+  /**
+   * factory from #toSerializeable
+   * @param {Object} serializeable
+   * @return {PassiveTree}
+   */
+  static fromSerializeable(serializeable) {
+    return new PassiveTree(serializeable.data, serializeable.id);
+  }
 };
