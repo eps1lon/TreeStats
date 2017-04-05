@@ -3,7 +3,8 @@ import PassiveTreeconf from '../../poe/PassiveTreeConf';
 const HeatmapWorker = require('worker-loader!../workers/heatmap.js');
 let worker = new HeatmapWorker();
 
-export const CALCULATE_HEATMAP_DATA = 'HEATMAP/CALCULATE_DATA';
+export const CALCULATE = 'HEATMAP/CALCULATE_DATA';
+export const SET = 'HEATMAP/SET_DATA';
 export const EXTREMA_CHANGE = 'HEATMAP/EXTREMA_CHANGE';
 
 // rrf form models that are relevant to the heatmap calculation
@@ -39,6 +40,9 @@ export const calculateHeatmapFromState = (state) => {
  */
 export function calculateHeatmap(rows, conf, passive_tree) {
   return (dispatch) => {
+    // signal start of calculation
+    dispatch({ type: CALCULATE });
+
     // stop old calculation
     worker.terminate();
     worker = new HeatmapWorker();
@@ -64,7 +68,7 @@ export function calculateHeatmap(rows, conf, passive_tree) {
 function onWorkerMessage(dispatch) {
   return (message) => {
     dispatch({
-      type: CALCULATE_HEATMAP_DATA,
+      type: SET,
       payload: message.data,
     });
   };
