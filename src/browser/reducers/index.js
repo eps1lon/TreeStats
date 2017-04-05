@@ -11,7 +11,7 @@ import db, { STATE as DB_STATE } from './db.js';
 import nav_tabs from './nav_tabs.js';
 import poe from './poe.js';
 import rows from './rows.js';
-import heatmap from './heatmap.js';
+import heatmap, { STATE as HEATMAP_STATE } from './heatmap.js';
 import tooltip from './tooltip.js';
 import zoom from './zoom.js';
 
@@ -21,14 +21,25 @@ import zoom from './zoom.js';
  */
 export const getTaskState = (state) => {
   return List.of(
-    ['source index', state.getIn(['data', 'loading'])],
-    ['source content', state.getIn(['db', 'state']) == DB_STATE.AWAITING_ROWS],
-    ['preparing db', state.getIn(['db', 'state']) == DB_STATE.INSERT_ROWS],
-    // when they are done the heatmap actor immediately fires
-    // calculate heatmap data which in sync calculates data
-    // so it doesnt make sense to add another indicator since the
-    // main thread will be busy
-    ['crunching numbers', state.getIn(['rows', 'selecting'])],
+    [
+      'source index',
+      state.getIn(['data', 'loading']),
+    ],
+    [
+      'source content',
+      state.getIn(['db', 'state']) == DB_STATE.AWAITING_ROWS,
+    ],
+    [
+      'preparing db',
+      state.getIn(['db', 'state']) == DB_STATE.INSERT_ROWS,
+    ],
+    [
+      'filtering character',
+      state.getIn(['rows', 'selecting'])],
+    [
+      'crunching numbers',
+      state.getIn(['heatmap', 'state']) == HEATMAP_STATE.CALCULATING,
+    ],
   );
 };
 
