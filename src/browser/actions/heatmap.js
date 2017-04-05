@@ -1,7 +1,7 @@
 import PassiveTreeconf from '../../poe/PassiveTreeConf';
 
 const HeatmapWorker = require('worker-loader!../workers/heatmap.js');
-const worker = new HeatmapWorker();
+let worker = new HeatmapWorker();
 
 export const CALCULATE_HEATMAP_DATA = 'HEATMAP/CALCULATE_DATA';
 export const EXTREMA_CHANGE = 'HEATMAP/EXTREMA_CHANGE';
@@ -40,7 +40,8 @@ export const calculateHeatmapFromState = (state) => {
 export function calculateHeatmap(rows, conf, passive_tree) {
   return (dispatch) => {
     // stop old calculation
-    // worker.terminate();
+    worker.terminate();
+    worker = new HeatmapWorker();
 
     // give msg handle the dispatch function
     worker.onmessage = onWorkerMessage(dispatch);
