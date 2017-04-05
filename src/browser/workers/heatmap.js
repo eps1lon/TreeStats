@@ -1,5 +1,21 @@
+import { List } from 'immutable';
+
 const NodeAggregation = require('../../poe/PassiveNodeAggregation');
 import JavaHashSink from '../../hash_sinks/JavaHashSink';
+import PassiveTree from '../../poe/PassiveTree';
+import PassiveTreeConf from '../../poe/PassiveTreeConf';
+
+// see web worker api
+onmessage = function(event) {
+  const { rows, conf, passive_tree } = event.data;
+
+  // create interface compliant types from the deserialized event data
+  postMessage(calculateHeatmap(
+    List(rows),
+    PassiveTreeConf.fromSerializeable(conf),
+    PassiveTree.fromSerializeable(passive_tree),
+  ));
+};
 
 /**
  * calculates the heatmap from the sum aggregation of the nodes in rows
@@ -8,7 +24,7 @@ import JavaHashSink from '../../hash_sinks/JavaHashSink';
  * @param {PassiveTree} passive_tree
  * @return {Object} action
  */
-export function calculateHeatmap(rows, conf, passive_tree) {
+function calculateHeatmap(rows, conf, passive_tree) {
   const node_filter = (node_id) => {
     const node = passive_tree.nodes.get(node_id);
     // some passives in the standard league are no more found

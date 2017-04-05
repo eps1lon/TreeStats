@@ -1,5 +1,7 @@
 import PassiveTreeconf from '../../poe/PassiveTreeConf';
-import { calculateHeatmap as calculateHeatmapWorker } from '../workers/heatmap';
+
+const HeatmapWorker = require('worker-loader!../workers/heatmap.js');
+const worker = new HeatmapWorker();
 
 export const CALCULATE_HEATMAP_DATA = 'HEATMAP/CALCULATE_DATA';
 export const EXTREMA_CHANGE = 'HEATMAP/EXTREMA_CHANGE';
@@ -30,19 +32,42 @@ export const calculateHeatmapFromState = (state) => {
 
 /**
  * action creator for the calculation of the heatmap
- * @param {Object[]} rows
+ * @param {List} rows
  * @param {PassiveTreeConf} conf
  * @param {PassiveTree} passive_tree
  * @return {Object} action
  */
 export function calculateHeatmap(rows, conf, passive_tree) {
-  const heatmap = calculateHeatmapWorker(rows, conf, passive_tree);
+  return (dispatch) => {
+    // stop old calculation
+    // worker.terminate();
 
-  return {
-    type: CALCULATE_HEATMAP_DATA,
-    payload: heatmap,
+    // give msg handle the dispatch function
+    worker.onmessage = onWorkerMessage(dispatch);
+
+    // start calculation
+    // web workers can only receive strings to we need to
+    // give the message serializeable types
+    worker.postMessage({
+      rows: rows.toJS(),
+      conf: conf.toSerializeable(),
+      passive_tree: passive_tree.toSerializeable(),
+    });
   };
 };
+
+/**
+ * @param {Function} dispatch
+ * @return {Function} event listener for worker.onmessage
+ */
+function onWorkerMessage(dispatch) {
+  return (message) => {
+    dispatch({
+      type: CALCULATE_HEATMAP_DATA,
+      payload: message.data,
+    });
+  };
+}
 
 /**
  * action creator for extrema change
