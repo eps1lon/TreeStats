@@ -32,7 +32,7 @@ class AppState extends React.Component {
     const { extended } = this.state;
 
     return progress != new_props.progress
-      || !task_state.equals(new_props.task_state)
+      || !task_state.hash_code !== new_props.task_state.hash_code
       || extended != new_state.extended;
   }
 
@@ -40,7 +40,6 @@ class AppState extends React.Component {
    * update the progress bar
    */
   componentDidUpdate() {
-    console.log(this.props.progress);
     if (this.props.progress === 1) {
       NProgress.done();
     } else {
