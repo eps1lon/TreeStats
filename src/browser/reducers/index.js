@@ -43,12 +43,22 @@ export const getTaskState = (state) => {
   );
 };
 
+export const progress = (task_state) => {
+  const first_running = task_state.findIndex(([, running]) => running);
+
+  if (first_running === -1) {
+    return 1;
+  }
+
+  return first_running / task_state.size;
+};
+
 /**
- * @param {Object} state redux state of the app
+ * @param {List} task_state returnval from {getTaskState}
  * @return {string[]} array of string representations of all tasks
  */
-export const getRunningTasks = (state) => {
-  return getTaskState(state)
+export const getRunningTasks = (task_state) => {
+  return task_state
     .filter(([, running]) => running)
     .map(([task]) => task);
 };

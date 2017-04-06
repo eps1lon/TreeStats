@@ -5,7 +5,7 @@ import { List } from 'immutable';
 
 import NProgress from 'nprogress';
 import TaskState from '../components/TaskState.jsx';
-import { getTaskState, getRunningTasks } from '../reducers/index';
+import { getTaskState, progress } from '../reducers/index';
 
 /**
  * container that represents in which task state the app currently is
@@ -13,7 +13,7 @@ import { getTaskState, getRunningTasks } from '../reducers/index';
  */
 class AppState extends React.Component {
   static propTypes = {
-    running: React.PropTypes.number.isRequired,
+    progress: React.PropTypes.number.isRequired,
     task_state: React.PropTypes.instanceOf(List).isRequired,
   }
 
@@ -28,23 +28,27 @@ class AppState extends React.Component {
    * @return {boolean} if task_state or busy changes
    */
   shouldComponentUpdate(new_props, new_state) {
-    const { running, task_state } = this.props;
+    const { progress, task_state } = this.props;
     const { extended } = this.state;
 
-    return running != new_props.running
+    return progress != new_props.progress
       || !task_state.equals(new_props.task_state)
       || extended != new_state.extended;
   }
 
   /**
    * update the progress bar
-   * @param {Object} prevProps
    */
-  componentDidUpdate(prevProps) {
-    if (prevProps.running == 0 && this.props.running > 0) {
-      NProgress.start();
-    } else if (prevProps.running > 0 && this.props.running == 0) {
+  componentDidUpdate() {
+    console.log(this.props.progress);
+    if (this.props.progress === 1) {
       NProgress.done();
+    } else {
+      if (!NProgress.isStarted()) {
+        NProgress.start();
+      }
+
+      NProgress.set(progress);
     }
   }
 
@@ -66,9 +70,11 @@ class AppState extends React.Component {
 };
 
 const mapStateToProps = (state) => {
+  const task_state = getTaskState(state);
+
   return {
-    running: getRunningTasks(state).size,
-    task_state: getTaskState(state),
+    progress: progress(task_state),
+    task_state,
   };
 };
 
