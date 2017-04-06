@@ -5,7 +5,7 @@ import { List } from 'immutable';
 
 import NProgress from 'nprogress';
 import TaskState from '../components/TaskState.jsx';
-import { getTaskState, progress } from '../reducers/index';
+import { getTaskState, progress } from '../task';
 
 /**
  * container that represents in which task state the app currently is
