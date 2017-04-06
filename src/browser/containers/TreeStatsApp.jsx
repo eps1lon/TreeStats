@@ -1,12 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-const poe = require('../../poe/data');
-
 import { immutableToTransform } from '../../d3_util';
 
 import { fetchSourcesFromJson } from '../actions/data';
-import { fetchTree } from '../actions/passive_tree';
 import { showTooltip } from '../actions/tooltip';
 import { resetZoom, zoomed } from '../actions/zoom';
 
@@ -95,7 +92,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     init: () => {
       dispatch(fetchSourcesFromJson(`./sources_${process.env.NODE_ENV}.json`));
-      dispatch(fetchTree(poe.current_tree));
     },
     tooltip: (event, parent) => {
       event.persist();
