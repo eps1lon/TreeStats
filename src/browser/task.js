@@ -31,12 +31,26 @@ export const getTaskState = (state) => {
   );
 };
 
+// because in between the epics trigger we dont have a running task
+// and the system thinks we are ready. so we need to keep track where
+// our progress was previously
+let old_progress = 1;
+
 export const progress = (task_state) => {
   const first_running = task_state.findIndex(([, running]) => running);
 
-  if (first_running === -1) {
-    return 1;
+  // last step before finished
+  const final_progress = (task_state.size - 1) / task_state.size;
+
+  let progress = 1;
+
+  if (first_running !== -1) {
+    progress = first_running / task_state.size;
+  } else if (old_progress < final_progress) {
+    progress = old_progress;
   }
 
-  return first_running / task_state.size;
+  old_progress = progress;
+
+  return progress;
 };
