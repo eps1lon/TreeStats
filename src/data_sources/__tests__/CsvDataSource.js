@@ -9,6 +9,7 @@ const fixtures = {
   empty: './fixtures/empty.csv',
   working_url: './fixtures/example_small.csv',
   404: './404.csv',
+  tree_url: './fixtures/324324_260_testTree.csv',
 };
 
 // mock fetch to fixture requests
@@ -66,6 +67,20 @@ describe('CsvDataSource', function() {
 
       assert.isBelow(fetch_time2, fetch_time);
       assert.equal(fetch_time2, 0);
+    });
+  });
+
+  describe('.tree', function() {
+    it('should not have a tree on non-conformant filenames', function() {
+      const non_conformant_source = new CsvDataSource(fixtures.working_url);
+
+      assert.equal(non_conformant_source.tree_ident, undefined);
+    });
+
+    it('should have a tree ident on conformant filenames', function() {
+      const conformant_source = new CsvDataSource(fixtures.tree_url);
+
+      assert.equal(conformant_source.tree_ident, '260');
     });
   });
 });

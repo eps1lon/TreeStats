@@ -72,6 +72,20 @@ class CsvDataSource extends AbstractDataSource {
 
     return this._rows;
   }
+
+  /**
+   * TODO thats more a concern of the get_trees.js task
+   * @return {Any} the PassiveTree identifier associated to this DataSource
+   */
+  get tree_ident() {
+    const match = this.filename.match(/\d+_([^_]+)_.*\.csv$/);
+
+    if (match === null) {
+      return undefined;
+    }
+
+    return match[1];
+  }
 };
 
 export default CsvDataSource;

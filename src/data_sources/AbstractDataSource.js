@@ -11,6 +11,13 @@ class AbstractDataSource {
       reject('rows not implemented');
     });
   }
+
+  /**
+   * @return {Any} the PassiveTree identifier associated to this DataSource
+   */
+  get tree_ident() {
+    return undefined;
+  }
 };
 
 export default AbstractDataSource;
