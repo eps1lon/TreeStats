@@ -52,9 +52,18 @@ export function setActive(active) {
       payload: { active },
     });
 
-    const state = getState();
-    const source = state.getIn(['data', 'sources', active]);
+    const source = getSourceByKey(getState(), active);
 
     dispatch(insertRows(source.rows));
   };
 }
+
+/**
+ * selects the source by the given key
+ * @param {Map} state redux state
+ * @param {Any} key
+ * @return {AbstractDataSource}
+ */
+export function getSourceByKey(state, key) {
+  return state.getIn(['data', 'sources', key]);
+};
