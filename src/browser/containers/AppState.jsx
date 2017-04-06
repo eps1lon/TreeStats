@@ -47,7 +47,7 @@ class AppState extends React.Component {
         NProgress.start();
       }
 
-      NProgress.set(progress);
+      NProgress.set(this.props.progress);
     }
   }
 
