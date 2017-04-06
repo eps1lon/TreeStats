@@ -4,6 +4,7 @@ import { getSourcesIndex, setSourcesIndex } from './data';
 import { heatmapCache } from './heatmap';
 import { fetchTree, matchTreeToData } from './passive_tree';
 import { cacheRows } from './rows';
+import { syncZoom } from './zoom';
 
 const root_epic = combineEpics(
   getSourcesIndex,
@@ -12,6 +13,7 @@ const root_epic = combineEpics(
   heatmapCache,
   fetchTree,
   matchTreeToData,
+  syncZoom,
 );
 
 export default root_epic;
