@@ -1,0 +1,3 @@
+# exclude tests
+exclude_paths:
+- "../__tests__/"
