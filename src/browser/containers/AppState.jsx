@@ -32,7 +32,7 @@ class AppState extends React.Component {
     const { extended } = this.state;
 
     return progress != new_props.progress
-      || !task_state.hash_code !== new_props.task_state.hash_code
+      || task_state.hash_code !== new_props.task_state.hash_code
       || extended != new_state.extended;
   }
 
