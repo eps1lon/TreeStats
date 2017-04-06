@@ -1,6 +1,6 @@
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/switchMap';
 
 import { NEW_TREE } from '../actions/passive_tree';
 import { UPDATE_ROWS } from '../actions/rows';
@@ -18,7 +18,7 @@ import { formModelChanged } from '../helpers/rrf';
 // filter(...).bufferUntilThenDontBufferAnymore(action$.ofType(NEW_TREE)).map...
 export const heatmapCache = (action$, store) => {
   return action$.ofType(NEW_TREE)
-    .mergeMap(
+    .switchMap(
       () => action$.filter((action) => {
         return action.type === UPDATE_ROWS
           || (formModelChanged(action, 'passive_tree_conf')
