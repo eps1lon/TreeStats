@@ -1,13 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { immutableToTransform } from '../../d3_util';
-
 import { fetchSourcesFromJson } from '../actions/data';
 import { showTooltip } from '../actions/tooltip';
-import { resetZoom, zoomed } from '../actions/zoom';
-
-import Zoomable from '../components/Zoomable.jsx';
+import { resetZoom } from '../actions/zoom';
 
 import AppState from './AppState.jsx';
 import DataFilter from './DataFilter.jsx';
@@ -18,6 +14,7 @@ import Tooltip from './Tooltip.jsx';
 import TreeHeatmap from './TreeHeatmap.jsx';
 import PassiveTree from './PassiveTree.jsx';
 import PassiveTreeConf from './PassiveTreeConf.jsx';
+import Zoomable from './Zoomable';
 
 import HeatmapLegend from '../components/HeatmapLegend.jsx';
 
@@ -36,7 +33,7 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { tally, legend, zoom, zoomed, resetZoom } = this.props;
+    const { tally, legend, resetZoom } = this.props;
     const tooltip
       = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
 
@@ -63,7 +60,7 @@ class TreeStatsApp extends React.Component {
           onMouseMove={tooltip}
           ref="heatmap_wrapper">
 
-          <Zoomable zoom={zoom} onZoom={zoomed}>
+          <Zoomable>
             <TreeHeatmap />
             <PassiveTree />
           </Zoomable>
@@ -84,7 +81,6 @@ const mapStateToProps = (state) => {
   return {
     legend: state.getIn(['heatmap', 'legend']),
     tally: state.getIn(['rows', 'rows']).size,
-    zoom: immutableToTransform(state.get('zoom')),
   };
 };
 
@@ -105,7 +101,6 @@ const mapDispatchToProps = (dispatch) => {
 
       dispatch(showTooltip(x, y, node_id, event));
     },
-    zoomed: (transform) => dispatch(zoomed(transform)),
     resetZoom: () => dispatch(resetZoom()),
   };
 };

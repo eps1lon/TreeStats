@@ -1,9 +1,11 @@
 import React from 'react';
 
 import { event, select } from 'd3-selection';
-import { zoom } from 'd3-zoom';
+import { zoom, zoomIdentity } from 'd3-zoom';
 
 import { browserTransform, transformEqual } from '../../d3_util';
+
+export const RESET_ZOOM = 'ZOOMABLE/RESET';
 
 /**
  * creates a zoomable div
@@ -42,7 +44,29 @@ class Zoomable extends React.Component {
    * @return {boolean} true if applied transformations !equal
    */
   shouldComponentUpdate(new_props) {
-    return !transformEqual(this.props.zoom, new_props.zoom);
+    return !transformEqual(this.props.zoom, new_props.zoom)
+      || this.props.command !== new_props.command;
+  }
+
+  /**
+   * invoker for commands
+   */
+  componentDidUpdate() {
+    switch (this.props.command) {
+      case RESET_ZOOM:
+        this.resetZoom();
+        this.props.commandExecuted();
+
+        break;
+    }
+  }
+
+  /**
+   * resets the zoom
+   * this is only needed to reset the event
+   */
+  resetZoom() {
+    select(this.refs.zoomWrapper).call(this.zoom.transform, zoomIdentity);
   }
 
   /**
