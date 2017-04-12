@@ -13,6 +13,7 @@ class ReactHeatmap extends React.Component {
 	static propTypes = {
 		conf: React.PropTypes.object.isRequired,
 		data: React.PropTypes.object.isRequired,
+		onDataChange: React.PropTypes.func,
 	};
 
 	/**
@@ -68,7 +69,7 @@ class ReactHeatmap extends React.Component {
 		if (this.shouldDataUpdate(data)) {
 			const bbox = ReactDOM.findDOMNode(this).getBoundingClientRect();
 			const { width, height } = bbox;
-			const { viewbox } = this.props;
+			const { viewbox, onDataChange } = this.props;
 			const scaled_data
 				= this.transformData(
 					data.data,
@@ -79,6 +80,10 @@ class ReactHeatmap extends React.Component {
 				max: data.max,
 				data: scaled_data.toArray(),
 			});
+
+			if (onDataChange !== undefined) {
+				onDataChange(this.heatmap.getDataURL());
+			}
 		}
 	}
 

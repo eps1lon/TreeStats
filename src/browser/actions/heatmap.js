@@ -6,6 +6,7 @@ let worker = new HeatmapWorker();
 export const CALCULATE = 'HEATMAP/CALCULATE_DATA';
 export const SET = 'HEATMAP/SET_DATA';
 export const EXTREMA_CHANGE = 'HEATMAP/EXTREMA_CHANGE';
+export const DATA_CHANGE = 'HEATMAP/DATA_CHANGE';
 
 // rrf form models that are relevant to the heatmap calculation
 // in calculateHeatmap()
@@ -87,5 +88,17 @@ export function extremaChange(data) {
     payload: {
       legend: data,
     },
+  };
+};
+
+/**
+ * action creator for then the heatmap was redrawn and the src change therefore
+ * @param {string} data_url heatmap#getDataURL()
+ * @return {Object}
+ */
+export function dataChange(data_url) {
+  return {
+    type: DATA_CHANGE,
+    payload: { data_url },
   };
 };
