@@ -9,6 +9,7 @@ import AppState from './AppState.jsx';
 import DataFilter from './DataFilter.jsx';
 import DataSources from './DataSources.jsx';
 import HeatmapConf from './HeatmapConf.jsx';
+import ImageAnimation from './ImageAnimation';
 import NavTab from './NavTab.jsx';
 import Tooltip from './Tooltip.jsx';
 import TreeHeatmap from './TreeHeatmap.jsx';
@@ -44,6 +45,7 @@ class TreeStatsApp extends React.Component {
           <DataFilter key="data_filter" tabLabel="filter" />
           <HeatmapConf key="heatmap_conf" tabLabel="heatmap" />
           <PassiveTreeConf key="tree_conf" tabLabel="tree" />
+          <ImageAnimation key="heatmap_animation" tabLabel="animation" />
         </NavTab>
 
         <div className="data-legend">
