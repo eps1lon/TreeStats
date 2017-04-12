@@ -41,6 +41,16 @@ class ReactHeatmap extends React.Component {
 	}
 
 	/**
+	 *
+	 * @param {Object} new_props
+	 * @return {boolean} true to invoke #render()
+	 */
+	shouldComponentUpdate(new_props) {
+		return this.shouldConfUpdate(new_props.conf)
+			|| this.shouldDataUpdate(new_props.data);
+	}
+
+	/**
 	 * @param {Object} new_conf
 	 */
 	setConf(new_conf) {
