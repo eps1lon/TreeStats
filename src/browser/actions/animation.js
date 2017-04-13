@@ -4,7 +4,8 @@ export const FAST_BACKWARD = 'ANIMATION/FAST_BACKWARD';
 export const FAST_FORWARD = 'ANIMATION/FAST_FORWARD';
 export const STEP_BACKWARD = 'ANIMATION/STEP_BACKWARD';
 export const STEP_FORWARD = 'ANIMATION/STEP_FORWARD';
-export const PLAY_TOGGLE = 'ANIMATION/PLAY_TOGGLE';
+export const PLAY = 'ANIMATION/PLAY';
+export const PAUSE = 'ANIMATION/PAUSE';
 
 /**
  * action creator to add the current heatmap to the animation
@@ -76,7 +77,11 @@ export function fastForward() {
  * @return {Object}
  */
 export function playToggle() {
-  return {
-    type: PLAY_TOGGLE,
+  return (dispatch, getState) => {
+    if (getState().getIn(['animation', 'playing'])) {
+      dispatch({ type: PAUSE });
+    } else {
+      dispatch({ type: PLAY });
+    }
   };
 };
