@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 
+import { addCurrent } from '../actions/animation';
 import ImageAnimation from '../components/ImageAnimation.jsx';
 
 const mapStateToProps = (state) => {
@@ -11,7 +12,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onAdd: () => dispatch({ type: 'ADD' }),
+    onAdd: () => dispatch(addCurrent()),
     onClear: () => dispatch({ type: 'CLEAR' }),
     onFastBackward: () => dispatch({ type: 'FAST_BACKWARD' }),
     onFastForward: () => dispatch({ type: 'FAST_FORWARD' }),
