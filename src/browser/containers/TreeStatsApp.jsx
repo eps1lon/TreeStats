@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchSourcesFromJson } from '../actions/data';
 import { showTooltip } from '../actions/tooltip';
 import { resetZoom } from '../actions/zoom';
 
@@ -23,13 +22,6 @@ import HeatmapLegend from '../components/HeatmapLegend.jsx';
  *
  */
 class TreeStatsApp extends React.Component {
-  /**
-   * call app init
-   */
-  componentDidMount() {
-    this.props.init();
-  }
-
   /**
    * @return {JSX}
    */
@@ -88,9 +80,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    init: () => {
-      dispatch(fetchSourcesFromJson(`./sources_${process.env.NODE_ENV}.json`));
-    },
     tooltip: (event, parent) => {
       event.persist();
 

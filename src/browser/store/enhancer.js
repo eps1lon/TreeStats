@@ -1,4 +1,5 @@
 import { compose } from 'redux';
+import { autoRehydrate } from 'redux-persist-immutable';
 
 import { verbose_actions } from './logger';
 import middleware from './middleware';
@@ -15,6 +16,7 @@ const composeEnhancers =
 const enhancer = composeEnhancers(
   middleware,
   // additional enhancer
+  autoRehydrate({ log: true }),
 );
 
 export default enhancer;

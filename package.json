@@ -30,6 +30,7 @@
     "redux-immutable": "^3.0.11",
     "redux-logger": "^2.7.4",
     "redux-observable": "^0.13.0",
+    "redux-persist-immutable": "^4.2.0",
     "redux-thunk": "^2.2.0",
     "request": "^2.79.0",
     "reset-css": "^2.2.0",
