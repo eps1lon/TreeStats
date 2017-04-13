@@ -3,7 +3,7 @@ import { List, Map } from 'immutable';
 import { add as groupAdd } from '../helpers/abelGroup';
 import {
   ADD, CLEAR,
-  STEP_BACKWARD, STEP_FORWARD,
+  STEP_BACKWARD, STEP_FORWARD, FAST_BACKWARD, FAST_FORWARD,
 } from '../actions/animation';
 
 const initial = Map({
@@ -34,6 +34,10 @@ const animation = (state = initial, action) => {
         'current_frame',
         (frame) => groupAdd(frame, state.get('heatmaps').size, +1),
       );
+    case FAST_BACKWARD:
+      return state.set('current_frame', 0);
+    case FAST_FORWARD:
+      return state.set('current_frame', state.get('heatmaps').size - 1);
     default:
       return state;
   }

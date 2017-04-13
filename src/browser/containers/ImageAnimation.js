@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import {
   addCurrent, clear,
-  stepBackward, stepForward,
+  stepBackward, stepForward, fastBackward, fastForward,
 } from '../actions/animation';
 import ImageAnimation from '../components/ImageAnimation.jsx';
 
@@ -18,8 +18,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onAdd: () => dispatch(addCurrent()),
     onClear: () => dispatch(clear()),
-    onFastBackward: () => dispatch({ type: 'FAST_BACKWARD' }),
-    onFastForward: () => dispatch({ type: 'FAST_FORWARD' }),
+    onFastBackward: () => dispatch(fastBackward()),
+    onFastForward: () => dispatch(fastForward()),
     onStepBackward: () => dispatch(stepBackward()),
     onStepForward: () => dispatch(stepForward()),
     onPlay: () => dispatch({ type: 'PLAY_TOGGLE' }),
