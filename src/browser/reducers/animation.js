@@ -1,6 +1,6 @@
 import { List, Map } from 'immutable';
 import {
-  ADD,
+  ADD, CLEAR,
 } from '../actions/animation';
 
 const initial = Map({
@@ -14,6 +14,11 @@ const animation = (state = initial, action) => {
       return state.update(
         'heatmaps',
         (heatmaps) => heatmaps.push(action.payload.src),
+      );
+    case CLEAR:
+      return state.update(
+        'heatmaps',
+        (heatmaps) => heatmaps.clear(),
       );
     default:
       return state;
