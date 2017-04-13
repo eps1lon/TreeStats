@@ -23,7 +23,7 @@ const animation = (state = initial, action) => {
       return state.update(
         'heatmaps',
         (heatmaps) => heatmaps.clear(),
-      );
+      ).set('current_frame', 0);
     case STEP_BACKWARD:
       return state.update(
         'current_frame',
