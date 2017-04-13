@@ -7,6 +7,7 @@ const mapStateToProps = (state) => {
   return {
     images: state.getIn(['animation', 'heatmaps']),
     playing: state.getIn(['animation', 'playing']),
+    current_frame: state.getIn(['animation', 'current_frame']),
   };
 };
 

@@ -6,6 +6,7 @@ import {
 const initial = Map({
   heatmaps: List(),
   playing: false,
+  current_frame: 0,
 });
 
 const animation = (state = initial, action) => {

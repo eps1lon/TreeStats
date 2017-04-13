@@ -27,7 +27,7 @@ class ImageAnimation extends React.Component {
       onPlay, onStepBackward, onStepForward, onFastBackward, onFastForward,
       playing,
       onAdd, onClear,
-      images,
+      images, current_frame,
     } = this.props;
 
     const controls = {
@@ -37,7 +37,7 @@ class ImageAnimation extends React.Component {
 
     return (
       <div className="react-fragment">
-        <ImageGallery images={images} />
+        <ImageGallery images={images} active={current_frame} />
 
         <button type="button" onClick={onAdd}>
           add current heatmap

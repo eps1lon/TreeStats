@@ -3,6 +3,8 @@ import { List } from 'immutable';
 
 import ImageGalleryImage from './ImageGalleryImage.jsx';
 
+export const ACTIVE_CLASS_NAME = 'active';
+
 /**
  *
  */
@@ -15,12 +17,21 @@ class ImageGallery extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { images } = this.props;
+    const { images, active } = this.props;
 
     return (
       <ol className="image-gallery">
         {images.map((src, i) => {
-          return <li key={i}><ImageGalleryImage src={src} /></li>;
+          const class_names = [];
+          if (i === active) {
+            class_names.push(ACTIVE_CLASS_NAME);
+          }
+
+          return (
+            <li key={i} className={class_names.join(' ')}>
+              <ImageGalleryImage src={src} />
+            </li>
+          );
         })}
       </ol>
     );

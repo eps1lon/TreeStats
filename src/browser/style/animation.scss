@@ -1,5 +1,9 @@
 .image-gallery li {
   display: inline-block;
+
+  &.active {
+    border: 1px solid black;
+  }
 }
 
 .image-gallery-image {
