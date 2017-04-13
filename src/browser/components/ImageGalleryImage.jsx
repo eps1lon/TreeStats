@@ -15,7 +15,7 @@ class ImageGalleryImage extends React.Component {
     const { src } = this.props;
 
     return (
-      <img src={src} width="100" height="100" className="gallery-image" />
+      <img src={src} className="image-gallery-image" />
     );
   }
 };
