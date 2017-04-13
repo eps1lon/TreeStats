@@ -79,9 +79,17 @@ export function fastForward() {
 export function playToggle() {
   return (dispatch, getState) => {
     if (getState().getIn(['animation', 'playing'])) {
-      dispatch({ type: PAUSE });
+      dispatch(pause());
     } else {
       dispatch({ type: PLAY });
     }
   };
 };
+
+/**
+ * action creator to pause
+ * @return {Object}
+ */
+export function pause() {
+  return { type: PAUSE };
+}

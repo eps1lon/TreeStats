@@ -1,6 +1,6 @@
 import { combineEpics } from 'redux-observable';
 
-import { animate } from './animation';
+import { animate, interruptPlay } from './animation';
 import { getSourcesIndex, setSourcesIndex } from './data';
 import { heatmapCache } from './heatmap';
 import { fetchTree, matchTreeToData } from './passive_tree';
@@ -16,6 +16,7 @@ const root_epic = combineEpics(
   matchTreeToData,
   syncZoom,
   animate,
+  interruptPlay,
 );
 
 export default root_epic;
