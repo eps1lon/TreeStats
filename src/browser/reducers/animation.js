@@ -1,6 +1,9 @@
 import { List, Map } from 'immutable';
+
+import { add as groupAdd } from '../helpers/abelGroup';
 import {
   ADD, CLEAR,
+  STEP_BACKWARD,
 } from '../actions/animation';
 
 const initial = Map({
@@ -20,6 +23,11 @@ const animation = (state = initial, action) => {
       return state.update(
         'heatmaps',
         (heatmaps) => heatmaps.clear(),
+      );
+    case STEP_BACKWARD:
+      return state.update(
+        'current_frame',
+        (frame) => groupAdd(frame, state.get('heatmaps').size, -1),
       );
     default:
       return state;
