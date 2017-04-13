@@ -19,8 +19,8 @@ class ImageGallery extends React.Component {
 
     return (
       <ol className="image-gallery">
-        {images.map((src) => {
-          return <li><ImageGalleryImage key={src} src={src} /></li>;
+        {images.map((src, i) => {
+          return <li key={i}><ImageGalleryImage src={src} /></li>;
         })}
       </ol>
     );
