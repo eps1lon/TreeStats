@@ -12,6 +12,13 @@ const initial = Map({
   current_frame: 0,
 });
 
+// actions that change the current_frame
+// use in e.g. epics
+export const FRAME_CHANGERS = [
+  STEP_BACKWARD, STEP_FORWARD,
+  FAST_BACKWARD, FAST_FORWARD,
+];
+
 /**
  * selector for the current heatmap
  * @param {Map} state
