@@ -7,7 +7,6 @@ import {
   PLAY, PAUSE, STEP_FORWARD,
   stepForward, pause,
 } from '../actions/heatmap_history';
-import { setData as setHeatmapData } from '../actions/heatmap';
 import { ACTIVATE } from '../actions/nav_tabs';
 import { getCurrentHeatmap } from '../reducers/heatmap_history';
 
