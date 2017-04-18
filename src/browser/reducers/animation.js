@@ -8,9 +8,19 @@ import {
 
 const initial = Map({
   heatmaps: List(),
+  hidden: true,
   playing: false,
   current_frame: 0,
 });
+
+/**
+ * selector for the current heatmap
+ * @param {Map} state
+ * @return {String} for img src attr
+ */
+export function getCurrentHeatmap(state) {
+  return state.get('heatmaps').get(state.get('current_frame'));
+};
 
 const animation = (state = initial, action) => {
   switch(action.type) {
@@ -25,19 +35,31 @@ const animation = (state = initial, action) => {
         (heatmaps) => heatmaps.clear(),
       ).set('current_frame', 0);
     case STEP_BACKWARD:
-      return state.update(
-        'current_frame',
-        (frame) => groupAdd(frame, state.get('heatmaps').size, -1),
-      );
+      return state.withMutations((state) => {
+        state.update(
+          'current_frame',
+          (frame) => groupAdd(frame, state.get('heatmaps').size, -1),
+        );
+        state.set('hidden', false);
+      });
     case STEP_FORWARD:
-      return state.update(
-        'current_frame',
-        (frame) => groupAdd(frame, state.get('heatmaps').size, +1),
-      );
+      return state.withMutations((state) => {
+        state.update(
+          'current_frame',
+          (frame) => groupAdd(frame, state.get('heatmaps').size, +1),
+        );
+        state.set('hidden', false);
+      });
     case FAST_BACKWARD:
-      return state.set('current_frame', 0);
+      return state.withMutations((state) => {
+        state.set('current_frame', 0);
+        state.set('hidden', false);
+      });
     case FAST_FORWARD:
-      return state.set('current_frame', state.get('heatmaps').size - 1);
+      return state.withMutations((state) => {
+        state.set('current_frame', state.get('heatmaps').size - 1);
+        state.set('hidden', false);
+      });
     case PLAY:
       return state.set('playing', true);
     case PAUSE:
