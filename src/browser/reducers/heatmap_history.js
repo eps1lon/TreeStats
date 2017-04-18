@@ -4,11 +4,10 @@ import { add as groupAdd } from '../helpers/abelGroup';
 import {
   ADD, CLEAR,
   STEP_BACKWARD, STEP_FORWARD, FAST_BACKWARD, FAST_FORWARD, PLAY, PAUSE,
-} from '../actions/animation';
+} from '../actions/heatmap_history';
 
 const initial = Map({
-  heatmaps: List(),
-  hidden: true,
+  history: List(), // list of dispatchable actions
   playing: false,
   current_frame: 0,
 });
@@ -19,46 +18,42 @@ const initial = Map({
  * @return {String} for img src attr
  */
 export function getCurrentHeatmap(state) {
-  return state.get('heatmaps').get(state.get('current_frame'));
+  return state.get('history').get(state.get('current_frame'));
 };
 
-const animation = (state = initial, action) => {
+const heatmap_history = (state = initial, action) => {
   switch(action.type) {
     case ADD:
       return state.update(
-        'heatmaps',
-        (heatmaps) => heatmaps.push(action.payload.src),
+        'history',
+        (history) => history.push(action.payload),
       );
     case CLEAR:
       return state.update(
-        'heatmaps',
-        (heatmaps) => heatmaps.clear(),
+        'history',
+        (history) => history.clear(),
       ).set('current_frame', 0);
     case STEP_BACKWARD:
       return state.withMutations((state) => {
         state.update(
           'current_frame',
-          (frame) => groupAdd(frame, state.get('heatmaps').size, -1),
+          (frame) => groupAdd(frame, state.get('history').size, -1),
         );
-        state.set('hidden', false);
       });
     case STEP_FORWARD:
       return state.withMutations((state) => {
         state.update(
           'current_frame',
-          (frame) => groupAdd(frame, state.get('heatmaps').size, +1),
+          (frame) => groupAdd(frame, state.get('history').size, +1),
         );
-        state.set('hidden', false);
       });
     case FAST_BACKWARD:
       return state.withMutations((state) => {
         state.set('current_frame', 0);
-        state.set('hidden', false);
       });
     case FAST_FORWARD:
       return state.withMutations((state) => {
-        state.set('current_frame', state.get('heatmaps').size - 1);
-        state.set('hidden', false);
+        state.set('current_frame', state.get('history').size - 1);
       });
     case PLAY:
       return state.set('playing', true);
@@ -69,4 +64,4 @@ const animation = (state = initial, action) => {
   }
 };
 
-export default animation;
+export default heatmap_history;

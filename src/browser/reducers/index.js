@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux-immutable';
 import { createForms } from 'react-redux-form/immutable';
 
-import animation from './animation.js';
+import heatmap_history from './heatmap_history';
 import app from './app.js';
 import forms from './forms.js';
 import passive_tree from './passive_tree.js';
@@ -26,7 +26,7 @@ export const getRunningTasks = (task_state) => {
 
 
 const treeStatsApp = combineReducers({
-  animation,
+  heatmap_history,
   app,
   db, // redux (dev tools and state-invariant have problems with Nedb it seems
   rows,

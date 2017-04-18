@@ -3,14 +3,21 @@ import { connect } from 'react-redux';
 import {
   addCurrent, clear,
   stepBackward, stepForward, fastBackward, fastForward, playToggle,
-} from '../actions/animation';
+} from '../actions/heatmap_history';
 import ImageAnimation from '../components/ImageAnimation.jsx';
+
+const imageFactory = (history) => {
+  return {
+    label: history.payload.hash.toString(),
+    src: undefined,
+  };
+};
 
 const mapStateToProps = (state) => {
   return {
-    images: state.getIn(['animation', 'heatmaps']),
-    playing: state.getIn(['animation', 'playing']),
-    current_frame: state.getIn(['animation', 'current_frame']),
+    images: state.getIn(['heatmap_history', 'history']).map(imageFactory),
+    playing: state.getIn(['heatmap_history', 'playing']),
+    current_frame: state.getIn(['heatmap_history', 'current_frame']),
   };
 };
 

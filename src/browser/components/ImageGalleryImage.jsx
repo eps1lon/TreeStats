@@ -5,17 +5,18 @@ import React from 'react';
  */
 class ImageGalleryImage extends React.Component {
   static propTypes = {
-    src: React.PropTypes.string.isRequired,
+    label: React.PropTypes.string,
+    src: React.PropTypes.string,
   }
 
   /**
    * @return {JSX}
    */
   render() {
-    const { src } = this.props;
+    const { src, label } = this.props;
 
     return (
-      <img src={src} className="image-gallery-image" />
+      <img src={src} alt={label} />
     );
   }
 };

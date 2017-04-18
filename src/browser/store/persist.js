@@ -1,5 +1,5 @@
 const persist_config = {
-  whitelist: ['animation'],
+  whitelist: ['heatmap_history'],
 };
 
 export default persist_config;

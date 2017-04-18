@@ -26,9 +26,27 @@ const initial = Map({
   state: STATE.READY,
 });
 
+/**
+ * returns a dispatchable object which can be serialized for usage
+ * in a history
+ * @param {Map} state redux state
+ * @return {Object} for dispatch()
+ */
+export function replaySet(state) {
+  return {
+    type: SET,
+    payload: {
+      max: state.get('max'),
+      data: state.get('data'),
+      hash: state.get('hash'),
+    },
+  };
+}
+
 const heatmap = (state = initial, action) => {
   switch (action.type) {
     case SET:
+      // tightly couple with replayState! change accordingly
       return state.withMutations((state) => {
         state.set('max', action.payload.max);
         state.set('data', List(action.payload.data));

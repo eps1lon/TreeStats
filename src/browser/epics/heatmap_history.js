@@ -1,16 +1,30 @@
 import { interval } from 'rxjs/observable/interval';
+import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mapTo';
 import 'rxjs/add/operator/takeUntil';
 
-import { PLAY, PAUSE, stepForward, pause } from '../actions/animation';
+import {
+  PLAY, PAUSE, STEP_FORWARD,
+  stepForward, pause,
+} from '../actions/heatmap_history';
+import { setData as setHeatmapData } from '../actions/heatmap';
 import { ACTIVATE } from '../actions/nav_tabs';
+import { getCurrentHeatmap } from '../reducers/heatmap_history';
 
 export const animate = (action$) => {
   return action$.ofType(PLAY)
     .mergeMap(() => {
-      return interval(500)
+      return interval(1000)
         .mapTo(stepForward())
         .takeUntil(action$.ofType(PAUSE));
+    });
+};
+
+export const timeTravelHistory = (action$, store) => {
+  return action$.ofType(STEP_FORWARD)
+    .map(() => {
+      const state = store.getState().get('heatmap_history');
+      return getCurrentHeatmap(state);
     });
 };
 

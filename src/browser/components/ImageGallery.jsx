@@ -21,7 +21,7 @@ class ImageGallery extends React.Component {
 
     return (
       <ol className="image-gallery">
-        {images.map((src, i) => {
+        {images.map((image, i) => {
           const class_names = [];
           if (i === active) {
             class_names.push(ACTIVE_CLASS_NAME);
@@ -29,7 +29,7 @@ class ImageGallery extends React.Component {
 
           return (
             <li key={i} className={class_names.join(' ')}>
-              <ImageGalleryImage src={src} />
+              <ImageGalleryImage {...image} />
             </li>
           );
         })}

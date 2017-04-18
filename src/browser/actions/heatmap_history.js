@@ -1,29 +1,16 @@
-export const ADD = 'ANIMATION/ADD';
-export const CLEAR = 'ANIMATION/CLEAR';
-export const FAST_BACKWARD = 'ANIMATION/FAST_BACKWARD';
-export const FAST_FORWARD = 'ANIMATION/FAST_FORWARD';
-export const STEP_BACKWARD = 'ANIMATION/STEP_BACKWARD';
-export const STEP_FORWARD = 'ANIMATION/STEP_FORWARD';
-export const PLAY = 'ANIMATION/PLAY';
-export const PAUSE = 'ANIMATION/PAUSE';
+import { replaySet } from '../reducers/heatmap';
+
+export const ADD = 'HEATMAP_HISTORY/ADD';
+export const CLEAR = 'HEATMAP_HISTORY/CLEAR';
+export const FAST_BACKWARD = 'HEATMAP_HISTORY/FAST_BACKWARD';
+export const FAST_FORWARD = 'HEATMAP_HISTORY/FAST_FORWARD';
+export const STEP_BACKWARD = 'HEATMAP_HISTORY/STEP_BACKWARD';
+export const STEP_FORWARD = 'HEATMAP_HISTORY/STEP_FORWARD';
+export const PLAY = 'HEATMAP_HISTORY/PLAY';
+export const PAUSE = 'HEATMAP_HISTORY/PAUSE';
 
 /**
- * action creator to add the current heatmap to the animation
- * @return {Object}
- */
-export function addCurrent() {
-  return (dispatch, getState) => {
-    dispatch({
-      type: ADD,
-      payload: {
-        src: getState().getIn(['heatmap', 'data_url']),
-      },
-    });
-  };
-};
-
-/**
- * action creator to clear the animation
+ * action creator to clear the HEATMAP_HISTORY
  * @return {Object}
  */
 export function clear() {
@@ -78,7 +65,7 @@ export function fastForward() {
  */
 export function playToggle() {
   return (dispatch, getState) => {
-    if (getState().getIn(['animation', 'playing'])) {
+    if (getState().getIn(['heatmap_history', 'playing'])) {
       dispatch(pause());
     } else {
       dispatch({ type: PLAY });
@@ -93,3 +80,13 @@ export function playToggle() {
 export function pause() {
   return { type: PAUSE };
 }
+
+
+export function addCurrent() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: ADD,
+      payload: replaySet(getState().get('heatmap')),
+    });
+  };
+};
