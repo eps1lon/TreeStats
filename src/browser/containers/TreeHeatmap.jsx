@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { extremaChange } from '../actions/heatmap';
+import { extremaChange, dataURLChange } from '../actions/heatmap';
 import Heatmap from '../components/Heatmap.jsx';
 
 const mapStateToProps = (state) => {
@@ -29,6 +29,9 @@ const mapDispatchToProps = (dispatch) => {
     onExtremaChange: function(data) {
       dispatch(extremaChange(data));
     },
+    onDataURLChange: function(data_url) {
+      dispatch(dataURLChange(data_url));
+    },
   };
 };
 
@@ -37,6 +40,7 @@ const mergeProps = (state_props, dispatch_props, own_props) => {
     ...own_props,
     ...state_props,
     onInstanceCreation: dispatch_props.onInstanceCreation,
+    onDataURLChange: dispatch_props.onDataURLChange,
     conf: {
       ...state_props.conf,
       // merge the extremachange into to conf

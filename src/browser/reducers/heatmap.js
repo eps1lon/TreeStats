@@ -4,6 +4,7 @@ import {
   CALCULATE,
   SET,
   EXTREMA_CHANGE,
+  DATA_URL_CHANGE,
 } from '../actions/heatmap';
 
 export const STATE = {
@@ -13,6 +14,7 @@ export const STATE = {
 
 const initial = Map({
   data: List(),
+  data_url: undefined,
   max: 0,
   hash: null,
   instance: null,
@@ -37,6 +39,8 @@ const heatmap = (state = initial, action) => {
       return state.set('state', STATE.CALCULATING);
     case EXTREMA_CHANGE:
       return state.set('legend', Immutable.fromJS(action.payload.legend));
+    case DATA_URL_CHANGE:
+      return state.set('data_url', action.payload.data_url);
     default:
       return state;
   }
