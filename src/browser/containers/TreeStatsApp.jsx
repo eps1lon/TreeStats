@@ -8,6 +8,7 @@ import { resetZoom } from '../actions/zoom';
 import AppState from './AppState.jsx';
 import DataFilter from './DataFilter.jsx';
 import DataSources from './DataSources.jsx';
+import DownloadHeatmap from './DownloadHeatmap';
 import HeatmapConf from './HeatmapConf.jsx';
 import NavTab from './NavTab.jsx';
 import Tooltip from './Tooltip.jsx';
@@ -68,6 +69,7 @@ class TreeStatsApp extends React.Component {
           <div className="toolbar">
             <AppState />
             <button onClick={resetZoom}>resetZoom</button>
+            <DownloadHeatmap />
           </div>
         </div>
 
