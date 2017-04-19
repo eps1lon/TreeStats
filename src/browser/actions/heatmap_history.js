@@ -81,7 +81,10 @@ export function pause() {
   return { type: PAUSE };
 }
 
-
+/**
+ * add current heatmap as a replayable history
+ * @return {Object}
+ */
 export function addCurrent() {
   return (dispatch, getState) => {
     dispatch({
