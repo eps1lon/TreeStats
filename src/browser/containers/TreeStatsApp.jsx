@@ -69,7 +69,7 @@ class TreeStatsApp extends React.Component {
           <div className="toolbar">
             <AppState />
             <button onClick={resetZoom}>resetZoom</button>
-            <DownloadHeatmap />
+            <DownloadHeatmap label="Download Heatmap" filename="heatmap.png" />
           </div>
         </div>
 
