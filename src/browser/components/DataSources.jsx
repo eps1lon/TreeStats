@@ -4,6 +4,7 @@ import path from 'path';
 
 import POE from '../../poe/data';
 import CsvDataSource from '../../data_sources/CsvDataSource';
+import { fileProps } from '../../../task/lib/treesToCsvFile';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 
@@ -25,11 +26,11 @@ class DataSources extends React.Component {
   optionValue(source) {
     if (source instanceof CsvDataSource) {
       const filename = path.basename(source.filename);
-      const match = filename.match(/^(\d+)_([^_]+)_get_trees\.csv$/);
+      const file_props = fileProps(filename);
 
-      if (match !== null) {
-        const date = new Date(+match[1]);
-        const tree = POE.trees.get(match[2]);
+      if (file_props !== undefined) {
+        const date = new Date(file_props.ctime);
+        const tree = POE.trees.get(file_props.tree_ident);
 
         if (date && tree) {
           return [

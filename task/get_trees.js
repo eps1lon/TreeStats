@@ -5,11 +5,13 @@ const fs = require('fs');
 const log4js = require('log4js');
 const csv = require('csv');
 
-const POE = require('../src/poe/data.js');
+const { ctimeOutFile, filename } = require('./lib/treesToCsvFile');
 
+const POE = require('../src/poe/data.js');
 const TreeUrl = require('../src/poe/PassiveTreeUrl');
 
 const tree_ident = POE.current_tree;
+const outFilename = (root, now) => filename(root, now, tree_ident);
 
 // create some lookup tables for leagues, classes etc
 const leagues = new Map();
@@ -91,29 +93,6 @@ const ladderApiToLeague = (api_url) => {
  */
 const passivesApi = (character, account) => {
   return `https://www.pathofexile.com/character-window/get-passive-skills?character=${character}&accountName=${account}`;
-};
-
-/**
- * generates the filename for the csv output
- * @param {string} root
- * @param {number} now
- * @return {*}
- */
-const outFilename = (root, now) => {
-  // adjust gitignore accordingly
-  return path.join(root, `${now}_${tree_ident}_get_trees.csv`);
-};
-
-/**
- * extracts the creation date from a filename which
- * should be a js Date at the start of the basename
- * @param {string} filename
- * @return {number}
- */
-const ctimeOutFile = (filename) => {
-  const match = new RegExp(`^([^_]+)_${tree_ident}_get_trees\.csv$`)
-    .exec(path.basename(filename));
-  return match ? +match[1] : Number.NEGATIVE_INFINITY;
 };
 
 /**
