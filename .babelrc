@@ -3,7 +3,7 @@
     "src/poe/trees/250/*",
     "src/poe/trees/260/*"
   ],
-  "presets": ["react", "es2015", "es2017"],
+  "presets": ["env", "react"],
   "plugins": [
     "transform-runtime",
     "transform-object-rest-spread",
