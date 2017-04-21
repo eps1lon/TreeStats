@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux-immutable';
 import { createForms } from 'react-redux-form/immutable';
 
+import { label as dataSourceLabel } from '../../data_sources/factory';
+
 import app from './app.js';
-import forms from './forms.js';
+import forms, { slugify as slugifyForm } from './forms.js';
 import passive_tree from './passive_tree.js';
-import data from './data.js';
+import data, { activeSource } from './data.js';
 import db from './db.js';
 import nav_tabs from './nav_tabs.js';
 import poe from './poe.js';
@@ -23,6 +25,17 @@ export const getRunningTasks = (task_state) => {
     .map(([task]) => task);
 };
 
+/**
+ * generates a meaningful filename for the current heatmap
+ * @param {ReduxState} state
+ * @return {string}
+ */
+export function heatmapLabel(state) {
+  return [
+    dataSourceLabel(activeSource(state.get('data'))),
+    slugifyForm(state.get('data_filter')),
+  ].join('-');
+}
 
 const treeStatsApp = combineReducers({
   app,

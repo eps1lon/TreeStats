@@ -1,3 +1,5 @@
+import { basename } from 'path';
+
 import CsvDataSource from './CsvDataSource';
 
 export const CSV_SOURCE = 'CSV_SOURCE';
@@ -23,6 +25,21 @@ export function guessType(data_source) {
 
   return undefined;
 };
+
+/**
+ * @param {AbstractDataSource} data_source
+ * @return {string} a label for the given source
+ */
+export function label(data_source) {
+  if (data_source === undefined) {
+    return 'undefined';
+  } else if (data_source.filename) {
+    // TODO extension support
+    return basename(data_source.filename, '.csv');
+  } else {
+    return 'generic-source';
+  }
+}
 
 /**
  * @param {Object} data_source

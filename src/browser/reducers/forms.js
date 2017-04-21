@@ -1,5 +1,7 @@
 import { Map } from 'immutable';
+
 import { SELECT_ANY } from '../actions/rows';
+import { slugify as slugifyMap } from '../helpers/map';
 
 export const initial_filter = Map({
   league: SELECT_ANY,
@@ -36,5 +38,13 @@ const forms = {
   heatmap_conf: initial_heatmap_conf,
   passive_tree_conf: initial_tree_conf,
 };
+
+/**
+ * @param {Map} form a form defined in this file
+ * @return {string} slugified string of the form
+ */
+export function slugify(form) {
+  return slugifyMap(form.map((value) => value === SELECT_ANY ? 'any' : value));
+}
 
 export default forms;
