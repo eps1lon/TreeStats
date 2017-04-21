@@ -6,6 +6,14 @@ import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import { SELECT_ANY } from '../actions/rows';
 
+export const duration_units = new Map([
+  [1, { human: 'seconds' }],
+  [60, { human: 'minutes' }],
+  [60*60, { human: 'hours' }],
+  [60*60*24, { human: 'days' }],
+  [60*60*24*7, { human: 'weeks' }],
+]);
+
 /**
  *
  */
@@ -37,11 +45,16 @@ class DataFilter extends React.Component {
         </LabeledInput>
 
         <LabeledInput>
-          <label>active since</label>
+          <label>last active</label>
           <Control
-            type="date"
+            type="number"
             model="data_filter.last_active" />
         </LabeledInput>
+
+        <OptionsMap
+          options={duration_units}
+          model="data_filter.last_active_base"
+          name_key="human" />
 
         <LabeledInput>
           <label>limit</label>

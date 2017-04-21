@@ -1,10 +1,12 @@
 /* eslint new-cap: off */
 import { Map, OrderedMap } from 'immutable';
+
 import {
   FETCH_SOURCES_FROM_JSON,
   SET_SOURCES,
   SET_ACTIVE,
 } from '../actions/data';
+import { ctimeOutFile } from '../../../task/lib/treesToCsvFile';
 
 export const defaultSource = (state) => {
   return state.getIn(['data', 'sources']).keySeq().first();
@@ -17,6 +19,18 @@ export const defaultSource = (state) => {
  */
 export function activeSource(state) {
   return state.get('sources').get(state.get('active'));
+}
+
+/**
+ * @param {AbstractDataSource} data_source
+ * @return {number} -inf on undefined source
+ */
+export function ctime(data_source) {
+  if (data_source) {
+    return ctimeOutFile(data_source.filename);
+  } else {
+    return Number.NEGATIVE_INFINITY;
+  }
 }
 
 const initial = Map({

@@ -6,10 +6,19 @@ import { slugify as slugifyMap } from '../helpers/map';
 export const initial_filter = Map({
   league: SELECT_ANY,
   klass: SELECT_ANY,
-  last_active: '2017-01-01',
+  last_active: 7,
+  last_active_base: 60*60*24, // days as default
   limit: 15000,
   offset: 0,
 });
+
+/**
+ * @param {Map} form
+ * @return {number} the value in seconds
+ */
+export function activeForSeconds(form) {
+  return form.get('last_active') * form.get('last_active_base');
+}
 
 // https://www.patrick-wied.at/static/heatmapjs/docs.html#h337-create
 export const initial_heatmap_conf = Map({

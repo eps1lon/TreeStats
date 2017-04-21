@@ -18,7 +18,7 @@ function filename(root, now, tree_ident) {
  * @param {string} filename
  * @return {Object} reverse of outFilename
  */
-function fileProps(filename) {
+function fileProps(filename='') {
   const match = new RegExp(`^([^_]+)_([^_]+)_get_trees\.csv$`)
     .exec(path.basename(filename));
 

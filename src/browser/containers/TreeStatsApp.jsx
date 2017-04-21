@@ -89,7 +89,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     init: () => {
-      dispatch(fetchSourcesFromJson(`./sources_${process.env.NODE_ENV}.json`));
+      dispatch(fetchSourcesFromJson(`./sources_production.json`));
     },
     tooltip: (event, parent) => {
       event.persist();

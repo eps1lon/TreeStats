@@ -1,3 +1,6 @@
+import { activeForSeconds } from '../reducers/forms';
+import { activeSource, ctime } from '../reducers/data';
+
 export const SELECT_ANY = 'ROWS/SELECT_ANY';
 
 // action types
@@ -8,16 +11,18 @@ export const SELECT_ROWS = 'ROWS/SELECT';
  * promises exec of a data cursor with the data filter applied
  * @param {Nedb} db
  * @param {Object} data_filter
+ * @param {number} db_ctime the time the table was created
  * @return {Promise} the {Object[]} rows
  */
-function selectRows(db, data_filter) {
-  const last_active = data_filter.get('last_active');
+function selectRows(db, data_filter, db_ctime=0) {
   const league = data_filter.get('league');
   const klass = data_filter.get('klass');
 
   const filter = {
+    // db uses old last_active values
+    // therefor db_ctime >= last_active
     last_active: {
-      $gte: new Date(last_active).valueOf(),
+      $gte: db_ctime - activeForSeconds(data_filter) * 1000,
     },
   };
 
@@ -50,12 +55,13 @@ export function updateRows() {
     const state = getState();
     const db = state.get('db');
     const data_filter = state.get('data_filter');
+    const db_ctime = ctime(activeSource(state.get('data')));
 
     dispatch({
       type: SELECT_ROWS,
     });
 
-    return selectRows(db.get('db'), data_filter).then((rows) => {
+    return selectRows(db.get('db'), data_filter, db_ctime).then((rows) => {
       dispatch({
         type: UPDATE_ROWS,
         payload: { rows },
