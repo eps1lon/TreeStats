@@ -11,6 +11,7 @@
     "async": "^2.1.4",
     "bootstrap": "^3.3.7",
     "buffer": "^5.0.3",
+    "chrome-remote-interface": "^0.22.0",
     "csv": "^1.1.0",
     "d3-selection": "^1.0.3",
     "d3-zoom": "^1.1.1",

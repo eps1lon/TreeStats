@@ -8,3 +8,6 @@ npm-debug.log
 dist
 coverage
 dependencies*.json
+
+/* image batch processing */
+task/screenshot/*.png
