@@ -15,7 +15,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onChange: (event) => {
       const select = event.target;
-      const index = event.target.selectedIndex;
+      const index = select.selectedIndex;
       const option = select.options.item(index);
 
       if (option) {
