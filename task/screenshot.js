@@ -61,6 +61,35 @@ const headmapLoaded = (DOM) => new Promise(async (resolve) => {
   resolve();
 });
 
+const dispatchClick = (client, options) => Promise.resolve()
+  .then(() => client.Input.dispatchMouseEvent(Object.assign({},
+    options,
+    { type: 'mousePressed' }
+  )))
+  .then(() => client.Input.dispatchMouseEvent(Object.assign({},
+    options,
+    { type: 'mouseReleased' }
+  )));
+
+const clickNode = async (DOM, selector) => {
+  const node = await querySelector(DOM, selector);
+  const model = await DOM.getBoxModel({ nodeId: node.nodeId });
+
+  // TODO: there is no get position, just get node at position
+};
+
+const navigateToSources = async (client) => {
+  await clickNode(client.DOM, 'ul.nav-tabs li:nth-of-type(1)');
+  await dispatchClick(client, {
+    x: 60,
+    y: 30,
+    button: 'left',
+    clickCount: 1,
+  });
+
+  // TODO: use url navigation an provide routing in app
+};
+
 CDP(async (client) => {
   const { Emulation, Page, DOM } = client;
   try {
@@ -86,6 +115,8 @@ CDP(async (client) => {
 
     await sleep(20); // waitfor init action
     await headmapLoaded(DOM);
+
+    await navigateToSources(client);
 
     const { data } = await Page.captureScreenshot();
     fs.writeFileSync(
