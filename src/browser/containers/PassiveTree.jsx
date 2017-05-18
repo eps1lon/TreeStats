@@ -7,6 +7,11 @@ import Nodes from '../components/PassiveTree/Nodes.jsx';
 import Edges from '../components/PassiveTree/Edges.jsx';
 import Groups from '../components/PassiveTree/Groups.jsx';
 
+export const tree_visual_changed = (old_props, new_props) => {
+    return !old_props.tree.equals(new_props.tree)
+      || !old_props.conf.equals(new_props.conf);
+};
+
 /**
  *
  */
@@ -17,9 +22,7 @@ class PassiveTree extends React.Component {
    * @return {boolean}
    */
   shouldComponentUpdate(new_props) {
-    const old_props = this.props;
-    return !old_props.tree.equals(new_props.tree)
-      || !old_props.conf.equals(new_props.conf);
+    return tree_visual_changed(this.props, new_props);
   }
 
   /**
