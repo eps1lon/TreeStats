@@ -35,3 +35,7 @@ svg {
     pointer-events: none;
     white-space: pre;			
 }
+
+.passive-tree .voronoi polygon {
+    fill: transparent;
+}

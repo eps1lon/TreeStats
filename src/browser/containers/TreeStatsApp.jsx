@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchSourcesFromJson } from '../actions/data';
-import { showTooltip } from '../actions/tooltip';
 import { resetZoom } from '../actions/zoom';
 
 import AppState from './AppState.jsx';
@@ -57,8 +56,6 @@ class TreeStatsApp extends React.Component {
 
         <div
           className="heatmap-wrapper"
-          onMouseLeave={tooltip}
-          onMouseMove={tooltip}
           ref="heatmap_wrapper">
 
           <Zoomable>
@@ -90,18 +87,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     init: () => {
       dispatch(fetchSourcesFromJson(`./sources_production.json`));
-    },
-    tooltip: (event, parent) => {
-      event.persist();
-
-      const { top, left } = parent.getBoundingClientRect();
-      const x = event.clientX - left;
-      const y = event.clientY - top;
-
-      const id_attr = event.target.attributes.getNamedItem('poe-node_id');
-      const node_id = id_attr ? +id_attr.value : undefined;
-
-      dispatch(showTooltip(x, y, node_id, event));
     },
     resetZoom: () => dispatch(resetZoom()),
   };
