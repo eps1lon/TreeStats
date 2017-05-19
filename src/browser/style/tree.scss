@@ -36,6 +36,14 @@ svg {
     white-space: pre;			
 }
 
-.passive-tree .voronoi polygon {
+.voronoi {
     fill: transparent;
+
+    &:hover + .tree_node {
+        fill: black;
+    }
+}
+
+.tree_node {
+    pointer-events: none;
 }

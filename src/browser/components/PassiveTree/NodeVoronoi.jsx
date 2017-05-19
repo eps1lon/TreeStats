@@ -3,13 +3,14 @@ import { voronoi as d3Voronoi } from 'd3-voronoi';
 
 import VoronoiPolygon from './VoronoiyPolygon.jsx';
 
+const jitter = () => Math.random();
+
 /**
  * creates an svg group representing a voronoi diagram of the
  * provided nodes
  */
-class Voronoi extends React.Component {
+class NodeVoronoi extends React.Component {
   static propTypes = {
-    nodes: PropTypes.array.isRequired,
     extent: PropTypes.array.isRequired,
     tooltip: PropTypes.func,
   }
@@ -37,24 +38,30 @@ class Voronoi extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { nodes, extent } = this.props;
+    const { extent, children } = this.props;
 
     const tooltip = this.tooltip.bind(this);
 
     const voronoi = d3Voronoi()
-      .x((d) => d.x)
-      .y((d) => d.y)
       .extent(extent);
 
+    const polygons = voronoi.polygons(
+      children.map(({ props: { node } }) => {
+        return [node.x + jitter(), node.y + jitter()];
+      })
+    );
+
     return (
-      <g className="voronoi"
+      <g className="passive-nodes"
         onMouseEnter={tooltip}
-        onMouseMove={tooltip}
-        onMouseLeave={tooltip}>
-        {voronoi.polygons(nodes).map((points, i) => {
+        onMouseLeave={tooltip}
+        onMouseMove={tooltip} >
+        {children.map((node, i) => {
           return (
-            <VoronoiPolygon key={i}
-              points={points} id={nodes[i].id} />
+            <g key={node.props.node.id}>
+              <VoronoiPolygon points={polygons[i]} />
+              {node}
+            </g>
           );
         })}
       </g>
@@ -62,4 +69,4 @@ class Voronoi extends React.Component {
   }
 }
 
-export default Voronoi;
+export default NodeVoronoi;

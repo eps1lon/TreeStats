@@ -11,7 +11,7 @@ class VoronoiPolygon extends React.Component {
     const points = this.props.points.map((p) => p.join(',')).join(' ');
 
     return (
-      <polygon is voronoi-id={this.props.id} points={points} />
+      <polygon className="voronoi" points={points} />
     );
   }
 };

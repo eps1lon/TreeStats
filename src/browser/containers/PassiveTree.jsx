@@ -6,7 +6,6 @@ import PassiveTreeConf from '../../poe/PassiveTreeConf';
 import Nodes from '../components/PassiveTree/Nodes.jsx';
 import Edges from '../components/PassiveTree/Edges.jsx';
 import Groups from '../components/PassiveTree/Groups.jsx';
-import Tooltip from '../components/PassiveTree/Tooltip.jsx';
 
 import { showTooltip } from '../actions/tooltip';
 
@@ -37,9 +36,9 @@ class PassiveTree extends React.Component {
     return (
       <svg className="passive-tree" viewBox={tree.viewbox.join(' ')}>
         <Edges edges={tree.edges} conf={conf} />
-        <Nodes nodes={tree.nodes} conf={conf} />
+        <Nodes nodes={tree.nodes} conf={conf}
+          tooltip={tooltip} dimensions={tree.dimensions} />
         <Groups nodes={tree.nodes} groups={tree.groups} conf={conf} />
-        <Tooltip conf={conf} tree={tree} tooltip={tooltip} />
       </svg>
     );
   }
