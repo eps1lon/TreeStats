@@ -36,8 +36,11 @@ class NodeVoronoi extends React.Component {
       const x = event.clientX - left;
       const y = event.clientY - top;
 
+      console.log(event);
+
       const id_attr = target.attributes.getNamedItem('voronoi-id');
-      const node_id = id_attr ? +id_attr.value : undefined;
+      const node_id = id_attr && event.type !== 'mouseleave'
+        ? +id_attr.value : undefined;
 
       this.props.tooltip(x, y, node_id, event);
     }
