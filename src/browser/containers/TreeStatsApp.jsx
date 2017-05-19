@@ -33,10 +33,15 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { tally, legend, resetZoom } = this.props;
+    const { tally, legend, resetZoom, clean } = this.props;
+    const class_names = ['react-fragment'];
+
+    if (clean) {
+      class_names.push('clean-view');
+    }
 
     return (
-      <div className="react-fragment">
+      <main id="app" className={class_names.join(' ')}>
         <NavTab tab_key="conf">
           <DataSources key="data" tabLabel="source" />
           <DataFilter key="data_filter" tabLabel="filter" />
@@ -69,7 +74,7 @@ class TreeStatsApp extends React.Component {
         </div>
 
         <Tooltip />
-      </div>
+      </main>
     );
   };
 };
@@ -78,6 +83,9 @@ const mapStateToProps = (state) => {
   return {
     legend: state.getIn(['heatmap', 'legend']),
     tally: state.getIn(['rows', 'rows']).size,
+    clean: state.getIn([
+      'routing', 'locationBeforeTransitions', 'query',
+    ]).has('clean'),
   };
 };
 

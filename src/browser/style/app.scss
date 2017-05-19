@@ -78,3 +78,9 @@ html, body {
 .toolbar button {
   vertical-align: top;
 }
+
+#app.clean-view {
+  .data-legend, .react-nav-tabs, .toolbar {
+    display: none;
+  }
+}
