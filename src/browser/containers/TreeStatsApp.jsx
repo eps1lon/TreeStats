@@ -34,8 +34,6 @@ class TreeStatsApp extends React.Component {
    */
   render() {
     const { tally, legend, resetZoom } = this.props;
-    const tooltip
-      = (event) => this.props.tooltip(event, this.refs.heatmap_wrapper);
 
     return (
       <div className="react-fragment">
