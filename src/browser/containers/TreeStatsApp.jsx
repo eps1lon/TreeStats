@@ -2,18 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchSourcesFromJson } from '../actions/data';
-import { resetZoom } from '../actions/zoom';
 
-import AppState from './AppState.jsx';
 import DataFilter from './DataFilter.jsx';
 import DataSources from './DataSources.jsx';
-import DownloadHeatmap from './DownloadHeatmap';
 import HeatmapConf from './HeatmapConf.jsx';
 import NavTab from './NavTab.jsx';
 import Tooltip from './Tooltip.jsx';
 import TreeHeatmap from './TreeHeatmap.jsx';
 import PassiveTree from './PassiveTree.jsx';
 import PassiveTreeConf from './PassiveTreeConf.jsx';
+import Toolbar from './Toolbar.jsx';
 import Zoomable from './Zoomable';
 
 import HeatmapLegend from '../components/HeatmapLegend.jsx';
@@ -33,7 +31,7 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { tally, legend, resetZoom, clean } = this.props;
+    const { tally, legend, clean } = this.props;
     const class_names = ['react-fragment'];
 
     if (clean) {
@@ -66,11 +64,7 @@ class TreeStatsApp extends React.Component {
             <PassiveTree />
           </Zoomable>
 
-          <div className="toolbar">
-            <AppState />
-            <button onClick={resetZoom}>resetZoom</button>
-            <DownloadHeatmap label="Download Heatmap" filename="heatmap.png" />
-          </div>
+          <Toolbar />
         </div>
 
         <Tooltip />
@@ -94,7 +88,6 @@ const mapDispatchToProps = (dispatch) => {
     init: () => {
       dispatch(fetchSourcesFromJson(`./sources_production.json`));
     },
-    resetZoom: () => dispatch(resetZoom()),
   };
 };
 
