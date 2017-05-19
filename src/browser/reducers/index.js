@@ -10,6 +10,7 @@ import data, { activeSource } from './data.js';
 import db from './db.js';
 import nav_tabs from './nav_tabs.js';
 import poe from './poe.js';
+import routing from './routing';
 import rows from './rows.js';
 import heatmap from './heatmap.js';
 import tooltip from './tooltip.js';
@@ -48,6 +49,7 @@ const treeStatsApp = combineReducers({
   tooltip,
   zoom,
   data,
+  routing,
   ...createForms(forms),
 });
 
