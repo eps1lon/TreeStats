@@ -1,5 +1,5 @@
 /**
- * @param {Map} map
+ * @param {Immutable.Map} map
  * @return {string} slugified string of the map
  */
 export function slugify(map) {
