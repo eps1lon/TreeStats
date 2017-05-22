@@ -1,5 +1,6 @@
 import { activeForSeconds } from '../reducers/forms';
-import { activeSource, ctime } from '../reducers/data';
+import { ctime } from '../reducers/data';
+import { activeSource } from '../selectors/data';
 
 export const SELECT_ANY = 'ROWS/SELECT_ANY';
 

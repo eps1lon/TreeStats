@@ -11,7 +11,7 @@ import {
   setActive,
   setSourcesArray,
 } from '../actions/data';
-import { defaultSource } from '../reducers/data';
+import { defaultSource } from '../selectors/data';
 import { getLocation } from '../selectors/routing';
 import dataSource from '../../data_sources/factory';
 

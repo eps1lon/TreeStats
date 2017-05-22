@@ -2,11 +2,12 @@ import { combineReducers } from 'redux-immutable';
 import { createForms } from 'react-redux-form/immutable';
 
 import { label as dataSourceLabel } from '../../data_sources/factory';
+import { activeSource } from '../selectors/data';
 
 import app from './app.js';
 import forms, { slugify as slugifyForm } from './forms.js';
 import passive_tree from './passive_tree.js';
-import data, { activeSource } from './data.js';
+import data from './data.js';
 import db from './db.js';
 import nav_tabs from './nav_tabs.js';
 import poe from './poe.js';
