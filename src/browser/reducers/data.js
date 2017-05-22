@@ -6,10 +6,12 @@ import {
   SET_SOURCES,
   SET_ACTIVE,
 } from '../actions/data';
+import { getLocation } from '../selectors/routing';
 import { ctimeOutFile } from '../../../task/lib/treesToCsvFile';
 
 export const defaultSource = (state) => {
-  return state.getIn(['data', 'sources']).keySeq().first();
+  return getLocation(state).getIn(['query', 'source'])
+  || state.getIn(['data', 'sources']).keySeq().first();
 };
 
 /**

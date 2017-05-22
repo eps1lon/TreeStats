@@ -1,4 +1,7 @@
+import { push } from 'react-router-redux';
+
 import { insertRows } from './db';
+import { getLocation } from '../selectors/routing';
 
 export const FETCH_SOURCES_FROM_JSON = 'SOURCES/FROM_JSON';
 export const SET_SOURCES = 'SOURCES/SET';
