@@ -7,6 +7,7 @@ export const appUrl = (league) => {
   return (dispatch, getState) => {
     const location = getLocation(getState());
 
-    dispatch(push(location.set('pathname', appPath(league)).toJS()));
+    // TODO disabled routing display
+    // dispatch(push(location.set('pathname', appPath(league)).toJS()));
   };
 };

@@ -14,7 +14,8 @@ const root_epic = combineEpics(
   fetchTree,
   matchTreeToData,
   syncZoom,
-  sourceInLocation,
+  // TODO disabled routing display
+  // sourceInLocation,
 );
 
 export default root_epic;
