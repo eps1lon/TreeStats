@@ -12,16 +12,6 @@ class OptionsMap extends React.Component {
     options: React.PropTypes.instanceOf(Map).isRequired,
     name_key: React.PropTypes.any.isRequired,
     model: React.PropTypes.string.isRequired,
-    handleChange: React.PropTypes.func,
-  }
-
-  /**
-   * @param {object} values
-   */
-  handleChange(values) {
-    if (this.props.handleChange) {
-      this.props.handleChange(values);
-    }
   }
 
   /**
@@ -31,9 +21,7 @@ class OptionsMap extends React.Component {
     const { options, name_key, model, id } = this.props;
 
     return (
-      <Control.select
-        model={model} id={id}
-        onChange={(values) => this.handleChange(values)}>
+      <Control.select model={model} id={id}>
         {[...options.entries()].map((entry) => {
           const [id, props] = entry;
 
