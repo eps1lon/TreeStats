@@ -79,6 +79,10 @@ html, body {
   vertical-align: top;
 }
 
+#app:not(.clean-view) h1 {
+  display: none;
+}
+
 #app.clean-view {
   .data-legend, .react-nav-tabs, .toolbar {
     display: none;

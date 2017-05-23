@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchSourcesFromJson } from '../actions/data';
+import { heatmapTitle } from '../selectors/app';
 
 import DataFilter from './DataFilter.jsx';
 import DataSources from './DataSources.jsx';
@@ -31,7 +32,7 @@ class TreeStatsApp extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { tally, legend, clean } = this.props;
+    const { tally, legend, clean, title } = this.props;
     const class_names = ['react-fragment'];
 
     if (clean) {
@@ -40,6 +41,7 @@ class TreeStatsApp extends React.Component {
 
     return (
       <main id="app" className={class_names.join(' ')}>
+        <h1>{title}</h1>
         <NavTab tab_key="conf">
           <DataSources key="data" tabLabel="source" />
           <DataFilter key="data_filter" tabLabel="filter" />
@@ -80,6 +82,7 @@ const mapStateToProps = (state) => {
     clean: state.getIn([
       'routing', 'locationBeforeTransitions', 'query',
     ]).has('clean'),
+    title: heatmapTitle(state),
   };
 };
 
