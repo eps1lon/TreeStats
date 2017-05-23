@@ -8,11 +8,12 @@ import {
   newTree,
   fetchTree as fetchTreeAction,
 } from '../actions/passive_tree';
+import { publicPath } from '../helpers/url';
 
 const poe = require('../../poe/data');
 
 export const treeJsonUrl = (id) => {
-  return `trees/${id}.json`;
+  return publicPath(`trees/${id}.json`);
 };
 
 export const fetchTree = (action$, store) => {

@@ -1,7 +1,5 @@
-import { push } from 'react-router-redux';
-
 import { insertRows } from './db';
-import { getLocation } from '../selectors/routing';
+import { publicPath } from '../helpers/url';
 
 export const FETCH_SOURCES_FROM_JSON = 'SOURCES/FROM_JSON';
 export const SET_SOURCES = 'SOURCES/SET';
@@ -16,7 +14,7 @@ export const SET_ACTIVE = 'SOURCES/ACTIVATE';
 export function fetchSourcesFromJson(filename) {
   return {
     type: FETCH_SOURCES_FROM_JSON,
-    payload: filename,
+    payload: publicPath(filename),
   };
 };
 

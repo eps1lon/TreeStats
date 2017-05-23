@@ -86,7 +86,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     init: () => {
-      dispatch(fetchSourcesFromJson(`./sources_production.json`));
+      dispatch(fetchSourcesFromJson(`sources_production.json`));
     },
   };
 };

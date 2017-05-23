@@ -11,6 +11,7 @@ import {
   setActive,
   setSourcesArray,
 } from '../actions/data';
+import { publicPath } from '../helpers/url';
 import { defaultSource } from '../selectors/data';
 import { getLocation } from '../selectors/routing';
 import dataSource from '../../data_sources/factory';
@@ -19,7 +20,10 @@ export const getSourcesIndex = (action$) => {
   return action$.ofType(FETCH_SOURCES_FROM_JSON)
     .mergeMap((action) => {
       return ajax.getJSON(action.payload)
-        .map((sources) => setSourcesArray(sources.map(dataSource)));
+        .map((sources) => setSourcesArray(sources.map((source) => {
+          source.filename = publicPath(source.filename);
+          return dataSource(source);
+        })));
     });
 };
 
