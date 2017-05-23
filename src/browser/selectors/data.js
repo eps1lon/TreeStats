@@ -1,3 +1,9 @@
+import path from 'path';
+
+import POE from '../../poe/data';
+import CsvDataSource from '../../data_sources/CsvDataSource';
+import { fileProps } from '../../../task/lib/treesToCsvFile';
+
 import { getLocation } from './routing';
 
 export const defaultSource = (state) => {
@@ -13,3 +19,25 @@ export const defaultSource = (state) => {
 export function activeSource(state) {
   return state.get('sources').get(state.get('active'));
 }
+
+/**
+ * @param {DataSource?} source
+ * @return {Object | undefined}
+ */
+export function dataSourceProps(source) {
+  if (source instanceof CsvDataSource) {
+    const filename = path.basename(source.filename);
+    const file_props = fileProps(filename);
+
+    if (file_props !== undefined) {
+      const date = new Date(file_props.ctime);
+      const tree = POE.trees.get(file_props.tree_ident);
+
+      if (date && tree) {
+        return { date, tree };
+      }
+    }
+  }
+
+  return undefined;
+};

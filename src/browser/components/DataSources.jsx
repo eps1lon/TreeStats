@@ -2,11 +2,8 @@ import React from 'react';
 import { Map } from 'immutable';
 import path from 'path';
 
-import POE from '../../poe/data';
-import CsvDataSource from '../../data_sources/CsvDataSource';
-import { fileProps } from '../../../task/lib/treesToCsvFile';
-
 import LabeledInput from '../components/LabeledInput.jsx';
+import { dataSourceProps } from '../selectors/data';
 
 /**
  * a container for data sources
@@ -24,26 +21,20 @@ class DataSources extends React.Component {
    * @return {string}
    */
   optionValue(source) {
-    if (source instanceof CsvDataSource) {
+    const props = dataSourceProps(source);
+
+    if (props !== undefined) {
+      return [
+        props.date.toLocaleDateString(),
+        props.tree.name,
+      ].join(' - ');
+    } else if (source instanceof CsvDataSource) {
       const filename = path.basename(source.filename);
-      const file_props = fileProps(filename);
-
-      if (file_props !== undefined) {
-        const date = new Date(file_props.ctime);
-        const tree = POE.trees.get(file_props.tree_ident);
-
-        if (date && tree) {
-          return [
-            date.toLocaleDateString(),
-            tree.name,
-          ].join(' - ');
-        }
-      }
 
       return filename;
+    } else {
+      return source.toString();
     }
-
-    return source.toString();
   }
 
   /**
