@@ -1,12 +1,13 @@
-const CDP = require('chrome-remote-interface');
+const cdp = require('chrome-remote-interface');
 const fs = require('fs');
 const path = require('path');
 
 const viewportWidth = 1920;
 const viewportHeight = 1080;
-const out_file = 'index.png';
 
 const sleep = (n) => new Promise((resolve) => setTimeout(() => resolve(), n));
+
+const range = (n, m) => Array(m - n).fill(0).map((_, i) => n + i);
 
 const interleavedToObject = (array) => {
   if (array.length % 2) {
@@ -61,36 +62,29 @@ const headmapLoaded = (DOM) => new Promise(async (resolve) => {
   resolve();
 });
 
-const dispatchClick = (client, options) => Promise.resolve()
-  .then(() => client.Input.dispatchMouseEvent(Object.assign({},
-    options,
-    { type: 'mousePressed' }
-  )))
-  .then(() => client.Input.dispatchMouseEvent(Object.assign({},
-    options,
-    { type: 'mouseReleased' }
-  )));
+const screenshot = async (
+  Page, DOM, out_prefix, league = 'all', source = '0'
+) => {
+  const url = `http://localhost:3000/league/${league}/?clean&source=${source}`;
 
-const clickNode = async (DOM, selector) => {
-  const node = await querySelector(DOM, selector);
-  const model = await DOM.getBoxModel({ nodeId: node.nodeId });
+  await Page.navigate({ url });
+  await Page.domContentEventFired();
 
-  // TODO: there is no get position, just get node at position
+  await sleep(20); // waitfor init action
+  await headmapLoaded(DOM);
+
+  const { data } = await Page.captureScreenshot();
+  fs.writeFileSync(
+    path.join(
+      __dirname,
+      'screenshot',
+      [out_prefix, source, league].join('-') + '.png'
+    ),
+    Buffer.from(data, 'base64')
+  );
 };
 
-const navigateToSources = async (client) => {
-  await clickNode(client.DOM, 'ul.nav-tabs li:nth-of-type(1)');
-  await dispatchClick(client, {
-    x: 60,
-    y: 30,
-    button: 'left',
-    clickCount: 1,
-  });
-
-  // TODO: use url navigation an provide routing in app
-};
-
-CDP(async (client) => {
+cdp(async (client) => {
   const { Emulation, Page, DOM } = client;
   try {
     await Page.enable();
@@ -108,21 +102,14 @@ CDP(async (client) => {
     await Emulation.setVisibleSize({
       width: viewportWidth,
       height: viewportHeight,
-  });
+    });
 
-    await Page.navigate({ url: 'http://localhost:3000' });
-    await Page.domContentEventFired();
+    const sources = range(0, 3);
 
-    await sleep(20); // waitfor init action
-    await headmapLoaded(DOM);
-
-    await navigateToSources(client);
-
-    const { data } = await Page.captureScreenshot();
-    fs.writeFileSync(
-      path.join(__dirname, 'screenshot', out_file),
-      Buffer.from(data, 'base64')
-    );
+    for (const source of sources) {
+      await screenshot(Page, DOM, 'test', 'all', source);
+      console.log('shot taken of', source);
+    }
   } catch (err) {
     console.error(err);
   }
