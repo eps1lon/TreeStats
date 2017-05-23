@@ -1,6 +1,6 @@
 import { push } from 'react-router-redux';
 
-import { appPath } from '../routes.jsx';
+import { appPath } from '../helpers/routes';
 import { getLocation } from '../selectors/routing';
 
 export const appUrl = (league) => {

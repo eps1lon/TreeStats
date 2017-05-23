@@ -4,19 +4,9 @@ import { Route } from 'react-router';
 
 import TreeStatsApp from './containers/TreeStatsApp.jsx';
 
+// adjust helpers/routes onchange
 const routes = (
   <Route path="/(league/:league)" component={TreeStatsApp} />
 );
-
-// are the only helpers rly only jsx expressions for components?
-export const appPath = (league) => {
-  let url = '/';
-
-  if (league) {
-    url += `league/${league.name}`;
-  }
-
-  return url;
-};
 
 export default routes;

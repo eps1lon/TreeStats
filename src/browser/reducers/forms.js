@@ -2,8 +2,10 @@ import { Map } from 'immutable';
 
 import { SELECT_ANY } from '../actions/rows';
 import { slugify as slugifyMap } from '../helpers/map';
+import { pathnameToAppParams } from '../helpers/routes';
+import { leagueFromName } from '../selectors/poe';
 
-export const initial_filter = Map({
+const default_initial_filter = Map({
   league: SELECT_ANY,
   klass: SELECT_ANY,
   last_active: 7,
@@ -11,6 +13,22 @@ export const initial_filter = Map({
   limit: 15000,
   offset: 0,
 });
+
+const createInitialFilter = () => {
+  // this prob super bad practice but i dont of any way
+  // to inject react-router params into react-redux-form
+  return default_initial_filter.withMutations((filter) => {
+    if (window && window.location) {
+      const pathname = window.location.pathname;
+      const params = pathnameToAppParams(pathname);
+
+      // controlled merge instead of spread
+      filter.set('league', leagueFromName(params.league, filter.get('league')));
+    }
+  });
+};
+
+export const initial_filter = createInitialFilter();
 
 /**
  * @param {Map} form
