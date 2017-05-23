@@ -60,9 +60,12 @@
     "fetch-mock": "^5.9.3",
     "file-loader": "^0.10.0",
     "html-webpack-plugin": "^2.28.0",
+    "husky": "^0.13.3",
     "jest": "^18.1.0",
+    "lint-staged": "^3.4.2",
     "node-sass": "^4.5.0",
     "opn-cli": "^3.1.0",
+    "prettier": "^1.3.1",
     "resolve-url-loader": "^1.6.1",
     "sass-loader": "^6.0.0",
     "style-loader": "^0.13.1",
@@ -81,12 +84,19 @@
     "build:copy": "copyfiles --all -u 1 public/* 'public/**/*' dist",
     "build:dependencies": "webpack --profile --json > dependencies1.json",
     "prebuild": "npm run build:clean && npm run build:copy",
+    "precommit": "lint-staged",
     "build": "NODE_ENV=\"production\" webpack -p --progress --colors"
   },
   "jest": {
     "testPathIgnorePatterns": [
       "node_modules",
       "fixtures"
+    ]
+  },
+  "lint-staged": {
+    ".{js,jsx}": [
+      "prettier --write --trailing-comma es5 --single-quote",
+      "git add"
     ]
   }
 }
