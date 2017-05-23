@@ -14,7 +14,8 @@ const createSelectLocationState = () => {
   let prevRoutingStateJS;
 	return (state) => {
 		const routingState = state.get('routing');
-		if (typeof prevRoutingState === 'undefined' || !prevRoutingState.equals(routingState)) {
+		if (typeof prevRoutingState === 'undefined'
+      || !prevRoutingState.equals(routingState)) {
 			prevRoutingState = routingState;
 			prevRoutingStateJS = routingState.toJS();
 		}
