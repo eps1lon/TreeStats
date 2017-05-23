@@ -13,7 +13,7 @@ export const appPath = (league) => {
   let url = '/';
 
   if (league) {
-    url += `/league/${league}`;
+    url += `league/${league.name}`;
   }
 
   return url;

@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Control, Form } from 'react-redux-form/immutable';
+import {} from 'react-router-redux';
 
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import { SELECT_ANY } from '../actions/rows';
+import { appUrl } from '../actions/routing';
 
 export const duration_units = new Map([
   [1, { human: 'seconds' }],
@@ -18,16 +20,33 @@ export const duration_units = new Map([
  *
  */
 class DataFilter extends React.Component {
+  static propTypes = {
+    classes: React.PropTypes.instanceOf(Map),
+    leagues: React.PropTypes.instanceOf(Map),
+    handleChange: React.PropTypes.func,
+  }
+
+  /**
+   * rrf onChange handle
+   * @param {object} values
+   */
+  handleChange(values) {
+    if (this.props.handleChange) {
+      this.props.handleChange(values, this.props.classes, this.props.leagues);
+    }
+  }
+
   /**
    * @return {JSX}
    */
   render() {
     const { classes, leagues } = this.props;
+    const handleChange = this.handleChange.bind(this);
 
     // disabling inputs/fieldset is a bad idea
     // because you will loose focus
     return (
-      <Form model="data_filter">
+      <Form model="data_filter" onChange={handleChange}>
         <LabeledInput>
           <label>league</label>
           <OptionsMap
@@ -110,6 +129,15 @@ const mapStateToProps = (state) => {
   };
 };
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleChange: (values, classes, leagues) => {
+      dispatch(appUrl(leagues.get(values.get('league'))));
+    },
+  };
+};
+
 export default connect(
   mapStateToProps,
+  mapDispatchToProps,
 )(DataFilter);
