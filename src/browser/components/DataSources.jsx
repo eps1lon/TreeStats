@@ -1,9 +1,8 @@
 import React from 'react';
 import { Map } from 'immutable';
-import path from 'path';
 
 import LabeledInput from '../components/LabeledInput.jsx';
-import { dataSourceProps } from '../selectors/data';
+import { dataSourceHuman } from '../selectors/data';
 
 /**
  * a container for data sources
@@ -21,20 +20,7 @@ class DataSources extends React.Component {
    * @return {string}
    */
   optionValue(source) {
-    const props = dataSourceProps(source);
-
-    if (props !== undefined) {
-      return [
-        props.date.toLocaleDateString(),
-        props.tree.name,
-      ].join(' - ');
-    } else if (source instanceof CsvDataSource) {
-      const filename = path.basename(source.filename);
-
-      return filename;
-    } else {
-      return source.toString();
-    }
+    return dataSourceHuman(source);
   }
 
   /**

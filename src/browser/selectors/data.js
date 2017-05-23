@@ -41,3 +41,25 @@ export function dataSourceProps(source) {
 
   return undefined;
 };
+
+/**
+ *
+ * @param {DataSource?} source
+ * @return {String}
+ */
+export function dataSourceHuman(source) {
+  const props = dataSourceProps(source);
+
+  if (props !== undefined) {
+    return [
+      props.date.toLocaleDateString(),
+      props.tree.name,
+    ].join(' - ');
+  } else if (source instanceof CsvDataSource) {
+    const filename = path.basename(source.filename);
+
+    return filename;
+  } else {
+    return source.toString();
+  }
+};
