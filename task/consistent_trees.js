@@ -1,3 +1,12 @@
+/** ********************/
+/** ********************/
+/** ****LEGACY*****/
+/** working scripts ****/
+/** located in *********/
+/** scripts/ ***********/
+// //////////////////////
+
+
 const fs = require('fs');
 const path = require('path');
 const csvParse = require('csv-parse/lib/sync');
