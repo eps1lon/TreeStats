@@ -9,10 +9,10 @@ const DEBUG = process.env.NODE_ENV !== 'production';
 const config = {
   devtool: DEBUG ? 'source-map' : false,
   entry: [
-    path.join(__dirname, 'src/browser/index.jsx'),
+    path.join(__dirname, '../src/browser/index.jsx'),
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, '../dist'),
     filename: '[hash].bundle.js',
     publicPath: '/',
   },
@@ -68,7 +68,7 @@ const config = {
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: path.join(__dirname, '/public/index.html'),
+      template: path.join(__dirname, '../public/index.html'),
     }),
   ],
 };
