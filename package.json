@@ -19,7 +19,7 @@
     "fs": "^0.0.1-security",
     "heatmap.js": "^2.0.5",
     "immutable": "^3.8.1",
-    "log4js": "^1.1.0",
+    "log4js": "^1.1.1",
     "nedb": "^1.8.0",
     "nprogress": "^0.2.0",
     "object.entries": "^1.0.4",
@@ -88,7 +88,7 @@
     "build": "NODE_ENV=\"production\" webpack -p --config config/webpack.browser.js --progress --colors",
     "build:scripts": "webpack --config config/webpack.node.js --progress --colors",
     "build:scripts:clean": "del \"scripts/*\"",
-    "dev:scripts": "webpack --config config/webpack.node.js -w --progress"
+    "dev:scripts": "webpack --config config/webpack.node.js -w"
   },
   "jest": {
     "testPathIgnorePatterns": [

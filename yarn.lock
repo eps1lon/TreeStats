@@ -3930,13 +3930,13 @@ log-update@^1.0.2:
     ansi-escapes "^1.0.0"
     cli-cursor "^1.0.2"
 
-log4js@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/log4js/-/log4js-1.1.0.tgz#c7d2b616d91bbf47cc65fb79d6fe04581c8096fa"
+log4js@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/log4js/-/log4js-1.1.1.tgz#c21d29c7604089e4f255833e7f94b3461de1ff43"
   dependencies:
     debug "^2.2.0"
     semver "^5.3.0"
-    streamroller "^0.2.1"
+    streamroller "^0.4.0"
 
 longest@^1.0.1:
   version "1.0.1"
@@ -5817,12 +5817,13 @@ stream-transform@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-0.1.2.tgz#7d8e6b4e03ac4781778f8c79517501bfb0762a9f"
 
-streamroller@^0.2.1:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/streamroller/-/streamroller-0.2.2.tgz#a13420e04169e573db068f5920ee23d881abfe33"
+streamroller@^0.4.0:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/streamroller/-/streamroller-0.4.1.tgz#d435bd5974373abd9bd9068359513085106cc05f"
   dependencies:
     date-format "^0.0.0"
     debug "^0.7.2"
+    mkdirp "^0.5.1"
     readable-stream "^1.1.7"
 
 strict-uri-encode@^1.0.0:
