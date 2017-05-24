@@ -10,4 +10,4 @@ coverage
 dependencies*.json
 
 /* image batch processing */
-task/screenshot/*.png
+scripts/screenshot/*.png
