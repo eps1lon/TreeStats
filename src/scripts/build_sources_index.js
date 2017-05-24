@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 const [dir, out_file]
   = process.argv.slice(2, 4).map((file) => {
@@ -8,7 +8,7 @@ const [dir, out_file]
 
 const public_root = process.argv[4];
 
-ctime = (filename) => +filename.match(/^(\d+)/)[1];
+const ctime = (filename) => +filename.match(/^(\d+)/)[1];
 
 const sources = fs.readdirSync(dir)
   .filter((filename) => {

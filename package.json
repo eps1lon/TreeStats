@@ -41,6 +41,7 @@
     "rxjs": "^5.0.0-beta.10"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.1",
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
     "babel-jest": "^18.0.0",
@@ -84,7 +85,10 @@
     "build:dependencies": "webpack --profile --json > dependencies1.json",
     "prebuild": "npm run build:clean && npm run build:copy",
     "precommit": "lint-staged",
-    "build": "NODE_ENV=\"production\" webpack -p --progress --colors"
+    "build": "NODE_ENV=\"production\" webpack -p --progress --colors",
+    "build:scripts": "babel src/scripts --out-dir scripts/ --source-maps inline",
+    "build:scripts:clean": "del \"scripts/*\"",
+    "dev:scripts": "babel src/scripts/*.js --out-dir scripts/ --source-maps inline -w"
   },
   "jest": {
     "testPathIgnorePatterns": [
