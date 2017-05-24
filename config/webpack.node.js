@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const nodeExternals = require('webpack-node-externals');
 
 const script_dir = path.join(__dirname, '../src/scripts');
 
@@ -10,12 +11,17 @@ fs.readdirSync(script_dir)
 
 const config = {
   devtool: 'inline-source-map',
+  externals: [nodeExternals()],
   entry: scripts,
   output: {
     path: path.join(__dirname, '../scripts'),
     filename: '[name]',
   },
   target: 'node',
+  node: {
+    __filename: false,
+    __dirname: false,
+  },
   module: {
     loaders: [
       {
