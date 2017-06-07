@@ -18,7 +18,7 @@ const createInitialFilter = () => {
   // this prob super bad practice but i dont of any way
   // to inject react-router params into react-redux-form
   return default_initial_filter.withMutations((filter) => {
-    if (window && window.location) {
+    if (typeof window === 'object' && window.location) {
       const pathname = window.location.pathname;
       const params = pathnameToAppParams(pathname);
 
