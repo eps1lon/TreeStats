@@ -2,7 +2,7 @@ import path from 'path';
 
 import POE from '../../poe/data';
 import CsvDataSource from '../../data_sources/CsvDataSource';
-import { fileProps } from '../../../task/lib/treesToCsvFile';
+import { fileProps } from '../../scripts/lib/treesToCsvFile';
 
 import { getLocation } from './routing';
 

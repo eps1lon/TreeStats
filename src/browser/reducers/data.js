@@ -6,7 +6,7 @@ import {
   SET_SOURCES,
   SET_ACTIVE,
 } from '../actions/data';
-import { ctimeOutFile } from '../../../task/lib/treesToCsvFile';
+import { ctimeOutFile } from '../../scripts/lib/treesToCsvFile';
 
 /**
  * @param {AbstractDataSource} data_source
