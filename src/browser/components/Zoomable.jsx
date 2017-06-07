@@ -4,8 +4,7 @@ import { event, select } from 'd3-selection';
 import { zoom, zoomIdentity } from 'd3-zoom';
 
 import { browserTransform, transformEqual } from '../../d3_util';
-
-export const RESET_ZOOM = 'ZOOMABLE/RESET';
+import { RESET_ZOOM } from './Zoomable.constants';
 
 /**
  * creates a zoomable div
