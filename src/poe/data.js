@@ -14,6 +14,9 @@ module.exports = {
     ['5', { name: 'Standard', active: false, permanent: false }],
     ['6', { name: 'SSF Legacy', active: true, permanent: false }],
     ['7', { name: 'SSF HC Legacy', active: true, permanent: false }],
+    ['8', { name: '2 Week Mayhem HC (JRE091)', active: true, permanent: false }],
+    ['9', { name: '2 Week Mayhem (JRE092)', active: true, permanent: false }],
+    ['10', { name: '2 Week Mayhem HC Solo (JRE093)', active: true, permanent: false }],
   ]),
   // Map<string, ClassProps>
   classes: Map([
