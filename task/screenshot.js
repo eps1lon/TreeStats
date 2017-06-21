@@ -22,9 +22,20 @@ const range = (n, m) => Array(m - n + 1).fill(0).map((_, i) => n + i);
 const [prefix, league, sources_arg] = process.argv.slice(2);
 let sources = [];
 if (/\d+\.\.\d+/.test(sources_arg)) {
-  sources = range(...sources_arg.split('..').map((n) => +n));
+  sources = new Map(
+    range(...sources_arg.split('..').map((n) => +n))
+      .map((n) => [n, n])
+  );
+} else if (/.*\.json$/.test(sources_arg)) {
+  const sources_file = fs.readFileSync(sources_arg);
+  sources = new Map(
+    Object.entries(JSON.parse(sources_file))
+      .map(([key, source]) => [key, path.basename(source.filename, '.csv')])
+  );
 } else {
-  sources = sources_arg.split(',').map((n) => +n);
+  sources = new Map(
+    sources_arg.split(',').map((n) => +n).map((n) => [n, n])
+  );
 }
 
 const sleep = (n) => new Promise((resolve) => setTimeout(() => resolve(), n));
@@ -83,9 +94,9 @@ const headmapLoaded = (DOM) => new Promise(async (resolve) => {
 });
 
 const screenshot = async (
-  Page, DOM, out_prefix, league = 'all', source = '0'
+  Page, DOM, out_prefix, league = 'all', source_key = '0', source_id,
 ) => {
-  const url = `http://localhost:3000/league/${league}/?clean&source=${source}`;
+  const url = `http://localhost:3000/league/${league}/?clean&source=${source_key}`;
 
   await Page.navigate({ url });
   await Page.domContentEventFired();
@@ -98,7 +109,7 @@ const screenshot = async (
     path.join(
       __dirname,
       'screenshot',
-      [out_prefix, source, league].join('-') + '.png'
+      [out_prefix, source_id, league].join('-') + '.png'
     ),
     Buffer.from(data, 'base64')
   );
@@ -124,8 +135,8 @@ cdp(async (client) => {
       height: viewportHeight,
     });
 
-    for (const source of sources) {
-      await screenshot(Page, DOM, prefix, league, source);
+    for (const [source, id] of sources.entries()) {
+      await screenshot(Page, DOM, prefix, league, source, id);
       console.log('shot taken of', source);
     }
   } catch (err) {
