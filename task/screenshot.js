@@ -2,12 +2,32 @@ const cdp = require('chrome-remote-interface');
 const fs = require('fs');
 const path = require('path');
 
+// config
 const viewportWidth = 1920;
 const viewportHeight = 1080;
+const HEADLESS_PORT = 9222;
+// eslint still throws
+// eslint-disable-next-line: max-len
+const HEADLESS_COMMAND = `google-chrome --headless --hide-scrollbars --remote-debugging-port=${HEADLESS_PORT} --disable-gpu &`;
+
+const USAGE = `${path.basename(process.argv[1])} {prefix} {league} {sources}`;
+
+if (process.argv.length < 4) {
+  console.log(USAGE);
+  return;
+}
+
+const range = (n, m) => Array(m - n + 1).fill(0).map((_, i) => n + i);
+
+const [prefix, league, sources_arg] = process.argv.slice(2);
+let sources = [];
+if (/\d+\.\.\d+/.test(sources_arg)) {
+  sources = range(...sources_arg.split('..').map((n) => +n));
+} else {
+  sources = sources_arg.split(',').map((n) => +n);
+}
 
 const sleep = (n) => new Promise((resolve) => setTimeout(() => resolve(), n));
-
-const range = (n, m) => Array(m - n).fill(0).map((_, i) => n + i);
 
 const interleavedToObject = (array) => {
   if (array.length % 2) {
@@ -104,10 +124,8 @@ cdp(async (client) => {
       height: viewportHeight,
     });
 
-    const sources = range(0, 3);
-
     for (const source of sources) {
-      await screenshot(Page, DOM, 'test', 'all', source);
+      await screenshot(Page, DOM, prefix, league, source);
       console.log('shot taken of', source);
     }
   } catch (err) {
@@ -115,5 +133,7 @@ cdp(async (client) => {
   }
   await client.close();
 }).on('error', (err) => {
-  console.error(err);
+  console.log(
+    `you may not have started chrome in headless \nrun ${HEADLESS_COMMAND}`
+  );
 });
