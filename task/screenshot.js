@@ -1,6 +1,7 @@
 const cdp = require('chrome-remote-interface');
 const fs = require('fs');
 const path = require('path');
+const request = require('request');
 
 // config
 const viewportWidth = 1920;
@@ -10,31 +11,57 @@ const HEADLESS_PORT = 9222;
 // eslint-disable-next-line: max-len
 const HEADLESS_COMMAND = `google-chrome --headless --hide-scrollbars --remote-debugging-port=${HEADLESS_PORT} --disable-gpu &`;
 
-const USAGE = `${path.basename(process.argv[1])} {prefix} {league} {sources}`;
+const USAGE = `${path.basename(process.argv[1])} {prefix} {league} {sources} {host} [{blacklist}]`;
 
-if (process.argv.length < 4) {
+if (process.argv.length < 5) {
   console.log(USAGE);
   return;
 }
 
 const range = (n, m) => Array(m - n + 1).fill(0).map((_, i) => n + i);
 
-const [prefix, league, sources_arg] = process.argv.slice(2);
-let sources = [];
+const [
+  prefix, league, sources_arg, host, blacklist_file,
+] = process.argv.slice(2);
+
+let sources_promise = Promise.resolve(new Map());
 if (/\d+\.\.\d+/.test(sources_arg)) {
-  sources = new Map(
+  sources_promise = Promise.resolve(new Map(
     range(...sources_arg.split('..').map((n) => +n))
       .map((n) => [n, n])
-  );
+  ));
 } else if (/.*\.json$/.test(sources_arg)) {
-  const sources_file = fs.readFileSync(sources_arg);
-  sources = new Map(
-    Object.entries(JSON.parse(sources_file))
-      .map(([key, source]) => [key, path.basename(source.filename, '.csv')])
-  );
+  sources_promise = new Promise((resolve, reject) => {
+    request(`${host}/${sources_arg}`, (e, response, body) => {
+      if (e) {
+        reject(e);
+      } else {
+        resolve(new Map(
+          Object.entries(JSON.parse(body))
+            .map(([key, source]) => {
+              return [key, path.basename(source.filename, '.csv')];
+            })
+        ));
+      }
+    });
+  });
 } else {
-  sources = new Map(
+  sources_promise = Promise.resolve(new Map(
     sources_arg.split(',').map((n) => +n).map((n) => [n, n])
+  ));
+}
+
+let source_blacklist = new Set();
+if (blacklist_file !== undefined) {
+  // init, create empty
+  if (!fs.existsSync(blacklist_file)) {
+    fs.writeFileSync(blacklist_file, '');
+  }
+
+  source_blacklist = new Set(
+    fs.readFileSync(blacklist_file).toString()
+      .split(',')
+      .filter((s) => s.length > 0)
   );
 }
 
@@ -96,7 +123,7 @@ const headmapLoaded = (DOM) => new Promise(async (resolve) => {
 const screenshot = async (
   Page, DOM, out_prefix, league = 'all', source_key = '0', source_id,
 ) => {
-  const url = `http://localhost:3000/league/${league}/?clean&source=${source_key}`;
+  const url = `${host}league/${league}/?clean&source=${source_key}`;
 
   await Page.navigate({ url });
   await Page.domContentEventFired();
@@ -135,9 +162,23 @@ cdp(async (client) => {
       height: viewportHeight,
     });
 
+    const sources = await sources_promise;
+
     for (const [source, id] of sources.entries()) {
-      await screenshot(Page, DOM, prefix, league, source, id);
-      console.log('shot taken of', source);
+      if (!source_blacklist.has(source)) {
+        await screenshot(Page, DOM, prefix, league, source, id);
+        console.log('shot taken of', source);
+
+        source_blacklist.add(source);
+        if (blacklist_file !== undefined) {
+          fs.writeFileSync(
+            blacklist_file,
+            [...source_blacklist.values()].join(',')
+          );
+        }
+      } else {
+        console.log('skipped', source);
+      }
     }
   } catch (err) {
     console.error(err);
