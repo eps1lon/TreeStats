@@ -7,8 +7,14 @@ import { fileProps } from '../../../task/lib/treesToCsvFile';
 import { getLocation } from './routing';
 
 export const defaultSource = (state) => {
-  return getLocation(state).getIn(['query', 'source'])
-  || state.getIn(['data', 'sources']).keySeq().first();
+  const location_key = getLocation(state).getIn(['query', 'source']);
+  const sources = state.getIn(['data', 'sources']);
+
+  if (sources.has(location_key)) {
+    return location_key;
+  } else {
+    return sources.keySeq().first();
+  }
 };
 
 /**

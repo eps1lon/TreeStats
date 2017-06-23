@@ -48,12 +48,20 @@ export function setSourcesArray(sources) {
  */
 export function setActive(active) {
   return (dispatch, getState) => {
+    let source = getSourceByKey(getState(), active);
+
+    if (source === undefined) {
+      // assert that defaultSource returns an existing one
+      // but for safety dont dispatch setActive(defaultSource())
+      // to avoid infinite recursion
+      active = defaultSource(getState());
+      source = getSourceByKey(getState(), active);
+    }
+
     dispatch({
       type: SET_ACTIVE,
       payload: { active },
     });
-
-    const source = getSourceByKey(getState(), active);
 
     dispatch(insertRows(source.rows));
   };
