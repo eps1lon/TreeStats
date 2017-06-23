@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const request = require('request');
 
+import { interleavedToObject, range, sleep } from './lib/util';
+
 // config
 const viewportWidth = 1920;
 const viewportHeight = 1080;
@@ -17,8 +19,6 @@ if (process.argv.length < 5) {
   console.log(USAGE);
   return;
 }
-
-const range = (n, m) => Array(m - n + 1).fill(0).map((_, i) => n + i);
 
 const [
   prefix, league, sources_arg, host, blacklist_file,
@@ -64,21 +64,6 @@ if (blacklist_file !== undefined) {
       .filter((s) => s.length > 0)
   );
 }
-
-const sleep = (n) => new Promise((resolve) => setTimeout(() => resolve(), n));
-
-const interleavedToObject = (array) => {
-  if (array.length % 2) {
-    throw new Error('only interleaved when |array| % 2 == 0');
-  }
-
-  const parsed = {};
-  for (let i = 0; i < array.length; i += 2) {
-    parsed[array[i]] = array[i+1];
-  }
-
-  return parsed;
-};
 
 const classNames = async (DOM, node_id) => {
   const attributes = interleavedToObject(
