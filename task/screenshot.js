@@ -97,13 +97,13 @@ const appIsLoading = async (DOM) => {
   return await hasClass(DOM, htmlNodeId, 'nprogress-busy');
 };
 
-const headmapLoaded = (DOM) => new Promise(async (resolve) => {
+const headmapLoaded = async (DOM) => {
+  // sleep until appIsLoading === false
   while (await appIsLoading(DOM)) {
     // await sleep(20);
     await DOM.attributeModified();
   }
-  resolve();
-});
+};
 
 const screenshot = async (
   Page, DOM, out_prefix, league = 'all', source_key = '0', source_id,
