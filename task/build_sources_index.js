@@ -10,15 +10,22 @@ const public_root = process.argv[4];
 
 ctime = (filename) => +filename.match(/^(\d+)/)[1];
 
-const sources = fs.readdirSync(dir)
+const sources = {};
+
+fs.readdirSync(dir)
   .filter((filename) => {
     return /^.*_get_trees\.csv$/.test(filename);
   })
   .sort((a, b) => ctime(b) - ctime(a))
   .map((filename) => {
-    return { filename: path.join(public_root, filename) };
+    return [
+      ctime(filename),
+      { filename: path.join(public_root, filename) },
+    ];
+  }).forEach((entry) => {
+    sources[entry[0]] = entry[1];
   });
 
 fs.writeFileSync(out_file, JSON.stringify(sources));
 
-console.log(`wrote ${sources.length} sources into '${out_file}'`);
+console.log(`wrote ${Object.keys(sources).length} sources into '${out_file}'`);

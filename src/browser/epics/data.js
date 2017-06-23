@@ -9,7 +9,7 @@ import {
   SET_ACTIVE,
   SET_SOURCES,
   setActive,
-  setSourcesArray,
+  setSourcesArray, setSources,
 } from '../actions/data';
 import { publicPath } from '../helpers/url';
 import { defaultSource } from '../selectors/data';
@@ -20,10 +20,19 @@ export const getSourcesIndex = (action$) => {
   return action$.ofType(FETCH_SOURCES_FROM_JSON)
     .mergeMap((action) => {
       return ajax.getJSON(action.payload)
-        .map((sources) => setSourcesArray(sources.map((source) => {
-          source.filename = publicPath(source.filename);
-          return dataSource(source);
-        })));
+        .map((sources) => {
+          if (Array.isArray(sources)) {
+            return setSourcesArray(sources.map((source) => {
+              source.filename = publicPath(source.filename);
+              return dataSource(source);
+            }));
+          } else {
+            return setSources(new Map(
+              Object.entries(sources)
+                .map(([key, source]) => [key, dataSource(source)])
+            ));
+          }
+        });
     });
 };
 

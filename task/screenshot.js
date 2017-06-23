@@ -24,31 +24,23 @@ const [
   prefix, league, sources_arg, host, blacklist_file,
 ] = process.argv.slice(2);
 
-let sources_promise = Promise.resolve(new Map());
+let sources_promise = Promise.resolve([]);
 if (/\d+\.\.\d+/.test(sources_arg)) {
-  sources_promise = Promise.resolve(new Map(
+  sources_promise = Promise.resolve(
     range(...sources_arg.split('..').map((n) => +n))
-      .map((n) => [n, n])
-  ));
+  );
 } else if (/.*\.json$/.test(sources_arg)) {
   sources_promise = new Promise((resolve, reject) => {
     request(`${host}/${sources_arg}`, (e, response, body) => {
       if (e) {
         reject(e);
       } else {
-        resolve(new Map(
-          Object.entries(JSON.parse(body))
-            .map(([key, source]) => {
-              return [key, path.basename(source.filename, '.csv')];
-            })
-        ));
+        resolve( Object.keys(JSON.parse(body)));
       }
     });
   });
 } else {
-  sources_promise = Promise.resolve(new Map(
-    sources_arg.split(',').map((n) => +n).map((n) => [n, n])
-  ));
+  sources_promise = Promise.resolve(sources_arg.split(',').map((n) => +n));
 }
 
 let source_blacklist = new Set();
@@ -106,7 +98,7 @@ const headmapLoaded = async (DOM) => {
 };
 
 const screenshot = async (
-  Page, DOM, out_prefix, league = 'all', source_key = '0', source_id,
+  Page, DOM, out_prefix, league = 'all', source_key = '0',
 ) => {
   const url = `${host}league/${league}/?clean&source=${source_key}`;
 
@@ -121,7 +113,7 @@ const screenshot = async (
     path.join(
       __dirname,
       'screenshot',
-      [out_prefix, source_id, league].join('-') + '.png'
+      [out_prefix, source_key, league].join('-') + '.png'
     ),
     Buffer.from(data, 'base64')
   );
@@ -149,12 +141,12 @@ cdp(async (client) => {
 
     const sources = await sources_promise;
 
-    for (const [source, id] of sources.entries()) {
+    for (const source_key of sources) {
       if (!source_blacklist.has(source)) {
-        await screenshot(Page, DOM, prefix, league, source, id);
-        console.log('shot taken of', source);
+        await screenshot(Page, DOM, prefix, league, source_key);
+        console.log('shot taken of', source_key);
 
-        source_blacklist.add(source);
+        source_blacklist.add(source_key);
         if (blacklist_file !== undefined) {
           fs.writeFileSync(
             blacklist_file,
@@ -162,7 +154,7 @@ cdp(async (client) => {
           );
         }
       } else {
-        console.log('skipped', source);
+        console.log('skipped', source_key);
       }
     }
   } catch (err) {
