@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const request = require('request');
 
-import { interleavedToObject, range, sleep } from './lib/util';
+const { interleavedToObject, range, sleep } = require('./lib/util');
 
 // config
 const viewportWidth = 1920;

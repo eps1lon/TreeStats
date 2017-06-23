@@ -1,4 +1,4 @@
-export const interleavedToObject = (array) => {
+const interleavedToObject = (array) => {
   if (array.length % 2) {
     throw new Error('only interleaved when |array| % 2 == 0');
   }
@@ -11,7 +11,9 @@ export const interleavedToObject = (array) => {
   return parsed;
 };
 
-export const sleep = (n) =>
+const sleep = (n) =>
   new Promise((resolve) => setTimeout(() => resolve(), n));
 
-export const range = (n, m) => Array(m - n + 1).fill(0).map((_, i) => n + i);
+const range = (n, m) => Array(m - n + 1).fill(0).map((_, i) => n + i);
+
+module.exports = { interleavedToObject, range, sleep };
