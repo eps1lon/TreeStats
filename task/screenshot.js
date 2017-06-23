@@ -7,7 +7,7 @@ const { interleavedToObject, range, sleep } = require('./lib/util');
 
 // config
 const viewportWidth = 1920;
-const viewportHeight = 1080;
+const viewportHeight = 1600;
 const HEADLESS_PORT = 9222;
 // eslint still throws
 // eslint-disable-next-line: max-len
