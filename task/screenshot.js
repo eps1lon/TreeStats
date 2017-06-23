@@ -142,7 +142,7 @@ cdp(async (client) => {
     const sources = await sources_promise;
 
     for (const source_key of sources) {
-      if (!source_blacklist.has(source)) {
+      if (!source_blacklist.has(source_key)) {
         await screenshot(Page, DOM, prefix, league, source_key);
         console.log('shot taken of', source_key);
 
