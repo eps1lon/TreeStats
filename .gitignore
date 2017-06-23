@@ -8,3 +8,6 @@ npm-debug.log
 dist
 coverage
 dependencies*.json
+
+/* files used by task/ */
+*.tmp
