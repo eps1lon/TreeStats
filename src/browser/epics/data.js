@@ -16,6 +16,13 @@ import { defaultSource } from '../selectors/data';
 import { getLocation } from '../selectors/routing';
 import dataSource from '../../data_sources/factory';
 
+const dataSourceWithPublicPath = (source) => {
+  return dataSource({
+    ...source,
+    filename: publicPath(source.filename),
+  });
+};
+
 export const getSourcesIndex = (action$) => {
   return action$.ofType(FETCH_SOURCES_FROM_JSON)
     .mergeMap((action) => {
@@ -23,13 +30,12 @@ export const getSourcesIndex = (action$) => {
         .map((sources) => {
           if (Array.isArray(sources)) {
             return setSourcesArray(sources.map((source) => {
-              source.filename = publicPath(source.filename);
-              return dataSource(source);
+              return dataSourceWithPublicPath(source);
             }));
           } else {
             return setSources(new Map(
               Object.entries(sources)
-                .map(([key, source]) => [key, dataSource(source)])
+                .map(([key, source]) => [key, dataSourceWithPublicPath(source)])
             ));
           }
         });
