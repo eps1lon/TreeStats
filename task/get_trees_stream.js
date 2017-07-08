@@ -159,7 +159,7 @@ const runtime = (() => {
   return () => Date.now() - start;
 })();
 
-const out_filename = outFilename(data_path, start);
+const out_filename = outFilename(data_path, 0);// start);
 const out_stream = fs.createWriteStream(out_filename);
 
 // get the last out
@@ -232,25 +232,29 @@ const fetchPassive = (entry) => {
     request(
       passivesApi(entry['character'].name, entry['account'].name),
       (error, response, body) => {
-        const passive_url = response.request.href;
-
         if (error) {
-          logger.warn(error);
-          resolve({});
+          reject(error);
         } else {
-          let passives;
+          const passive_url = response.request.href;
 
-          try {
-            passives = JSON.parse(body);
-          } catch (e) {
-            logger.warn(`bad request for ${passive_url}`);
-          }
-
-          if (passives) {
-            resolve(Object.assign(entry, { nodes: passives.hashes }));
+          if (error) {
+            logger.warn(error);
+            resolve({});
           } else {
-            logger.debug(passive_url);
-            resolve(resolve(entry));
+            let passives;
+
+            try {
+              passives = JSON.parse(body);
+            } catch (e) {
+              logger.warn(`bad request for ${passive_url}`);
+            }
+
+            if (passives) {
+              resolve(Object.assign(entry, { nodes: passives.hashes }));
+            } else {
+              logger.debug(passive_url);
+              resolve(resolve(entry));
+            }
           }
         }
       }
@@ -322,14 +326,10 @@ const oldTreesComplete = async (old_trees, ladder_urls) => {
   }));
 
   for (let i = 0; i < ladder_urls.length; i += api_rate_limit) {
-    const ladders = ladder_urls.slice(i, i + api_rate_limit).map(fetchLadder);
-
-    ladders.forEach(
-      async (ladder) =>
-        fetchPassives(await ladder, old_trees)
-          .catch((e) => {
-            logger.warn(e);
-          })
+    const ladders = ladder_urls.slice(i, i + api_rate_limit)
+      .map(fetchLadder)
+      .map(async (ladder) =>
+        await fetchPassives(await ladder, old_trees)
       );
 
     // wait for all to finish then start with the next batch
