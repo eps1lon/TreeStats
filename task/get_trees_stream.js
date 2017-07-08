@@ -268,7 +268,7 @@ const fetchPassives = async (response, old_trees) => {
   } else {
     for (let i = 0; i < body.entries.length; i += async_limit) {
       const with_passives =
-        body.entries.slice(i, async_limit)
+        body.entries.slice(i, i + async_limit)
         .map((entry) => {
           const id = entry['character'].id;
           const old_entry = old_trees.get(id);
@@ -322,9 +322,15 @@ const oldTreesComplete = async (old_trees, ladder_urls) => {
   }));
 
   for (let i = 0; i < ladder_urls.length; i += api_rate_limit) {
-    const ladders = ladder_urls.slice(i, api_rate_limit).map(fetchLadder);
+    const ladders = ladder_urls.slice(i, i + api_rate_limit).map(fetchLadder);
 
-    ladders.forEach(async (ladder) => fetchPassives(await ladder, old_trees));
+    ladders.forEach(
+      async (ladder) =>
+        fetchPassives(await ladder, old_trees)
+          .catch((e) => {
+            logger.warn(e);
+          })
+      );
 
     // wait for all to finish then start with the next batch
     await Promise.all(ladders);
