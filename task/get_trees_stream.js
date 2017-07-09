@@ -216,7 +216,7 @@ if (fs.existsSync(latest)) {
 }
 
 const saveTree = ((stream) => (entry) => {
-  if (entry.nodes) {
+  if (entry !== null && typeof entry === 'object' && entry.nodes) {
     csv.transform([entry], csvTransform)
       .pipe(csv.stringify({
         header: false,
@@ -236,25 +236,19 @@ const fetchPassive = (entry) => {
           reject(error);
         } else {
           const passive_url = response.request.href;
+          let passives;
 
-          if (error) {
-            logger.warn(error);
-            resolve({});
+          try {
+            passives = JSON.parse(body);
+          } catch (e) {
+            logger.warn(`fetchPassive: bad request for ${passive_url}`);
+          }
+
+          if (passives) {
+            resolve(Object.assign(entry, { nodes: passives.hashes }));
           } else {
-            let passives;
-
-            try {
-              passives = JSON.parse(body);
-            } catch (e) {
-              logger.warn(`bad request for ${passive_url}`);
-            }
-
-            if (passives) {
-              resolve(Object.assign(entry, { nodes: passives.hashes }));
-            } else {
-              logger.debug(passive_url);
-              resolve(resolve(entry));
-            }
+            logger.debug(passive_url);
+            resolve(resolve(entry));
           }
         }
       }
@@ -263,12 +257,18 @@ const fetchPassive = (entry) => {
 };
 
 const fetchPassives = async (response, old_trees) => {
-  const body = JSON.parse(response.body);
+  let body = null;
+  try {
+    body = JSON.parse(response.body);
+  } catch (e) {
+    logger.warn('fetchPassives:', e, response.request.href);
+    return;
+  }
 
   const league = ladderApiToLeague(response.request.href);
 
   if (!body.entries) {
-      logger.warn('no entries', response.request.href, body);
+      logger.warn('fetchPassives:', 'no entries', response.request.href, body);
   } else {
     for (let i = 0; i < body.entries.length; i += async_limit) {
       const with_passives =
@@ -281,7 +281,7 @@ const fetchPassives = async (response, old_trees) => {
             league,
             last_active:
               ladderActive(old_entry, entry) ? start : old_entry.last_active,
-          }));
+          })).catch((e) => logger.warn('caught fetchPassive:', e));
         });
 
       with_passives.forEach(async (entry) => saveTree(await entry));
@@ -336,5 +336,5 @@ const oldTreesComplete = async (old_trees, ladder_urls) => {
     await Promise.all(ladders);
   }
 
-  logger.info(`finished ladder fetch after ${runtime()}ms`);
+  logger.info(`finished task in ${(runtime() / 1000).toFixed(2)}s`);
 };
