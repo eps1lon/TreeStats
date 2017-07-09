@@ -159,7 +159,7 @@ const runtime = (() => {
   return () => Date.now() - start;
 })();
 
-const out_filename = outFilename(data_path, 0);// start);
+const out_filename = outFilename(data_path, start);
 const out_stream = fs.createWriteStream(out_filename);
 
 // get the last out
