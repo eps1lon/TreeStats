@@ -4,7 +4,18 @@
 Provides aggregated usage statistics of the passive tree in [Path of Exile](https://www.pathofexile.com/ "Path of Exile Website") for the top ladder characters.
 
 # Usage
-TODO
+
+## get trees
+15000 is a limit set by the api, 3 parallel requests to the api is something 
+i converged to but you may not hit the rate limit with upto 5-10 simultaneous 
+requests. 200 per ladder is also set by the api and 200 simultaneous passives
+fetches depends on your bandwith. Just experiment with it until it throws 
+socket hung up errors.
+  `node task/get_trees_stream.js 15000 400 200 3`
+
+## source index
+Creates an index file for the frontend to work with
+  `node task/build_sources_index.js trees_folder frontend_public_path_from_local frontend_public_path_for_trees_from_web`
 
 ## Screenshots
 Example with a blacklist to resume batch processing. 
