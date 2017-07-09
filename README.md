@@ -11,7 +11,7 @@ i converged to but you may not hit the rate limit with upto 5-10 simultaneous
 requests. 200 per ladder is also set by the api and 200 simultaneous passives
 fetches depends on your bandwith. Just experiment with it until it throws 
 socket hung up errors.
-  `node task/get_trees_stream.js 15000 400 200 3`
+  `node task/get_trees.js 15000 400 200 3`
 
 ## source index
 Creates an index file for the frontend to work with

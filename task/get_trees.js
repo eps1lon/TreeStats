@@ -1,4 +1,3 @@
-const nodeAsync = require('async');
 const request = require('request');
 const path = require('path');
 const fs = require('fs');
@@ -161,6 +160,7 @@ const runtime = (() => {
 })();
 
 const out_filename = outFilename(data_path, start);
+const out_stream = fs.createWriteStream(out_filename);
 
 // get the last out
 const latest = path.join(data_path,
@@ -179,10 +179,6 @@ logger.info(`fetching total of ${total} in chunks of ${async_limit}`);
 // this means that we will assign new passives to deleted chars
 // if another one was created
 // character id => ladder entry
-let entries = new Map();
-
-// passives_url => character id
-let passives_urls_characters = new Map();
 
 // w/o array.fill it results in empty values
 // create the ladder urls for each league and flatten it into one array
@@ -193,154 +189,152 @@ const ladder_urls
         ladderApi(league, offset * ladder_limit, ladder_limit))
   ));
 
+
+const estimated_passives = ladder_urls.length * total;
+
 logger.info(
-  `fetching total of ${ladder_urls.length}`
-  + ` ladders over ${leagues.size} leagues`
+  `fetching total of ${ladder_urls.length} ` +
+  `ladders over ${leagues.size} leagues, ` +
+  `estimating ${estimated_passives} passives`
 );
 
-fs.exists(latest, (exists) => {
-  let old_trees = new Map();
-
-  if (exists) {
-    fs.createReadStream(latest).pipe(csv.parse({
-      delimiter: ',',
-      columns: true,
-    }, (e, data) => {
-      if (!e) {
-        old_trees = new Map(data.map((entry) => {
-          return [entry.id, entry];
-        }));
-      }
-
-      oldTreesComplete(old_trees);
-    }));
-  } else {
-    oldTreesComplete(old_trees);
-  }
-});
-
-const ladderComplete = (results, old_trees) => {
-  logger.info(`finished ladder fetch after ${runtime()}ms`);
-
-  // flattened passive urls
-  const passives_urls = [].concat(...results.map((l) => {
-    // parse the body and map on every entry its passives url
-    const body = JSON.parse(l.body);
-
-    const league = ladderApiToLeague(l.request.href);
-
-    if (!body.entries) {
-      logger.warn('no entries', l.request.href, body);
-      return false;
-    }
-
-    return body.entries.map((e) => {
-      const passive_url
-        = passivesApi(e['character'].name, e['account'].name);
-      const id = e['character'].id;
-      const old_entry = old_trees.get(id);
-
-      // save the entry
-      entries.set(id, Object.assign(e, {
-        league: league,
-        last_active:
-        ladderActive(old_entry, e) ? start : old_entry.last_active,
+if (fs.existsSync(latest)) {
+  fs.createReadStream(latest).pipe(csv.parse({
+    delimiter: ',',
+    columns: true,
+  }, (e, data) => {
+    if (!e) {
+      old_trees = new Map(data.map((entry) => {
+        return [entry.id, entry];
       }));
-      // and a reverse mapping so we can get the entry via url
-      passives_urls_characters.set(passive_url, e['character'].id);
-
-      return passive_url;
-    });
-  })).filter((u) => u);
-
-  // logger.info(passives_urls)
-
-  logger.info(`fetching ${passives_urls.length} passives`);
-
-  // progress bar
-  let progress = 0; // number of urls fetched
-  const in_steps = passives_urls.length / 10 | 0; // every ~10%
-
-  nodeAsync.mapLimit(passives_urls, async_limit, (url, callback) => {
-    // just a wrapper that updates the progress
-    request(url, null, (err, transformed) => {
-      progress++;
-
-      if (progress % in_steps == 0) {
-        logger.info(
-          `finished`
-          + `${(100 * progress / passives_urls.length).toFixed(2)}%`);
-      }
-
-      if (err) {
-        logger.warn(err);
-      }
-      callback(null, transformed);
-    }).on('error', (e) => logger.warn(e));
-  }, (err, results) => {
-    if (err) {
-      logger.warn(err);
-    } else {
-      passivesComplete(results);
     }
+
+    oldTreesComplete(old_trees, ladder_urls);
+  }));
+} else {
+  oldTreesComplete(new Map(), ladder_urls);
+}
+
+const saveTree = ((stream) => (entry) => {
+  if (entry !== null && typeof entry === 'object' && entry.nodes) {
+    csv.transform([entry], csvTransform)
+      .pipe(csv.stringify({
+        header: false,
+      }))
+      .on('data', (data) => {
+        stream.write(data);
+      });
+  }
+})(out_stream);
+
+const fetchPassive = (entry) => {
+  return new Promise((resolve, reject) => {
+    request(
+      passivesApi(entry['character'].name, entry['account'].name),
+      (error, response, body) => {
+        if (error) {
+          reject(error);
+        } else {
+          const passive_url = response.request.href;
+          let passives;
+
+          try {
+            passives = JSON.parse(body);
+          } catch (e) {
+            logger.warn(`fetchPassive: bad request for ${passive_url}`);
+          }
+
+          if (passives) {
+            resolve(Object.assign(entry, { nodes: passives.hashes }));
+          } else {
+            logger.debug(passive_url);
+            resolve(resolve(entry));
+          }
+        }
+      }
+    );
   });
 };
 
-const passivesComplete = (results) => {
-  logger.info(
-    `finished passive fetch after ${runtime()}ms`
-    + `(${runtime() / results.length}ms/passive)`);
-
-  let trees = [];
-
-  for (let result of results) {
-    if (!result) continue;
-    const passive_url = result.request.href;
-    let passives = undefined;
-
-    try {
-      passives = JSON.parse(result.body);
-    } catch (e) {
-      logger.warn(`bad request for ${passive_url}`);
-      continue;
-    }
-
-
-    if (passives) {
-      const nodes = passives['hashes'];
-
-      const entry
-        = entries.get(passives_urls_characters.get(passive_url));
-
-      // logger.debug(passive_url, entry)
-
-      trees.push(Object.assign({
-        nodes: nodes,
-      }, entry));
-    } else {
-      // FIXME first breach result returns false but browser is ok
-      logger.debug(passive_url);
-    }
+const fetchPassives = async (response, old_trees) => {
+  let body = null;
+  try {
+    body = JSON.parse(response.body);
+  } catch (e) {
+    logger.warn('fetchPassives:', e, response.request.href);
+    return;
   }
 
-  taskComplete(trees);
-};
+  const league = ladderApiToLeague(response.request.href);
 
-const taskComplete = (trees) => {
-  logger.info(`finished task in ${(runtime() / 1000).toFixed(2)}s`);
+  if (!body.entries) {
+      logger.warn('fetchPassives:', 'no entries', response.request.href, body);
+  } else {
+    for (let i = 0; i < body.entries.length; i += async_limit) {
+      const with_passives =
+        body.entries.slice(i, i + async_limit)
+        .map((entry) => {
+          const id = entry['character'].id;
+          const old_entry = old_trees.get(id);
 
-  csv.transform(trees, csvTransform).pipe(csv.stringify({
-    header: true,
-  })).pipe(fs.createWriteStream(out_filename));
-};
+          return fetchPassive(Object.assign(entry, {
+            league,
+            last_active:
+              ladderActive(old_entry, entry) ? start : old_entry.last_active,
+          })).catch((e) => logger.warn('caught fetchPassive:', e));
+        });
 
-const oldTreesComplete = (old_trees) => {
-  // ggg has a rate ladder_limit so fuck me right
-  nodeAsync.mapLimit(ladder_urls, api_rate_limit, request, (e, results) => {
-    if (e) {
-      logger.warn(e);
-    } else {
-      ladderComplete(results, old_trees);
+      with_passives.forEach(async (entry) => saveTree(await entry));
+
+      await Promise.all(with_passives);
     }
+  }
+};
+
+const fetchLadder = (url) => {
+  return new Promise((resolve, reject) => {
+    request(url, (error, response, body) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(response);
+      }
+    });
   });
+};
+
+const createTreeFile = (out_stream, cols) => {
+  return new Promise((resolve, reject) => {
+    csv.transform([], csvTransform).pipe(csv.stringify({
+      columns: cols,
+      header: true,
+    }))
+    .on('data', (data) => out_stream.write(data, null, resolve));
+  });
+};
+
+const oldTreesComplete = async (old_trees, ladder_urls) => {
+  await createTreeFile(out_stream, Object.keys( {
+    id: 1,
+    last_active: 1,
+    league: 1,
+    xp: 1,
+    class: 1,
+    dead: 1,
+    nodes: 1,
+    challenges: 1,
+  }));
+
+  for (let i = 0; i < ladder_urls.length; i += api_rate_limit) {
+    const ladders = ladder_urls.slice(i, i + api_rate_limit)
+      .map(fetchLadder)
+      .map(async (ladder) =>
+        await fetchPassives(await ladder, old_trees)
+      );
+
+    // wait for all to finish then start with the next batch
+    await Promise.all(ladders);
+  }
+
+  logger.info(`finished task in ${(runtime() / 1000).toFixed(2)}s`);
 };
