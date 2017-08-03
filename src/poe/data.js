@@ -56,6 +56,7 @@ module.exports = {
     // dont use underscores in the ident or adjust regexp that rely on format
     ['250', { name: '2.5.0 Breach', version: 4 }],
     ['260', { name: '2.6.0 Legacy', version: 4 }],
+    ['300', { name: '3.0.0 Fall of Oriath', version: 4 }],
   ]),
-  current_tree: '260',
+  current_tree: '300',
 };
