@@ -1,7 +1,8 @@
 {
   "ignore": [
     "src/poe/trees/250/*",
-    "src/poe/trees/260/*"
+    "src/poe/trees/260/*",
+    "src/poe/trees/300/*"
   ],
   "presets": ["env", "react"],
   "plugins": [
