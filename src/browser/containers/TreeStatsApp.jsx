@@ -79,9 +79,7 @@ const mapStateToProps = (state) => {
   return {
     legend: state.getIn(['heatmap', 'legend']),
     tally: state.getIn(['rows', 'rows']).size,
-    clean: state.getIn([
-      'routing', 'locationBeforeTransitions', 'query',
-    ]).has('clean'),
+    clean: false,
     title: heatmapTitle(state),
   };
 };

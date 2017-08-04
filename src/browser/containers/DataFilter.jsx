@@ -5,7 +5,6 @@ import { Control, Form } from 'react-redux-form/immutable';
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import { SELECT_ANY } from '../actions/rows';
-import { appUrl } from '../actions/routing';
 
 export const duration_units = new Map([
   [1, { human: 'seconds' }],
@@ -129,11 +128,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleChange: (values, classes, leagues) => {
-      dispatch(appUrl(leagues.get(values.get('league'))));
-    },
-  };
+  return {};
 };
 
 export default connect(

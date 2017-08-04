@@ -4,17 +4,10 @@ import POE from '../../poe/data';
 import CsvDataSource from '../../data_sources/CsvDataSource';
 import { fileProps } from '../../../task/lib/treesToCsvFile';
 
-import { getLocation } from './routing';
-
 export const defaultSource = (state) => {
-  const location_key = getLocation(state).getIn(['query', 'source']);
   const sources = state.getIn(['data', 'sources']);
 
-  if (sources.has(location_key)) {
-    return location_key;
-  } else {
-    return sources.keySeq().first();
-  }
+  return sources.keySeq().first();
 };
 
 /**
