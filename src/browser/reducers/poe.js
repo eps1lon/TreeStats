@@ -1,24 +1,18 @@
-import { Map } from 'immutable';
+import { Map, Set } from 'immutable';
 
-const { UPDATE_ROWS } = require('../actions/rows');
-const { visibleLeagues } = require('../selectors/poe');
+const { SET_VISIBLE } = require('../actions/poe');
 const POE = require('../../poe/data');
 
 const initial = Map({
   classes: Map(POE.classes),
   leagues: Map(POE.leagues),
-  // cache the result of the corresponding selector
-  // because grouping over 10k might be to expensive for mapStateToProps
-  visible_leagues: Map(), // subset of leagues
+  visible_leagues: Set(), // keysof leagues
 });
 
 const poe = (state = initial, action) => {
   switch (action.type) {
-    case UPDATE_ROWS:
-      return state.set(
-        'visible_leagues',
-        visibleLeagues(state, action.payload.rows)
-      );
+    case SET_VISIBLE:
+      return state.set('visible_leagues', Set(action.payload.league_ids));
     default:
       return state;
   }

@@ -12,12 +12,10 @@ export const leagueFromName = (league_name, not_set_value) => {
   }
 };
 
-export const visibleLeagues = (poe_state, new_rows) => {
-  const available_leagues = new Set(
-    new_rows.map(({ league }) => String(league))
-  );
+export const visibleLeagues = (state) => {
+  const visible_ids = state.getIn(['poe', 'visible_leagues']);
 
-  return poe_state
-    .get('leagues')
-    .filter((league, league_id) => available_leagues.has(league_id));
+  return state
+    .getIn(['poe', 'leagues'])
+    .filter((league, league_id) => visible_ids.has(league_id));
 };

@@ -5,6 +5,7 @@ import { Control, Form } from 'react-redux-form/immutable';
 import LabeledInput from '../components/LabeledInput.jsx';
 import OptionsMap from '../components/OptionsMap.jsx';
 import { SELECT_ANY } from '../actions/rows';
+import { visibleLeagues } from '../selectors/poe';
 
 export const duration_units = new Map([
   [1, { human: 'seconds' }],
@@ -92,15 +93,6 @@ class DataFilter extends React.Component {
 };
 
 /**
- * only display active leagues
- * @param {Map} leagues
- * @return {Map}
- */
-const visibleLeagues = (leagues) => {
-  return new Map([...leagues.entries()]);
-};
-
-/**
  * boilerplate, display all classes
  * @param {Map} classes
  * @return {Map}
@@ -123,9 +115,7 @@ const addAnyEntry = (map, name_key = 'name') => {
 const mapStateToProps = (state) => {
   return {
     classes: addAnyEntry(visibleClasses(state.getIn(['poe', 'classes']))),
-    leagues: addAnyEntry(
-      visibleLeagues(state.getIn(['poe', 'visible_leagues'])),
-    ),
+    leagues: addAnyEntry(visibleLeagues(state)),
   };
 };
 

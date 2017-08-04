@@ -24,4 +24,5 @@ rules:
     - capIsNewExceptions: # immutable.js types
       - "List"
       - "Map"
+      - "Set"
   react/jsx-uses-vars: 1
