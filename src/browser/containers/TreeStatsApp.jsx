@@ -79,7 +79,7 @@ const mapStateToProps = (state) => {
   return {
     legend: state.getIn(['heatmap', 'legend']),
     tally: state.getIn(['rows', 'rows']).size,
-    clean: false,
+    clean: state.getIn(['app', 'clean']),
     title: heatmapTitle(state),
   };
 };
