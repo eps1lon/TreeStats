@@ -39,15 +39,15 @@ class AppState extends React.Component {
   /**
    * update the progress bar
    */
-  componentDidUpdate() {
-    if (this.props.progress === 1) {
-      NProgress.done();
+  componentWillUpdate({ progress }) {
+    if (progress === 1) {
+      NProgress.done(true);
     } else {
       if (!NProgress.isStarted()) {
         NProgress.start();
       }
 
-      NProgress.set(this.props.progress);
+      NProgress.set(progress);
     }
   }
 
@@ -55,13 +55,14 @@ class AppState extends React.Component {
    * @return {JSX}
    */
   render() {
-    const { task_state } = this.props;
+    const { progress, task_state } = this.props;
     const { extended } = this.state;
     const title = 'click for details on running tasks';
     const toggleDetails = () => this.setState({ extended: !extended });
 
     return (
       <div className="task-state" title={title} onClick={toggleDetails}>
+        {progress === 1 && <div id="app-ready" />}
         {extended && <TaskState tasks={task_state} />}
       </div>
     );
