@@ -1,7 +1,9 @@
 import { Map } from 'immutable';
 import { ACTIVATE } from '../actions/nav_tabs';
 
-const initial = Map();
+const initial = Map({
+  conf: 'data_filter',
+});
 
 /**
  * @param {Object} state
