@@ -4,7 +4,7 @@ ssh poeviz@poeviz.com <<'ENDSSH'
 cd site
 
 # backup trees
-tar cfvz get_trees.tar.gz TreeStats/task/get_trees/*_get_trees.csv.gz
+tar cfv get_trees.tar TreeStats/task/get_trees/*_get_trees.csv
 
 # update backend
 cd TreeStats
@@ -22,7 +22,20 @@ cd ../..
 
 # update trees
 node TreeStats/task/build_sources_index.js TreeStats/task/get_trees public/TreeStats/sources_production.json data
-find public/TreeStats/data/ -type f -name '*_get_trees.csv.gz' -delete
-find TreeStats/task/get_trees/ -type f -name "*_get_trees.csv" -exec bash -c 'gzip -c "$1" > public/TreeStats/data/"$1".gz'  - {} \;
+
+# only zip new files
+for in_file in TreeStats/task/get_trees/*_get_trees.csv; do
+  # get basename of file and join with out dir
+  out_file="public/TreeStats/data/${in_file##*/}.gz"
+  
+  # check for non zero in case we aborted the last deploy
+  # the script will have created in this case the files but
+  # without content
+  if [ ! -s $out_file ]; then
+    gzip -cv $in_file > $out_file
+  else
+    echo "skipped $in_file"
+  fi
+done
 
 ENDSSH
