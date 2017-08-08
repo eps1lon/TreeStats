@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const log4js = require('log4js');
 const csv = require('csv');
+const decompress = require('decompress');
 
 const { ctimeOutFile, filename } = require('./lib/treesToCsvFile');
 
@@ -59,31 +60,6 @@ const logger = log4js.getLogger();
 logger.setLevel('INFO');
 
 /**
- * generates the url for the ggg ladder api
- * see https://www.pathofexile.com/developer/docs/api-resource-ladders
- *
- * @param {string} league
- * @param {number} offset
- * @param {number} limit
- * @return {string}
- */
-const ladderApi = (league, offset, limit) => {
-  return `http://api.pathofexile.com/ladders/${league}?offset=${offset}&limit=${limit}&track=true`;
-};
-
-
-/**
- * partial inverse to ladderApi
- * @param {number} api_url
- * @return {string}
- */
-const ladderApiToLeague = (api_url) => {
-  return decodeURIComponent(
-    api_url.match(
-      /http:\/\/api.pathofexile.com\/ladders\/([^?]+)\?.*/)[1]);
-};
-
-/**
  * generates the url to display all used passives
  *
  * @param {string} character
@@ -104,11 +80,11 @@ const passivesApi = (character, account) => {
  * nodes: (*|Array|nodes|ny|Map), challenges: *}}
  */
 const csvTransform = (data) => {
-  if (data.character === undefined || data.account === undefined) {
+  if (data === undefined || Object.keys(data).length === 0) {
     return {};
   }
 
-  const klass = classes.get(data.character.class);
+  const klass = classes.get(data.class);
 
   const tree_url = TreeUrl.encode(
     POE.trees.get(POE.current_tree).version,
@@ -118,16 +94,16 @@ const csvTransform = (data) => {
   );
 
   return {
-    id: data.character.id,
+    id: data.id,
     last_active: data.last_active,
-    league: leagues.get(data.league),
-    xp: data.character.experience,
+    league: leagues.get(data.ladder),
+    xp: data.experience,
     class: klass.id,
     dead: data.dead,
     // on 10k passives we are saving around 2MB by encoding the nodes
     // (4.8MB down to 2.6MB)
     nodes: tree_url,
-    challenges: data.account.challenges.total,
+    challenges: data.challenges,
   };
 };
 
@@ -180,41 +156,6 @@ logger.info(`fetching total of ${total} in chunks of ${async_limit}`);
 // if another one was created
 // character id => ladder entry
 
-// w/o array.fill it results in empty values
-// create the ladder urls for each league and flatten it into one array
-const ladder_urls
-  = [].concat(...Array.from(leagues.keys()).map((league) =>
-    new Array(total / ladder_limit).fill(0)
-      .map((_, offset) =>
-        ladderApi(league, offset * ladder_limit, ladder_limit))
-  ));
-
-
-const estimated_passives = ladder_urls.length * total;
-
-logger.info(
-  `fetching total of ${ladder_urls.length} ` +
-  `ladders over ${leagues.size} leagues, ` +
-  `estimating ${estimated_passives} passives`
-);
-
-if (fs.existsSync(latest)) {
-  fs.createReadStream(latest).pipe(csv.parse({
-    delimiter: ',',
-    columns: true,
-  }, (e, data) => {
-    if (!e) {
-      old_trees = new Map(data.map((entry) => {
-        return [entry.id, entry];
-      }));
-    }
-
-    oldTreesComplete(old_trees, ladder_urls);
-  }));
-} else {
-  oldTreesComplete(new Map(), ladder_urls);
-}
-
 const saveTree = ((stream) => (entry) => {
   if (entry !== null && typeof entry === 'object' && entry.nodes) {
     csv.transform([entry], csvTransform)
@@ -230,7 +171,7 @@ const saveTree = ((stream) => (entry) => {
 const fetchPassive = (entry) => {
   return new Promise((resolve, reject) => {
     request(
-      passivesApi(entry['character'].name, entry['account'].name),
+      passivesApi(entry.name, entry.account),
       (error, response, body) => {
         if (error) {
           reject(error);
@@ -256,53 +197,6 @@ const fetchPassive = (entry) => {
   });
 };
 
-const fetchPassives = async (response, old_trees) => {
-  let body = null;
-  try {
-    body = JSON.parse(response.body);
-  } catch (e) {
-    logger.warn('fetchPassives:', e, response.request.href);
-    return;
-  }
-
-  const league = ladderApiToLeague(response.request.href);
-
-  if (!body.entries) {
-      logger.warn('fetchPassives:', 'no entries', response.request.href, body);
-  } else {
-    for (let i = 0; i < body.entries.length; i += async_limit) {
-      const with_passives =
-        body.entries.slice(i, i + async_limit)
-        .map((entry) => {
-          const id = entry['character'].id;
-          const old_entry = old_trees.get(id);
-
-          return fetchPassive(Object.assign(entry, {
-            league,
-            last_active:
-              ladderActive(old_entry, entry) ? start : old_entry.last_active,
-          })).catch((e) => logger.warn('caught fetchPassive:', e));
-        });
-
-      with_passives.forEach(async (entry) => saveTree(await entry));
-
-      await Promise.all(with_passives);
-    }
-  }
-};
-
-const fetchLadder = (url) => {
-  return new Promise((resolve, reject) => {
-    request(url, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(response);
-      }
-    });
-  });
-};
-
 const createTreeFile = (out_stream, cols) => {
   return new Promise((resolve, reject) => {
     csv.transform([], csvTransform).pipe(csv.stringify({
@@ -313,7 +207,50 @@ const createTreeFile = (out_stream, cols) => {
   });
 };
 
-const oldTreesComplete = async (old_trees, ladder_urls) => {
+const old_trees = new Promise((resolve, reject) => {
+  if (fs.existsSync(latest)) {
+    fs.createReadStream(latest).pipe(csv.parse({
+      delimiter: ',',
+      columns: true,
+    }, (e, data) => {
+      if (e) {
+        reject(e);
+      } else {
+        resolve(new Map(data.map((entry) => {
+          return [entry.id, entry];
+        })));
+      }
+    }));
+  } else {
+    resolve(old_trees);
+  }
+});
+
+const fetchLadder = () => {
+  return new Promise((resolve, reject) => {
+    request.get('http://pathofstats.com/poeapi/ladder', {
+      encoding: null,
+    }, (err, response, body) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(body);
+      }
+    });
+  });
+};
+
+const ladder = async () => {
+  const body = await fetchLadder();
+
+  const [zipfile] = await decompress(body);
+  const decoded = zipfile.data.toString('utf8');
+  const json = JSON.parse(decoded);
+
+  return json;
+};
+
+Promise.all([old_trees, ladder()]).then(async ([old_trees, { entries }]) => {
   await createTreeFile(out_stream, Object.keys( {
     id: 1,
     last_active: 1,
@@ -325,16 +262,30 @@ const oldTreesComplete = async (old_trees, ladder_urls) => {
     challenges: 1,
   }));
 
-  for (let i = 0; i < ladder_urls.length; i += api_rate_limit) {
-    const ladders = ladder_urls.slice(i, i + api_rate_limit)
-      .map(fetchLadder)
-      .map(async (ladder) =>
-        await fetchPassives(await ladder, old_trees)
-      );
+  logger.info(
+    `fetched api with ${entries.length} entries`
+  );
 
-    // wait for all to finish then start with the next batch
-    await Promise.all(ladders);
+  for (let i = 0; i < entries.length; i += async_limit) {
+    const with_passives =
+      entries.slice(i, i + async_limit)
+      .filter((entry) => {
+        return entry.rank <= total;
+      })
+      .map((entry) => {
+        const id = entry.id;
+        const old_entry = old_trees.get(id);
+
+        return fetchPassive(Object.assign(entry, {
+          last_active:
+            ladderActive(old_entry, entry) ? start : old_entry.last_active,
+        })).catch((e) => logger.warn('caught fetchPassive:', e));
+      });
+
+    with_passives.forEach(async (entry) => saveTree(await entry));
+
+    await Promise.all(with_passives);
   }
 
   logger.info(`finished task in ${(runtime() / 1000).toFixed(2)}s`);
-};
+});

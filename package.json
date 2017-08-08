@@ -17,6 +17,7 @@
     "d3-selection": "^1.0.3",
     "d3-voronoi": "^1.1.2",
     "d3-zoom": "^1.1.1",
+    "decompress": "^4.2.0",
     "fs": "^0.0.1-security",
     "heatmap.js": "^2.0.5",
     "immutable": "^3.8.1",
