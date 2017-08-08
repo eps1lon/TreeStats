@@ -1,6 +1,9 @@
 #!/bin/bash
 ssh poeviz@poeviz.com <<'ENDSSH'
 
+# load nvm, source .bashrc doesnt work despite a line for nvm being there
+. ~/.nvm/nvm.sh
+
 cd site
 
 # backup trees
@@ -9,6 +12,11 @@ tar cfv get_trees.tar TreeStats/task/get_trees/*_get_trees.csv
 # update backend
 cd TreeStats
 git pull
+
+# update node env
+nvm use
+
+# update packages
 yarn
 
 cd ..
