@@ -20,10 +20,14 @@ module.exports = {
     ['11', { name: '2 Week Turmoil (JRE094)', active: false, permanent: false }],
     ['12', { name: '2 Week Turmoil HC (JRE095)', active: false, permanent: false }],
     ['13', { name: '2 Week Turmoil HC Solo (JRE096)', active: false, permanent: false }],
-    ['14', { name: 'Harbinger', active: true, permanent: false }],
-    ['15', { name: 'Hardcore Harbinger', active: true, permanent: false }],
-    ['16', { name: 'SSF Harbinger', active: true, permanent: false }],
-    ['17', { name: 'SSF HC Harbinger', active: true, permanent: false }],
+    ['14', { name: 'Harbinger', active: false, permanent: false }],
+    ['15', { name: 'Hardcore Harbinger', active: false, permanent: false }],
+    ['16', { name: 'SSF Harbinger', active: false, permanent: false }],
+    ['17', { name: 'SSF HC Harbinger', active: false, permanent: false }],
+    ['18', { name: 'Abyss', active: false, permanent: false }],
+    ['19', { name: 'Hardcore Abyss', active: false, permanent: false }],
+    ['20', { name: 'SSF Abyss', active: false, permanent: false }],
+    ['21', { name: 'SSF HC Abyss', active: false, permanent: false }],
   ]),
   // Map<string, ClassProps>
   classes: Map([
