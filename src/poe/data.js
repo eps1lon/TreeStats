@@ -65,6 +65,7 @@ module.exports = {
     ['250', { name: '2.5.0 Breach', version: 4 }],
     ['260', { name: '2.6.0 Legacy', version: 4 }],
     ['300', { name: '3.0.0 Fall of Oriath', version: 4 }],
+    ['310v2', { name: '3.1.0 War for the Atlas', version: 4 }],
   ]),
-  current_tree: '300',
+  current_tree: '310v2',
 };
