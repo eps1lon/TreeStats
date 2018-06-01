@@ -7,11 +7,12 @@ const Map = require('immutable').Map;
 module.exports = {
   // Map<string, LeagueProps>
   leagues: Map([
+    ['5', { name: 'Standard', active: true, permanent: true }],
+    ['5', { name: 'Hardcore', active: true, permanent: true }],
     ['1', { name: 'Breach', active: false, permanent: false }],
     ['2', { name: 'Hardcore Breach', active: false, permanent: false }],
     ['3', { name: 'Legacy', active: false, permanent: false }],
     ['4', { name: 'Hardcore Legacy', active: false, permanent: false }],
-    ['5', { name: 'Standard', active: false, permanent: false }],
     ['6', { name: 'SSF Legacy', active: false, permanent: false }],
     ['7', { name: 'SSF HC Legacy', active: false, permanent: false }],
     ['8', { name: '2 Week Mayhem HC (JRE091)', active: false, permanent: false }],
