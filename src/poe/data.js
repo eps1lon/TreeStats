@@ -28,6 +28,10 @@ module.exports = {
     ['19', { name: 'Hardcore Abyss', active: false, permanent: false }],
     ['20', { name: 'SSF Abyss', active: false, permanent: false }],
     ['21', { name: 'SSF HC Abyss', active: false, permanent: false }],
+    ['22', { name: 'Incursion', active: false, permanent: false }],
+    ['23', { name: 'Hardcore Incursion', active: false, permanent: false }],
+    ['24', { name: 'SSF Incursion', active: false, permanent: false }],
+    ['25', { name: 'SSF HC Incursion', active: false, permanent: false }],
   ]),
   // Map<string, ClassProps>
   classes: Map([
@@ -66,6 +70,7 @@ module.exports = {
     ['260', { name: '2.6.0 Legacy', version: 4 }],
     ['300', { name: '3.0.0 Fall of Oriath', version: 4 }],
     ['310v2', { name: '3.1.0 War for the Atlas', version: 4 }],
+    ['330', { name: '3.3.0 Incursion', version: 4 }],
   ]),
   current_tree: '310v2',
 };
