@@ -33,10 +33,10 @@ module.exports = {
     ['27', { name: 'Hardcore Bestiary', active: false, permanent: false }],
     ['28', { name: 'SSF Bestiary', active: false, permanent: false }],
     ['29', { name: 'SSF HC Bestiary', active: false, permanent: false }],
-    ['22', { name: 'Incursion', active: false, permanent: false }],
-    ['23', { name: 'Hardcore Incursion', active: false, permanent: false }],
-    ['24', { name: 'SSF Incursion', active: false, permanent: false }],
-    ['25', { name: 'SSF HC Incursion', active: false, permanent: false }],
+    ['22', { name: 'Incursion', active: true, permanent: false }],
+    ['23', { name: 'Hardcore Incursion', active: true, permanent: false }],
+    ['24', { name: 'SSF Incursion', active: true, permanent: false }],
+    ['25', { name: 'SSF Incursion HC', active: true, permanent: false }],
   ]),
   // Map<string, ClassProps>
   classes: Map([
@@ -78,5 +78,5 @@ module.exports = {
     ['320', { name: '3.2.0 Bestiary', version: 4 }],
     ['330', { name: '3.3.0 Incursion', version: 4 }],
   ]),
-  current_tree: '320',
+  current_tree: '330',
 };

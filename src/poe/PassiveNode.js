@@ -90,7 +90,7 @@ module.exports = class {
    * @return {number[]} adjacent node ids
    */
   get adjacent() {
-    return this.props.out;
+    return this.props.out || [];
   }
 
   /**

@@ -51,7 +51,11 @@ module.exports = class PassiveTree {
    * @return {Map}
    */
   static initNodes(tree_data) {
-    return new Map(tree_data.nodes.map((n) => {
+    const nodes = Array.isArray(tree_data.nodes)
+      ? tree_data.nodes
+      : Object.values(tree_data.nodes);
+
+    return new Map(nodes.map((n) => {
       // [key, value]
       return [n.id, new PassiveNodeInstance(n, tree_data.groups)];
     }));
