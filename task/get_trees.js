@@ -12,10 +12,12 @@ const TreeUrl = require('../src/poe/PassiveTreeUrl');
 const tree_ident = POE.current_tree;
 const outFilename = (root, now) => filename(root, now, tree_ident);
 
+const leagueFilter = (league) => league.active && !league.permanent;
+
 // create some lookup tables for leagues, classes etc
 const leagues = new Map();
 for (let [league_id, league] of POE.leagues) {
-  if (league.active) {
+  if (leagueFilter(league)) {
     leagues.set(league.name, league_id);
   }
 }
