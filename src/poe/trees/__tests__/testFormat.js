@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import PassiveNode from '../../PassiveNode';
+import PassiveTree from '../../PassiveTree';
 
 import testPassiveGroupProps from '../../__tests__/PassiveGroup';
 import testPassiveNodeProps from '../../__tests__/PassiveNode';
@@ -25,9 +25,9 @@ function testFormatWith(tree_data) {
     });
 
     it('should pass integration tests on every node', function() {
-      tree_data.nodes.forEach((node) => {
-        testPassiveNodeProps(new PassiveNode(node, tree_data.groups));
-      });
+      for (const node of PassiveTree.initNodes(tree_data).values()) {
+        testPassiveNodeProps(node);
+      }
     });
   });
 }
