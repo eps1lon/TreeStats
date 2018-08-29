@@ -1,8 +1,8 @@
 language: node_js
 cache: yarn
-before_script:
-  - npm run prebuild
 script:
-  - npm run build
+  - yarn lint
+  - yarn test
+  - yarn run build
 after_success:
   - bash ./.travis-deploy.sh
