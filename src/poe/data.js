@@ -37,10 +37,10 @@ module.exports = {
     ['23', { name: 'Hardcore Incursion', active: false, permanent: false }],
     ['24', { name: 'SSF Incursion', active: false, permanent: false }],
     ['25', { name: 'SSF Incursion HC', active: false, permanent: false }],
-    ['26', { name: 'Delve', active: false, permanent: false }],
-    ['27', { name: 'Hardcore Delve', active: false, permanent: false }],
-    ['28', { name: 'SSF Delve', active: false, permanent: false }],
-    ['29', { name: 'SSF Delve HC', active: false, permanent: false }],
+    ['26', { name: 'Delve', active: true, permanent: false }],
+    ['27', { name: 'Hardcore Delve', active: true, permanent: false }],
+    ['28', { name: 'SSF Delve', active: true, permanent: false }],
+    ['29', { name: 'SSF Delve HC', active: true, permanent: false }],
   ]),
   // Map<string, ClassProps>
   classes: Map([
@@ -83,5 +83,5 @@ module.exports = {
     ['330', { name: '3.3.0 Incursion', version: 4 }],
     ['340', { name: '3.4.0 Delve', version: 4 }],
   ]),
-  current_tree: '330',
+  current_tree: '340',
 };
